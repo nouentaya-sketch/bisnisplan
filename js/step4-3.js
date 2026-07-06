@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
         labaCell.style.backgroundColor = laba < 0 ? "#EF4444" : "#ECFDF5";
       }
 
-      // ★★★ 4 & 5. 繰り返し積立・購入リキャスト処理 ★★★
+      // ★★★ 4 & 5. 積立・購入処理（HANYA SEKALI BELI, TIDAK OTOMATIS DIPERPANJANG） ★★★
       let investEventAmount = 0, monthlyAssetReserveTotal = 0;
       let assetBoughtLabels = [];
 
@@ -221,17 +221,24 @@ document.addEventListener("DOMContentLoaded", function() {
         if (a.price <= 0) return;
 
         if (a.isExisting) {
-          const cycle = a.span; 
+          // Aset Lama: "span" = Sisa Bulan hingga aset perlu diganti.
+          // Simpanan berjalan dari bulan 1 s/d bulan ke-"span", lalu dibeli SEKALI di bulan itu.
+          // Setelah lewat bulan itu: tidak ada simpanan lagi, tidak ada pembelian ulang.
+          const cycle = a.span;
           if (cycle > 0) {
-            if (m % cycle === 0) {
+            if (m === cycle) {
               investEventAmount += a.price;
               assetBoughtLabels.push(a.name);
             }
-            monthlyAssetReserveTotal += Math.round(a.price / cycle);
+            if (m <= cycle) {
+              monthlyAssetReserveTotal += Math.round(a.price / cycle);
+            }
           }
         } else {
+          // Aset Baru: simpanan berjalan dari bulan 1 s/d "shopMonth" (Beli Bulan),
+          // lalu dibeli SEKALI di bulan itu. Setelah itu (termasuk setelah "Masa Pakai"
+          // habis): tidak ada simpanan lagi, tidak ada pembelian ulang.
           const firstShop = a.shopMonth;
-          const cycle = a.span;
 
           if (m <= firstShop) {
             if (firstShop > 0) {
@@ -241,13 +248,6 @@ document.addEventListener("DOMContentLoaded", function() {
               investEventAmount += a.price;
               assetBoughtLabels.push(a.name);
             }
-          } else if (cycle > 0) {
-            const monthsAfterFirst = m - firstShop;
-            if (monthsAfterFirst % cycle === 0) {
-              investEventAmount += a.price;
-              assetBoughtLabels.push(a.name);
-            }
-            monthlyAssetReserveTotal += Math.round(a.price / cycle);
           }
         }
       });
