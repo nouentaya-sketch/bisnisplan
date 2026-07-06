@@ -5,27 +5,302 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tahap 5 : Hasil Riset Bisnis Superstar</title> 
   
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 
+  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step5.css">
+  
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
+  <!-- Header -->
   <div id="header-container"></div>
 
   <main class="main-container">
-    <h1>Tahap 5 : Hasil Riset Bisnis Superstar</h1>
+    <section class="sheet-section">
+      
+      <!-- ヘッダー説明文 -->
+      <div class="tab-header">
+        <h1>Tahap 5 : Hasil Riset Bisnis Superstar</h1>
+        <p>Tuliskan data riset pasar dan analisis keuangan yang diperoleh dari pengusaha yang menjadi contoh (Superstar).</p>
+        <p class="warning-text"><i class="fa-solid fa-circle-exclamation"></i> Keterangan untuk kolom angka tidak boleh menambahkan titik dan lain-lain selain angka.</p>
+      </div>
+      
+      <!-- プロフィール -->
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="nama-superstar">
+            <i class="fa-solid fa-star"></i> Nama Superstar
+          </label>
+          <input type="text" id="nama-superstar" placeholder="Masukkan nama pengusaha / bisnis contoh Anda" autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- PART 1: ANALISIS BISNIS (項目 1-8) -->
+      <!-- ====================================================== -->
+      <div class="section-title-container">
+        <h2><i class="fa-solid fa-address-card"></i> A. Profil & Informasi Dasar Bisnis</h2>
+      </div>
+
+      <div class="idea-grid">
+        <div class="idea-card passion-card text-left">
+          <h3><i class="fa-solid fa-store icon-blue"></i> 1. Nama Bisnis Superstar</h3>
+          <p class="field-desc">Nama bisnis yang menjadi contoh bagi usaha anda.</p>
+          <input type="text" id="superstar-name" placeholder="Masukkan nama bisnis...">
+        </div>
+
+        <div class="idea-card skill-card text-left">
+          <h3><i class="fa-solid fa-wheat-awn icon-blue"></i> 2. Jenis Komoditas</h3>
+          <p class="field-desc">Jenis komoditas atau jenis usaha apa yang dijalankan.</p>
+          <input type="text" id="superstar-commodity" placeholder="Contoh: Sayur Organik, Hidroponik...">
+        </div>
+
+        <div class="idea-card problem-card text-left">
+          <h3><i class="fa-solid fa-location-dot" style="color:#0284C7;"></i> 3. Lokasi Bisnis (Alamat)</h3>
+          <p class="field-desc">Alamat lengkap dari Desa hingga Provinsi.</p>
+          <textarea id="superstar-address" placeholder="Masukkan alamat lengkap..." class="height-mid"></textarea>
+        </div>
+
+        <div class="idea-card passion-card text-left">
+          <h3><i class="fa-solid fa-map-location-dot icon-blue"></i> 4. Lokasi Bisnis (Link Google Maps)</h3>
+          <p class="field-desc">Link lokasi usaha yang terdapat pada google map.</p>
+          <input type="url" id="superstar-map-link" placeholder="https://maps.google.com/...">
+        </div>
+
+        <div class="idea-card skill-card text-left">
+          <h3><i class="fa-solid fa-file-lines icon-blue"></i> 5. Ringkasan Bisnis</h3>
+          <p class="field-desc">Gambaran bisnis secara garis besar agar mudah dipahami.</p>
+          <textarea id="superstar-summary" placeholder="Tuliskan ringkasan bisnis..." class="height-mid"></textarea>
+        </div>
+
+        <div class="idea-card problem-card text-left">
+          <h3><i class="fa-solid fa-clock-rotate-left" icon-blue"></i> 6. Latar Belakang Bisnis</h3>
+          <p class="field-desc">Alasan mengapa memilih jenis usaha tersebut dan komoditasnya.</p>
+          <textarea id="superstar-background" placeholder="Tuliskan latar belakang..." class="height-mid"></textarea>
+        </div>
+      </div>
+
+      <div class="finance-block mt-25">
+        <h3><i class="fa-solid fa-bullseye icon-blue"></i> 7. Visi dan Misi</h3>
+        <p class="field-desc">Tujuan utama (visi) and tahapan/cara mencapainya (misi).</p>
+        <div class="input-group">
+          <textarea id="superstar-vision-mission" placeholder="Tuliskan visi dan misi secara detail..." class="height-large"></textarea>
+        </div>
+      </div>
+
+      <div class="finance-block mt-25">
+        <h3><i class="fa-solid fa-screwdriver-wrench" icon-blue"></i> 8. Sarana dan Barang Milik Bisnis</h3>
+        <p class="field-desc">Sarana dan barang yang sudah tersedia, sebutkan satu persatu.</p>
+        <div class="input-group">
+          <textarea id="superstar-assets" placeholder="Contoh: Traktor 1 unit, Greenhouse 2 blok..." class="height-large"></textarea>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- PART 2: STRATEGI & OPERASIONAL (項目 9-13) -->
+      <!-- ====================================================== -->
+      <div class="section-title-container mt-50">
+        <h2><i class="fa-solid fa-magnifying-glass-chart"></i> B. Analisis Strategi & Operasional</h2>
+      </div>
+
+      <!-- 9. Pemasaran -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="pemasaran" data-placeholder="Tuliskan poin penjelasan pemasaran...">
+        <h3><i class="fa-solid fa-chart-pie" icon-blue"></i> 9. Pemasaran (Penjelasan)</h3>
+        <p class="field-desc">Tempat memasarkan/menjual produk serta target pembeli utama.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <input type="text" class="item-input" placeholder="Tuliskan poin penjelasan pemasaran...">
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Penjelasan</button>
+        </div>
+      </div>
+
+      <!-- 10. Sumber Informasi -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="informasi" data-placeholder="Tuliskan poin sumber informasi bisnis...">
+        <h3><i class="fa-solid fa-circle-info" icon-blue"></i> 10. Sumber Informasi Bisnis</h3>
+        <p class="field-desc">Tempat atau orang untuk memperoleh informasi dan memecahkan masalah usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <input type="text" class="item-input" placeholder="Tuliskan poin sumber informasi bisnis...">
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Penjelasan</button>
+        </div>
+      </div>
+
+      <!-- 11. Hambatan -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="hambatan" data-placeholder="Tuliskan poin hambatan bisnis...">
+        <h3><i class="fa-solid fa-hand-back-fist" icon-blue"></i> 11. Hambatan Pebisnis Pada Saat Ini</h3>
+        <p class="field-desc">Permasalahan yang sedang dan akan dihadapi dalam kegiatan usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <input type="text" class="item-input" placeholder="Tuliskan poin hambatan bisnis...">
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Penjelasan</button>
+        </div>
+      </div>
+
+      <!-- 12. Risiko -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="risiko" data-placeholder="Tuliskan poin risiko bisnis...">
+        <h3><i class="fa-solid fa-triangle-exclamation" icon-blue"></i> 12. Risiko Bisnis</h3>
+        <p class="field-desc">Kemungkinan-kemungkinan masalah yang akan terjadi dalam kegiatan usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <input type="text" class="item-input" placeholder="Tuliskan poin risiko bisnis...">
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Penjelasan</button>
+        </div>
+      </div>
+
+      <!-- 13. Perbedaan -->
+      <div class="finance-block highlight-block dynamic-group mt-25" data-prefix="perbedaan" data-placeholder="Tuliskan analisis perbedaan bisnis..." data-type="textarea">
+        <h3><i class="fa-solid fa-code-compare icon-amber"></i> 13. Perbedaan Antara Bisnis Superstar dengan Bisnis Anda</h3>
+        <p class="field-desc">Bandingkan untuk mengetahui peluang dan perbaikan yang menjadi inspirasi Anda.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row items-start">
+            <textarea class="item-input height-small" placeholder="Tuliskan analisis perbedaan bisnis..."></textarea>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Analisis</button>
+        </div>
+      </div>
+
+
+      <!-- ====================================================== -->
+      <!-- PART 3: ANALISIS KEUANGAN (項目 14-17) -->
+      <!-- ====================================================== -->
+      <div class="section-title-container mt-50">
+        <h2><i class="fa-solid fa-money-bill-trend-up"></i> C. Analisis Keuangan Bisnis</h2>
+      </div>
+
+      <!-- 14. Harga beli sarana -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="investasi">
+        <h3><i class="fa-solid fa-calculator icon-blue"></i> 14. Harga Beli Sarana & Barang Bisnis</h3>
+        <p class="field-desc">Nama sarana dan barang yang sudah diinvestasikan beserta harga belinya.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Nama barang (Misal: Traktor)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input input-calc" placeholder="Harga..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Total Investasi Sarana dan Barang Bisnis</span>
+          <span id="total-investasi">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 15. Sumber Dana -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="dana">
+        <h3><i class="fa-solid fa-piggy-bank" icon-blue"></i> 15. Sumber Dana</h3>
+        <p class="field-desc">Dana yang akan dipakai baik dari hasil magang, tabungan maupun pinjaman.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Sumber dana (Misal: Hasil Magang)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input" placeholder="Nominal..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Sumber Dana</button>
+        </div>
+      </div>
+
+      <!-- 16. Hasil Komoditas -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="komoditas">
+        <h3><i class="fa-solid fa-boxes-stacked" icon-blue"></i> 16. Hasil Komoditas per Bulan (Pendapatan Kotor)</h3>
+        <p class="field-desc">Hasil yang diperoleh dari bisnis beserta besar pendapatannya.</p>
+        
+        <div class="table-like-header">
+          <div class="flex-grow-2">Nama Komoditas / Layanan</div>
+          <div class="flex-grow-1">Angka</div>
+          <div class="flex-grow-1">Satuan</div>
+          <div class="flex-grow-1-5">Harga Satuan</div>
+        </div>
+        
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Sayur Sawi...">
+            <input type="number" class="item-qty flex-grow-1 input-calc" placeholder="0">
+            <input type="text" class="item-unit flex-grow-1" placeholder="kg">
+            <div class="currency-wrapper flex-grow-1-5">
+              <span>Rp</span>
+              <input type="text" class="item-price currency-input input-calc" placeholder="Harga..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Komoditas</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Pendapatan dari Bisnis (Total per Bulan)</span>
+          <span id="total-pendapatan-kotor">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 17. Biaya Bisnis -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="biaya">
+        <h3><i class="fa-solid fa-file-invoice-dollar" icon-blue"></i> 17. Biaya Bisnis / Bulan (Pengeluaran Operasional)</h3>
+        <p class="field-desc">Biaya rutin yang dikeluarkan dalam usaha tersebut setiap bulannya.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Jenis biaya (Misal: Pupuk)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input input-calc" placeholder="Nominal..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Biaya</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Total Biaya Bisnis</span>
+          <span id="total-biaya">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 最終純利益サマリー -->
+      <div class="finance-block final-profit-block mt-40">
+        <div class="flex-space-between">
+          <span class="final-title">
+            <i class="fa-solid fa-coins"></i> PENDAPATAN BERSIH / BULAN (Net Profit)
+          </span>
+          <span id="pendapatan-bersih-final" class="final-amount">Rp 0</span>
+        </div>
+      </div>
+
+    </section>
   </main>
 
-  <script src="js/header-route.js"></script>
-<div id="footer-container"></div>
+  <!-- Footer -->
+  <div id="footer-container"></div>
 
+  <!-- JAVASCRIPT -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> </body>
-</html>
+  <script src="js/header-route.js"></script> 
+  <script src="js/step5.js"></script> 
 </body>
 </html>
