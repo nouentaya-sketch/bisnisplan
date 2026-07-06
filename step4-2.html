@@ -28,9 +28,13 @@
       <div class="profile-block">
         <div class="input-group">
           <label for="name">
-            <i class="fa-solid fa-user"></i> Nama Pemagang
+            <i class="fa-solid fa-user"></i> Nama Lengkap
           </label>
-          <input type="text" id="name" placeholder="Masukkan nama lengkap Anda">
+          <input
+            type="text"
+            id="name"
+            data-save="true"
+            placeholder="Masukkan nama lengkap Anda">
         </div>
       </div>
 
@@ -43,7 +47,11 @@
           <div class="input-group-half">
             <label for="sim-start-date"><i class="fa-solid fa-calendar-days"></i> Kapan Mulai Bisnis? (Bulan Ke-1)</label>
             <div class="wrapper-date">
-              <input type="month" id="sim-start-date" value="2026-04">
+              <input
+                type="month"
+                id="sim-start-date"
+                data-save="true"
+                value="2026-04">
             </div>
           </div>
 
@@ -51,7 +59,11 @@
             <label for="fund-source-amount"><i class="fa-solid fa-wallet"></i> Modal Usaha Awal (Bulan Ke-1)</label>
             <div class="wrapper-currency">
               <span class="currency-prefix">Rp</span>
-              <input type="number" id="fund-source-amount" placeholder="0">
+              <input
+                type="number"
+                id="fund-source-amount"
+                data-save="true"
+                placeholder="0">
             </div>
           </div>
 
@@ -59,7 +71,11 @@
             <label for="expected-salary-amount"><i class="fa-solid fa-hand-holding-dollar"></i> Biaya Hidup (Bulanan)</label>
             <div class="wrapper-currency">
               <span class="currency-prefix">Rp</span>
-              <input type="number" id="expected-salary-amount" placeholder="0">
+              <input
+                type="number"
+                id="expected-salary-amount"
+                data-save="true"
+                placeholder="0">
             </div>
           </div>
           
@@ -79,10 +95,10 @@
               <thead>
                 <tr>
                   <th><i class="fa-solid fa-tag"></i> Nama Item Aset</th>
-                  <th class="col-price"><i class="fa-solid fa-money-bill-wave"></i> Harga</th>
-                  <th class="col-month font-center"><i class="fa-solid fa-hourglass-half"></i> Sisa Bln</th>
+                  <th class="col-price"><i class="fa-solid fa-money-bill-wave"></i> Harga Beli</th>
+                  <th class="col-month font-center"><i class="fa-solid fa-hourglass-half"></i> Sisa Bulan</th>
                   <th class="col-span hidden-th"></th> 
-                  <th class="col-reserve-calc font-center"><i class="fa-solid fa-calculator"></i> Simpanan</th>
+                  <th class="col-reserve-calc font-center"><i class="fa-solid fa-calculator"></i>Simpanan Bulanan</th>
                   <th class="col-action"></th>
                 </tr>
               </thead>
@@ -106,10 +122,10 @@
               <thead>
                 <tr>
                   <th><i class="fa-solid fa-cart-plus"></i> Komponen Aset Baru</th>
-                  <th class="col-price"><i class="fa-solid fa-money-bill-wave"></i> Harga</th>
-                  <th class="col-month font-center"><i class="fa-solid fa-calendar-check"></i> Beli Bln</th>
+                  <th class="col-price"><i class="fa-solid fa-money-bill-wave"></i> Harga Beli</th>
+                  <th class="col-month font-center"><i class="fa-solid fa-calendar-check"></i> Beli Bulan</th>
                   <th class="col-span font-center"><i class="fa-solid fa-clock"></i> Masa Pakai</th>
-                  <th class="col-reserve-calc font-center"><i class="fa-solid fa-calculator"></i> Simpanan</th>
+                  <th class="col-reserve-calc font-center"><i class="fa-solid fa-calculator"></i> Simpanan Bulanan</th>
                   <th class="col-action"></th>
                 </tr>
               </thead>

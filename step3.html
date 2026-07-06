@@ -3,66 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 3 : Ide Bisnis</title> 
+  <title>Tahap 3 : Ide Bisnis</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css">       
-  <link rel="stylesheet" href="css/step3.css">     
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step3.css">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+
+<body data-page="step3">
 
   <div id="header-container"></div>
- <main class="main-container">
+
+  <main class="main-container">
     <section class="sheet-section">
+
       <div class="tab-header">
         <h2>Tahap 03 Ide Bisnis dan Cita-Cita pemagang setelah pulang ke Indonesia</h2>
         <p>Tahap selanjutnya adalah menentukan ide bisnis dan cita-cita yang ingin direalisasikan di Indonesia.</p>
-         <p>Setelah melengkapi tiga aspek, yaitu passion, skill, dan masalah sosial yang ingin diselesaikan, silakan menentukan nama bisnis serta ringkasan bisnis yang akan dijalankan.</p>
+        <p>Setelah melengkapi tiga aspek, yaitu passion, skill, dan masalah sosial yang ingin diselesaikan, silakan menentukan nama bisnis serta ringkasan bisnis yang akan dijalankan.</p>
       </div>
-            <div class="finance-block profile-block">
+
+      <div class="finance-block profile-block">
         <div class="input-group">
           <label for="name">
-            <i class="fa-solid fa-user"></i> Nama Pemagang
+            <i class="fa-solid fa-user"></i> Nama Lengkap
           </label>
-          <input type="text" id="name" placeholder="Masukkan nama lengkap Anda">
+          <input
+            type="text"
+            id="name"
+            data-save="true"
+            placeholder="Masukkan nama lengkap Anda"
+            autocomplete="off"
+            required>
         </div>
       </div>
+
       <div class="idea-grid">
+
         <div class="idea-card passion-card">
-          <div class="card-icon"><i class="fa-solid fa-heart"></i></div>
+          <div class="card-icon">
+            <i class="fa-solid fa-heart"></i>
+          </div>
+
           <h3>Passion</h3>
-          <textarea id="passion" placeholder="Tuliskan secara bebas hal-hal yang ingin Anda lakukan dan yang membuat Anda bersemangat...."></textarea>
+
+          <p class="field-desc">
+            Tuliskan secara bebas hal-hal yang ingin Anda lakukan, hobi, atau hal yang membuat Anda bersemangat.
+          </p>
+
+          <textarea
+            id="passion"
+            data-save="true"
+            placeholder="Contoh: Saya suka dunia pertanian modern, kuliner, mengajar, dll..."></textarea>
         </div>
 
         <div class="idea-card skill-card">
-          <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <div class="card-icon">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+
           <h3>Skill</h3>
-          <textarea id="skill" placeholder="Tuliskan keterampilan, pengalaman, keahlian, sertifikat/kualifikasi, jaringan, sumber daya yang dimiliki, serta potensi daerah yang dapat dimanfaatkan...."></textarea>
+
+          <p class="field-desc">
+            Tuliskan keterampilan, pengalaman magang di Jepang, keahlian, sertifikat/kualifikasi, jaringan, atau potensi daerah yang dimiliki.
+          </p>
+
+          <textarea
+            id="skill"
+            data-save="true"
+            placeholder="Contoh: Pengolahan sayur, budidaya hidroponik, manajemen kru, bahasa Jepang..."></textarea>
         </div>
 
         <div class="idea-card problem-card">
-          <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="card-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
           <h3>Masalah Sosial</h3>
-          <textarea id="problem" placeholder="Tuliskan masalah atau kesulitan yang Anda lihat di sekitar Anda dan ingin diselesaikan. Bisa berupa masalah di masyarakat, daerah, lingkungan sekitar, atau masalah sosial...."></textarea>
+
+          <p class="field-desc">
+            Tuliskan masalah, kesulitan, atau tantangan di sekitar Anda (masyarakat, lingkungan, daerah asal) yang ingin diselesaikan.
+          </p>
+
+          <textarea
+            id="problem"
+            data-save="true"
+            placeholder="Contoh: Banyak limbah pertanian terbuang, kurangnya lapangan kerja untuk pemuda..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="finance-block business-name-block">
+        <h3>
+          <i class="fa-solid fa-store"></i>
+          Nama Bisnis
+        </h3>
+
+        <p class="field-desc">
+          Tuliskan nama unik atau nama merek (brand) untuk bisnis yang ingin Anda kembangkan.
+        </p>
+
+        <div class="input-group">
+          <input
+            type="text"
+            id="nama-bisnis"
+            data-save="true"
+            placeholder="Masukkan nama bisnis atau brand Anda..."
+            autocomplete="off">
         </div>
       </div>
 
-      <div class="nama-bisnis">Nama Bisnis</div>
-      <textarea id="nama-bisnis" placeholder="Tuliskan nama bisnis yang ingin Anda kembangkan...."></textarea>
+      <div class="finance-block business-summary-block">
+        <h3>
+          <i class="fa-solid fa-file-lines"></i>
+          Ringkasan Bisnis
+        </h3>
 
-      <div class="ringkasan-bisnis">Ringkasan Bisnis</div>
-      <textarea id="ringkasan-bisnis" placeholder="Tuliskan ringkasan bisnis yang ingin Anda kembangkan...."></textarea>
+        <p class="field-desc">
+          Jelaskan secara singkat mengenai bisnis Anda (produk apa yang dijual, siapa target konsumennya, dan bagaimana cara menjalankannya).
+        </p>
+
+        <div class="input-group">
+          <textarea
+            id="ringkasan-bisnis"
+            data-save="true"
+            placeholder="Tuliskan ringkasan bisnis secara detail di sini..."></textarea>
+        </div>
+      </div>
+
     </section>
   </main>
 
   <div id="footer-container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> 
+  <script src="js/header-route.js"></script>
+  <script src="js/step3.js"></script>
+
 </body>
 </html>

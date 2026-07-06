@@ -187,6 +187,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
+    // AUTO-SAVE: helpers for dynamic groups
+    // ==========================================
+
+    function groupStorageKey(groupName) {
+        return "financeGroup:" + groupName;
+    }
+
+    function saveGroup(group) {
+        const groupName = group.dataset.group;
+        const listContainer = group.querySelector(".list-container");
+        const items = [];
+
+        listContainer.querySelectorAll(".dynamic-row").forEach(row => {
+            const nameInput = row.querySelector(".item-name");
+            const amountInput = row.querySelector(".item-amount");
+            items.push({
+                name: nameInput ? nameInput.value : "",
+                amount: amountInput ? amountInput.value : ""
+            });
+        });
+
+        try {
+            localStorage.setItem(groupStorageKey(groupName), JSON.stringify(items));
+        } catch (e) {
+            console.warn("Gagal menyimpan data grup:", groupName, e);
+        }
+    }
+
+    // Input "tetap" = input bertanda data-save="true" yang BUKAN bagian dari
+    // dynamic-finance-group (item-name / item-amount ditangani oleh saveGroup).
+    function getFixedSavableInputs() {
+        return document.querySelectorAll(
+            '[data-save="true"]:not(.item-name):not(.item-amount)'
+        );
+    }
+
+    function saveFixedInputs() {
+        getFixedSavableInputs().forEach(input => {
+            if (input.id) {
+                localStorage.setItem(input.id, input.value);
+            }
+        });
+    }
+
+    function loadFixedInputs() {
+        getFixedSavableInputs().forEach(input => {
+            if (!input.id) return;
+            const saved = localStorage.getItem(input.id);
+            if (saved !== null) {
+                input.value = saved;
+            }
+        });
+    }
+
+    // ==========================================
     // Setup Event Listener Dynamic Row
     // ==========================================
 
@@ -205,10 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // ------------------------------------
-        // Tambah Item
+        // Buat Row Baru (dipakai oleh tombol + dan saat restore)
         // ------------------------------------
 
-        addBtn.addEventListener("click", () => {
+        function createRow(nameValue = "", amountValue = "") {
 
             const newRow = document.createElement("div");
             newRow.className = "input-group dynamic-row";
@@ -218,11 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input
                         type="text"
                         class="item-name"
+                        data-save="true"
                         placeholder="Nama item">
                     <span class="rp-text">Rp</span>
                     <input
                         type="text"
                         class="item-amount currency-input"
+                        data-save="true"
                         placeholder="Contoh: 5.000.000">
                 </div>
                 <button type="button" class="btn-table-action">
@@ -230,15 +287,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 </button>
             `;
 
+            const nameInput = newRow.querySelector(".item-name");
+            const amountInput = newRow.querySelector(".item-amount");
+
+            nameInput.value = nameValue;
+            amountInput.value = amountValue;
+
             listContainer.appendChild(newRow);
 
             // Event nama item
-            newRow
-                .querySelector(".item-name")
-                .addEventListener("input", calculateEverything);
+            nameInput.addEventListener("input", () => {
+                calculateEverything();
+                saveGroup(group);
+            });
 
-            // Format rupiah otomatis
-            attachCurrencyFormatter(newRow.querySelector(".item-amount"));
+            // Format rupiah otomatis + simpan
+            attachCurrencyFormatter(amountInput);
+            amountInput.addEventListener("input", () => saveGroup(group));
 
             // Tombol hapus
             newRow
@@ -246,22 +311,65 @@ document.addEventListener("DOMContentLoaded", () => {
                 .addEventListener("click", () => {
                     newRow.remove();
                     calculateEverything();
+                    saveGroup(group);
                 });
+
+            return newRow;
+        }
+
+        // ------------------------------------
+        // Tambah Item (tombol +)
+        // ------------------------------------
+
+        addBtn.addEventListener("click", () => {
+            createRow();
+            saveGroup(group);
         });
 
         // ------------------------------------
-        // Row Pertama
+        // Row Pertama (default dari HTML)
         // ------------------------------------
 
         const firstAmount = listContainer.querySelector(".item-amount");
-        const firstName = listContainer.querySelector(".item-name");
+        const firstNameInput = listContainer.querySelector(".item-name");
 
-        if (firstName) {
-            firstName.addEventListener("input", calculateEverything);
+        if (firstNameInput) {
+            firstNameInput.setAttribute("data-save", "true");
+            firstNameInput.addEventListener("input", () => {
+                calculateEverything();
+                saveGroup(group);
+            });
         }
 
         if (firstAmount) {
+            firstAmount.setAttribute("data-save", "true");
             attachCurrencyFormatter(firstAmount);
+            firstAmount.addEventListener("input", () => saveGroup(group));
+        }
+
+        // ------------------------------------
+        // Restore dari localStorage
+        // ------------------------------------
+
+        const savedRaw = localStorage.getItem(groupStorageKey(group.dataset.group));
+
+        if (savedRaw) {
+            try {
+                const savedItems = JSON.parse(savedRaw);
+
+                if (Array.isArray(savedItems) && savedItems.length > 0) {
+                    // Isi baris pertama dengan item tersimpan pertama
+                    if (firstNameInput) firstNameInput.value = savedItems[0].name || "";
+                    if (firstAmount) firstAmount.value = savedItems[0].amount || "";
+
+                    // Buat baris tambahan untuk sisanya
+                    for (let i = 1; i < savedItems.length; i++) {
+                        createRow(savedItems[i].name, savedItems[i].amount);
+                    }
+                }
+            } catch (e) {
+                console.warn("Gagal memuat data grup:", group.dataset.group, e);
+            }
         }
     });
 
@@ -269,19 +377,33 @@ document.addEventListener("DOMContentLoaded", () => {
     // Bind Event Input Tetap
     // ==========================================
 
+    // Muat nilai tersimpan sebelum menghitung
+    loadFixedInputs();
+
     // Format otomatis input mata uang
     attachCurrencyFormatter(currentSavingInput);
     attachCurrencyFormatter(remittanceInput);
 
+    // Simpan setiap kali input tetap (data-save="true") berubah,
+    // termasuk input yang tidak terkait langsung dengan kalkulasi (mis. "name")
+    document.addEventListener("input", (e) => {
+        if (
+            e.target.matches &&
+            e.target.matches('[data-save="true"]:not(.item-name):not(.item-amount)')
+        ) {
+            saveFixedInputs();
+        }
+    });
+
     // Input jumlah bulan
     remainingMonthsInput.addEventListener("input", calculateEverything);
 
-    // Pasang formatter ke seluruh input currency
+    // Pasang formatter ke seluruh input currency lain yang belum tercakup
     document.querySelectorAll(".currency-input").forEach(input => {
         attachCurrencyFormatter(input);
     });
 
-    // Hitung pertama kali saat halaman dibuka
+    // Hitung pertama kali saat halaman dibuka (setelah data direstore)
     calculateEverything();
 
 });
