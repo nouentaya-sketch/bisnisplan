@@ -1,15 +1,25 @@
 // js/step2-2.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  // === 1. Load and Save Participant Name ===
-  const nameInput = document.getElementById('name');
-  if (nameInput) {
-    const savedName = localStorage.getItem('step2-2-name');
-    if (savedName) nameInput.value = savedName;
-    nameInput.addEventListener('input', () => {
-      localStorage.setItem('step2-2-name', nameInput.value);
-    });
+  // === 1. Static Fields (data-save="true" di HTML) ===
+  // Sama seperti step1 & step2-1: field mana yang disimpan ditentukan
+  // lewat atribut data-save="true" di HTML, bukan hardcode di JS.
+  function getStaticSavableFields() {
+    return document.querySelectorAll(
+      '[data-save="true"]:not(.item-name):not(.month-input)'
+    );
   }
+
+  getStaticSavableFields().forEach(element => {
+    if (!element.id) return;
+    const storageKey = `step2-2-${element.id}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved !== null) element.value = saved;
+
+    element.addEventListener('input', () => {
+      localStorage.setItem(storageKey, element.value);
+    });
+  });
 
   // === Helper Function: Format to Indonesian Rupiah ===
   function formatRupiah(value) {
@@ -99,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let monthCellsHtml = `
         <td>
           <div style="display: flex; align-items: center; gap: 4px; min-width: 105px;">
-            <input type="number" class="month-input jan-input" placeholder="0" min="0" value="${janVal}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
+            <input type="number" class="month-input jan-input" data-save="true" placeholder="0" min="0" value="${janVal}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
             <button type="button" class="btn-copy-all" title="Salin ke semua bulan" style="background:#FFFFFF; color:#64748B; border:none; padding:6px; border-radius:50%; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; transition: all 0.2s ease;">
               <i class="fa-regular fa-copy"></i>
             </button>
@@ -109,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       for (let i = 1; i < 12; i++) {
         const val = monthsArray[i] !== undefined ? monthsArray[i] : '';
-        monthCellsHtml += `<td><input type="number" class="month-input" placeholder="0" min="0" value="${val}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
+        monthCellsHtml += `<td><input type="number" class="month-input" data-save="true" placeholder="0" min="0" value="${val}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
       }
 
       // 💡 1行目なら「プラスボタン」、2行目以降なら「ゴミ箱ボタン」を Nama item の右隣にインライン配置
@@ -126,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td>
           <div style="display: flex; align-items: center; gap: 6px; min-width: 240px;">
-            <input type="text" class="item-name" placeholder="Nama item" value="${name}" style="flex: 1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.85rem;">
+            <input type="text" class="item-name" data-save="true" placeholder="Nama item" value="${name}" style="flex: 1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.85rem;">
             ${actionBtnHtml}
           </div>
         </td>

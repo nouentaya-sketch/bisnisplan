@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function saveAllToStorage() {
     if (nameInput) localStorage.setItem('sim-user-name', nameInput.value);
     if (startDateInput) localStorage.setItem('sim-start-date', startDateInput.value);
-    if (fundSourceInput) localStorage.setItem('fund-source-amount', fundSourceInput.value || "0");
-    if (salaryInput) localStorage.setItem('sim-expected-salary', salaryInput.value || "0");
+    if (fundSourceInput) localStorage.setItem('fund-source-amount', fundSourceInput.value);
+    if (salaryInput) localStorage.setItem('sim-expected-salary', salaryInput.value);
 
     const allAssetItems = [];
 

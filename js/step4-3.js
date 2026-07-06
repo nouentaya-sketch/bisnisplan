@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // --- 1. 初期データの読み込み ---
   const startSimDate = localStorage.getItem('sim-start-date') || "2026-04-01";
   const initialModal = parseFloat(localStorage.getItem('fund-source-amount')) || 0; 
-  const initialSalary = parseFloat(localStorage.getItem('upah-diharapkan')) || 0; 
+  const initialSalary = parseFloat(localStorage.getItem('sim-expected-salary')) || 0; 
   const assetPlans = JSON.parse(localStorage.getItem('invest-items') || "[]");
 
   // 💡 抜けていた変数の定義を完全に復元

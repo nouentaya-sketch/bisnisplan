@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 4-1 : Bisnis Plan</title> 
-  
+  <title>Tahap 4-1 : Bisnis Plan</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/step2-1.css"> 
-  
-  <link rel="stylesheet" href="css/style.css"> 
+  <link rel="stylesheet" href="css/step2-1.css">
+  <link rel="stylesheet" href="css/style.css">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
-  </body>
-</html>
-<body>
+
+<body data-page="step4-1">
 
   <div id="header-container"></div>
 
   <main class="main-container">
     <section class="sheet-section">
+
       <div class="tab-header">
         <h2>Tahap 4-1: Bisnis Plan</h2>
         <p>Pada tahap ini, silakan isi rencana bisnis Anda, termasuk strategi pemasaran, operasional, dan keuangan.</p>
@@ -32,109 +30,210 @@
       <div class="finance-block profile-block">
         <div class="input-group">
           <label for="name">
-            <i class="fa-solid fa-user"></i> Nama Pemagang
+            <i class="fa-solid fa-user"></i> Nama Lengkap
           </label>
-          <input type="text" id="name" placeholder="Masukkan nama lengkap Anda">
+          <input
+            type="text"
+            id="name"
+            data-save="true"
+            placeholder="Masukkan nama lengkap Anda">
         </div>
       </div>
 
       <div class="finance-block profile-block">
         <h3><i class="fa-solid fa-store"></i> 1. Nama Bisnis Anda</h3>
-        <p class="field-desc">Diisi dengan nama usaha atau pekerjaan yang dijalankan.<br>Contoh: ○○ Farm, ○○ Cafe, dll.</p>
+        <p class="field-desc">
+          Diisi dengan nama usaha atau pekerjaan yang dijalankan.<br>
+          Contoh: ○○ Farm, ○○ Cafe, dll.
+        </p>
+
         <div class="input-group">
-          <input type="text" id="biz-name" placeholder="Masukkan nama bisnis Anda">
+          <input
+            type="text"
+            id="biz-name"
+            data-save="true"
+            placeholder="Masukkan nama bisnis Anda">
         </div>
       </div>
 
       <div class="finance-block income-block">
         <h3><i class="fa-solid fa-wheat-awn"></i> 2. Jenis Komoditas / Jasa</h3>
-        <p class="field-desc">Diisi dengan komoditas yang dibudidayakan (petani) atau jenis usaha/pekerjaan yang dijalankan.<br>Contoh: Padi dan Sayuran, Jasa Konstruksi, dll.</p>
+        <p class="field-desc">
+          Diisi dengan komoditas yang dibudidayakan (petani) atau jenis usaha/pekerjaan yang dijalankan.<br>
+          Contoh: Padi dan Sayuran, Jasa Konstruksi, dll.
+        </p>
+
         <div class="input-group">
-          <input type="text" id="biz-commodity" placeholder="Masukkan jenis komoditas atau jasa">
+          <input
+            type="text"
+            id="biz-commodity"
+            data-save="true"
+            placeholder="Masukkan jenis komoditas atau jasa">
         </div>
       </div>
 
       <div class="finance-block saving-block">
         <h3><i class="fa-solid fa-location-dot"></i> 3. Lokasi Bisnis (Alamat & Google Maps)</h3>
-        <p class="field-desc">Diisi dengan alamat lengkap tempat usaha beserta link lokasi dari Google Maps.</p>
+        <p class="field-desc">
+          Diisi dengan alamat lengkap tempat usaha beserta link lokasi dari Google Maps.
+        </p>
+
         <div class="input-group">
           <label>Alamat Lengkap</label>
-          <input type="text" id="biz-address" placeholder="Masukkan alamat lengkap bisnis">
+          <input
+            type="text"
+            id="biz-address"
+            data-save="true"
+            placeholder="Masukkan alamat lengkap bisnis">
+
           <label>Link Google Maps</label>
-          <input type="url" id="biz-map-link" placeholder="Masukkan link google map lokasi bisnis">
+          <input
+            type="url"
+            id="biz-map-link"
+            data-save="true"
+            placeholder="Masukkan link google map lokasi bisnis">
         </div>
       </div>
 
       <div class="finance-block period-block">
         <h3><i class="fa-solid fa-file-lines"></i> 4. Ringkasan Bisnis</h3>
-        <p class="field-desc">Gambaran singkat mengenai bisnis yang dijalankan agar mudah dipahami.</p>
+        <p class="field-desc">
+          Gambaran singkat mengenai bisnis yang dijalankan agar mudah dipahami.
+        </p>
+
         <div class="input-group">
-          <textarea id="biz-summary" rows="4" placeholder="Masukkan ringkasan bisnis..."></textarea>
+          <textarea
+            id="biz-summary"
+            data-save="true"
+            rows="4"
+            placeholder="Masukkan ringkasan bisnis..."></textarea>
         </div>
       </div>
 
       <div class="finance-block remittance-block">
         <h3><i class="fa-solid fa-clock-rotate-left"></i> 5. Latar Belakang Bisnis</h3>
-        <p class="field-desc">Alasan mengapa memilih jenis usaha/pekerjaan tersebut. Jelaskan pula alasan memilih komoditas tersebut.</p>
+        <p class="field-desc">
+          Alasan mengapa memilih jenis usaha/pekerjaan tersebut. Jelaskan pula alasan memilih komoditas tersebut.
+        </p>
+
         <div class="input-group">
-          <textarea id="biz-background" rows="4" placeholder="Masukkan latar belakang bisnis..."></textarea>
+          <textarea
+            id="biz-background"
+            data-save="true"
+            rows="4"
+            placeholder="Masukkan latar belakang bisnis..."></textarea>
         </div>
       </div>
 
-      <div class="finance-block result-block">
+            <div class="finance-block result-block">
         <h3><i class="fa-solid fa-bullseye"></i> 6. Visi dan Misi</h3>
-        <p class="field-desc">Visi: Tujuan atau target utama. Misi: Langkah nyata untuk mencapai visi.</p>
+        <p class="field-desc">
+          Visi: Tujuan atau target utama. Misi: Langkah nyata untuk mencapai visi.
+        </p>
+
         <div class="input-group">
           <label>Visi</label>
-          <textarea id="biz-visi" rows="3" placeholder="Contoh: 1) Melaksanakan budidaya tanaman secara sehat. 2) Meningkatkan keuntungan..."></textarea>
+          <textarea
+            id="biz-visi"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: 1) Melaksanakan budidaya tanaman secara sehat. 2) Meningkatkan keuntungan..."></textarea>
+
           <label>Misi</label>
-          <textarea id="biz-misi" rows="3" placeholder="Contoh: 1) Melaksanakan budidaya tanaman secara sehat. 2) Meningkatkan keuntungan..."></textarea>
+          <textarea
+            id="biz-misi"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: 1) Melaksanakan budidaya tanaman secara sehat. 2) Meningkatkan keuntungan..."></textarea>
         </div>
       </div>
 
       <div class="finance-block desire-block">
         <h3><i class="fa-solid fa-bullhorn"></i> 7. Pemasaran & Sumber Informasi</h3>
-        <p class="field-desc">Target pasar tempat menjual hasil usaha, serta media/seseorang tempat memperoleh informasi usaha.</p>
+        <p class="field-desc">
+          Target pasar tempat menjual hasil usaha, serta media/seseorang tempat memperoleh informasi usaha.
+        </p>
+
         <div class="input-group">
           <label>Pemasaran / Target Pasar</label>
-          <textarea id="biz-marketing" rows="3" placeholder="Contoh: Tengkulak, Pedagang pasar, Masyarakat sekitar..."></textarea>
+          <textarea
+            id="biz-marketing"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: Tengkulak, Pedagang pasar, Masyarakat sekitar..."></textarea>
+
           <label>Sumber Informasi Bisnis</label>
-          <textarea id="biz-info-source" rows="3" placeholder="Contoh: Sesama petani, Petugas Penyuluh Lapang (PPL), Internet..."></textarea>
+          <textarea
+            id="biz-info-source"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: Sesama petani, Petugas Penyuluh Lapang (PPL), Internet..."></textarea>
         </div>
       </div>
 
-<!-- 8. Risiko Bisnis Block -->
-<div class="finance-block expense-block risk-section">
-  <h3><i class="fa-solid fa-triangle-exclamation"></i> 8. Risiko Bisnis</h3>
-  <p class="field-desc">Risiko bisnis adalah kemungkinan-kemungkinan masalah yang akan terjadi dalam kegiatan usaha.</p>
-  <div class="input-group">
-    <textarea id="biz-barriers" rows="3" placeholder="Contoh: Serangan hama dan penyakit, Harga pupuk meningkat, Cuaca buruk/perubahan iklim..."></textarea>
-  </div>
-</div>
+      <!-- 8. Risiko Bisnis -->
+      <div class="finance-block expense-block risk-section">
+        <h3>
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          8. Risiko Bisnis
+        </h3>
 
-<!-- 9. Kunci Sukses Block -->
-<div class="finance-block expense-block success-section">
-  <h3><i class="fa-solid fa-key"></i> 9. Kunci Sukses Bisnis</h3>
-  <p class="field-desc">Kunci sukses bisnis yaitu hal yang dapat menyelesaikan permasalahan selama mengembangkan usaha.</p>
-  <div class="input-group">
-    <textarea id="biz-success-key" rows="3" placeholder="Contoh: Menjaga kualitas produk, Pengiriman tepat waktu, Manajemen tim yang solid..."></textarea>
-  </div>
-</div>
+        <p class="field-desc">
+          Risiko bisnis adalah kemungkinan-kemungkinan masalah yang akan terjadi dalam kegiatan usaha.
+        </p>
 
-<!-- 10. Superstar Block -->
-<div class="finance-block expense-block superstar-section">
-  <h3><i class="fa-solid fa-star"></i> 10. Superstar Bisnis</h3>
-  <p class="field-desc">Superstar bisnis adalah orang yang menjadi panutan dan menjadi contoh dalam menjalankan kegiatan usaha.</p>
-  <div class="input-group">
-    <textarea id="biz-superstar" rows="3" placeholder="Contoh: Pak ○○ (selalu kerja cepat), atau petani sukses di daerah..."></textarea>
-  </div>
-</div>
+        <div class="input-group">
+          <textarea
+            id="biz-barriers"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: Serangan hama dan penyakit, Harga pupuk meningkat, Cuaca buruk/perubahan iklim..."></textarea>
+        </div>
+      </div>
+
+      <!-- 9. Kunci Sukses -->
+      <div class="finance-block expense-block success-section">
+        <h3>
+          <i class="fa-solid fa-key"></i>
+          9. Kunci Sukses Bisnis
+        </h3>
+
+        <p class="field-desc">
+          Kunci sukses bisnis yaitu hal yang dapat menyelesaikan permasalahan selama mengembangkan usaha.
+        </p>
+
+        <div class="input-group">
+          <textarea
+            id="biz-success-key"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: Menjaga kualitas produk, Pengiriman tepat waktu, Manajemen tim yang solid..."></textarea>
+        </div>
+      </div>
+            <!-- 10. Superstar Bisnis -->
+      <div class="finance-block expense-block superstar-section">
+        <h3>
+          <i class="fa-solid fa-star"></i>
+          10. Superstar Bisnis
+        </h3>
+
+        <p class="field-desc">
+          Superstar bisnis adalah orang yang menjadi panutan dan menjadi contoh dalam menjalankan kegiatan usaha.
+        </p>
+
+        <div class="input-group">
+          <textarea
+            id="biz-superstar"
+            data-save="true"
+            rows="3"
+            placeholder="Contoh: Pak ○○ (selalu kerja cepat), atau petani sukses di daerah..."></textarea>
+        </div>
+      </div>
+
     </section>
   </main>
-
   <div id="footer-container"></div>
-
-  <script src="js/header-route.js"></script> 
-  <script src="js/step2-1.js"></script> 
+  <script src="js/header-route.js"></script>
+  <script src="js/step2-1.js"></script>
 </body>
 </html>
