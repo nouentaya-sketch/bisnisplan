@@ -17,11 +17,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Palet warna untuk tiap titik/baris di grafik (dipakai bergiliran)
-  const CHART_COLORS = [
-    '#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6',
-    '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#84CC16'
-  ];
+  // Palet judul per kategori, meniru judul grafik Excel di buku panduan
+  const CHART_TITLES = {
+    keterampilan: 'Faktor Keterampilan yang akan diperlukan',
+    sarana: 'Faktor Sarana yang akan diperlukan',
+    modal: 'Faktor Modal yang akan diperlukan'
+  };
+
+  // Rentang sumbu tetap per kategori, disesuaikan dengan contoh grafik
+  // (bukan auto-scale lagi supaya hasilnya persis sama tiap kali dibuka)
+  const CHART_AXIS_RANGES = {
+    keterampilan: { xMin: 0, xMax: 6, yMin: -2, yMax: 5 },
+    sarana: { xMin: 0, xMax: 6, yMin: 0, yMax: 6 },
+    modal: { xMin: 0, xMax: 6, yMin: -3, yMax: 4 }
+  };
+
+  // Daftarkan plugin datalabels sekali di awal (kalau library-nya ke-load)
+  if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+  }
 
   // ==========================================
   // 2. Setup tiap section Payoff Matrix
@@ -36,33 +50,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!tbody || !addBtn || !canvas) return;
 
+    const axisRange = CHART_AXIS_RANGES[category] || { xMin: 0, xMax: 6, yMin: -5, yMax: 5 };
+
     const chart = new Chart(canvas.getContext('2d'), {
       type: 'scatter',
-      data: { datasets: [] },
+      data: { datasets: [{ data: [], backgroundColor: '#4472C4', pointRadius: 5 }] },
       options: {
         responsive: true,
+        aspectRatio: 2,
+        layout: {
+          padding: { right: 60, top: 30 } // ruang ekstra supaya label teks tidak terpotong
+        },
         scales: {
           x: {
-            title: { display: true, text: 'Kesulitan (Sulit -5 ↔ Mudah 5)' },
-            min: -5.5,
-            max: 5.5,
-            ticks: { stepSize: 1 }
+            title: { display: true, text: 'Efisiensi' },
+            min: axisRange.xMin,
+            max: axisRange.xMax,
+            ticks: { stepSize: 1 },
+            grid: { color: '#E5E7EB' }
           },
           y: {
-            title: { display: true, text: 'Efisiensi (Rendah -5 ↔ Tinggi 5)' },
-            min: -5.5,
-            max: 5.5,
-            ticks: { stepSize: 1 }
+            title: { display: true, text: 'Kesulitan' },
+            min: axisRange.yMin,
+            max: axisRange.yMax,
+            ticks: { stepSize: 1 },
+            grid: { color: '#E5E7EB' }
           }
         },
         plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { boxWidth: 10, font: { size: 11 } }
+          title: {
+            display: true,
+            text: CHART_TITLES[category] || 'Payoff Matrix',
+            font: { size: 15, weight: 'bold' },
+            padding: { bottom: 16 }
           },
+          legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => `${ctx.dataset.label}: Efisiensi ${ctx.parsed.y}, Kesulitan ${ctx.parsed.x}`
+              label: (ctx) => {
+                const item = ctx.dataset.itemLabels?.[ctx.dataIndex];
+                const name = item || '';
+                return `${name}: Efisiensi ${ctx.parsed.x}, Kesulitan ${ctx.parsed.y}`;
+              }
+            }
+          },
+          datalabels: {
+            color: '#374151',
+            anchor: 'end',
+            align: 'right',
+            offset: 6,
+            font: { style: 'italic', size: 11 },
+            formatter: (value, ctx) => {
+              const labels = ctx.dataset.itemLabels || [];
+              return labels[ctx.dataIndex] || '';
             }
           }
         }
@@ -92,18 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
         items.push({ name, efisiensi, kesulitan });
       });
 
-      // Satu dataset per baris yang sudah lengkap (nama + kedua angka),
-      // supaya legend grafik menampilkan nama tiap faktor seperti di buku panduan.
-      chart.data.datasets = items
-        .map((item, idx) => ({ item, idx }))
-        .filter(({ item }) => item.name.trim() !== '' && item.efisiensi !== '' && item.kesulitan !== '')
-        .map(({ item, idx }) => ({
-          label: item.name,
-          data: [{ x: parseFloat(item.kesulitan) || 0, y: parseFloat(item.efisiensi) || 0 }],
-          backgroundColor: CHART_COLORS[idx % CHART_COLORS.length],
-          pointRadius: 7,
-          pointHoverRadius: 9
-        }));
+      // Hanya baris yang sudah lengkap (nama + kedua angka) yang muncul di grafik.
+      // Sumbu X = Efisiensi, sumbu Y = Kesulitan (sesuai contoh buku panduan).
+      const validItems = items.filter(
+        item => item.name.trim() !== '' && item.efisiensi !== '' && item.kesulitan !== ''
+      );
+
+      chart.data.datasets[0].data = validItems.map(item => ({
+        x: parseFloat(item.efisiensi) || 0,
+        y: parseFloat(item.kesulitan) || 0
+      }));
+      chart.data.datasets[0].itemLabels = validItems.map(item => item.name);
 
       chart.update();
 
