@@ -1,0 +1,140 @@
+/* css/step8.css — Tahap 8 : Analisis Payoff Matrix */
+
+.payoff-section {
+  margin-bottom: 2rem;
+}
+
+.payoff-table-wrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.payoff-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.payoff-table th,
+.payoff-table td {
+  border: 1px solid #E2E8F0;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+.payoff-table thead th {
+  background-color: #ECFDF5;
+  color: #065F46;
+  font-weight: 700;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+.payoff-table .col-no {
+  width: 48px;
+  text-align: center;
+}
+
+.payoff-table .col-score {
+  width: 150px;
+  text-align: center;
+}
+
+.payoff-table .score-hint {
+  display: block;
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+.payoff-table .col-action {
+  width: 44px;
+}
+
+.payoff-row input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.payoff-row input.efisiensi-input,
+.payoff-row input.kesulitan-input {
+  text-align: center;
+}
+
+.no-cell {
+  font-weight: 700;
+  color: #10B981;
+  background-color: #F8FAFC;
+}
+
+.font-center {
+  text-align: center;
+}
+
+.btn-delete-payoff-row {
+  background: none;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-payoff-row:hover {
+  color: #B91C1C;
+}
+
+.button-row {
+  margin: 0.75rem 0 1.25rem;
+}
+
+.btn-add-payoff {
+  background-color: #10B981;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-add-payoff:hover {
+  background-color: #059669;
+}
+
+.chart-container {
+  max-width: 640px;
+  margin: 1rem auto 0.5rem;
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+@media (max-width: 640px) {
+  .payoff-table {
+    font-size: 0.8rem;
+  }
+
+  .payoff-table .col-score {
+    width: 110px;
+  }
+
+  .payoff-table .score-hint {
+    font-size: 0.62rem;
+  }
+}

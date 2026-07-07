@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 8 : Payoff Matriks Bisnis Plan</title> 
-  
+  <title>Tahap 8 : Analisis Payoff Matrix</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step8.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -17,15 +18,137 @@
   <div id="header-container"></div>
 
   <main class="main-container">
-    <h1>Tahap 8 : Payoff Matriks Bisnis Plan</h1>
+    <section class="sheet-section">
+
+      <div class="tab-header">
+        <h2>Tahap 08 : Analisis Payoff Matrix</h2>
+        <p>Tahap ini adalah analisis <em>Payoff Matrix</em>, yaitu analisis terhadap prioritas struktur bisnis dalam menjalankan usaha. Misalnya ketika kita akan membeli beberapa sarana namun modal yang dimiliki tidak cukup, maka kita harus mendahulukan sarana yang memiliki efisiensi tinggi dan yang paling mudah didapatkan.</p>
+        <p>Untuk setiap faktor, tentukan tingkat <strong>Efisiensi</strong> (skala -5 sampai 5 — semakin tinggi semakin efisien) dan tingkat <strong>Kesulitan</strong> (skala -5 sampai 5 — semakin tinggi semakin mudah didapatkan). Hasilnya akan otomatis tergambar di grafik di bawah tiap tabel.</p>
+      </div>
+
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="name">
+            <i class="fa-solid fa-user"></i> Nama Pemagang
+          </label>
+          <input type="text" id="name" data-save="true" placeholder="Masukkan nama lengkap Anda" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 1. Keterampilan -->
+      <!-- ====================================================== -->
+      <div class="finance-block payoff-section" data-payoff="keterampilan">
+        <h3><i class="fa-solid fa-brain"></i> 1. Keterampilan</h3>
+        <p class="field-desc">
+          Sebutkan keterampilan apa saja yang diperlukan dalam menjalankan bisnis, kemudian lakukan analisis untuk menentukan tingkat efisiensi dan kesulitannya.
+        </p>
+
+        <div class="payoff-table-wrapper">
+          <table class="payoff-table">
+            <thead>
+              <tr>
+                <th class="col-no">No</th>
+                <th>Faktor Keterampilan yang Diperlukan</th>
+                <th class="col-score">Efisiensi<span class="score-hint">Tinggi: 0–5 · Rendah: -5–0</span></th>
+                <th class="col-score">Kesulitan<span class="score-hint">Mudah: 0–5 · Sulit: -5–0</span></th>
+                <th class="col-action"></th>
+              </tr>
+            </thead>
+            <tbody class="payoff-rows-container"></tbody>
+          </table>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn-add-payoff">
+            <i class="fa-solid fa-plus"></i> Tambah Keterampilan
+          </button>
+        </div>
+
+        <div class="chart-container">
+          <canvas class="payoff-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 2. Sarana -->
+      <!-- ====================================================== -->
+      <div class="finance-block payoff-section" data-payoff="sarana">
+        <h3><i class="fa-solid fa-toolbox"></i> 2. Sarana</h3>
+        <p class="field-desc">
+          Sebutkan semua sarana yang diperlukan atau akan dibeli, serta tingkat efisiensi dan kesulitan mendapatkannya.
+        </p>
+
+        <div class="payoff-table-wrapper">
+          <table class="payoff-table">
+            <thead>
+              <tr>
+                <th class="col-no">No</th>
+                <th>Faktor Sarana yang Diperlukan</th>
+                <th class="col-score">Efisiensi<span class="score-hint">Tinggi: 0–5 · Rendah: -5–0</span></th>
+                <th class="col-score">Kesulitan<span class="score-hint">Mudah: 0–5 · Sulit: -5–0</span></th>
+                <th class="col-action"></th>
+              </tr>
+            </thead>
+            <tbody class="payoff-rows-container"></tbody>
+          </table>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn-add-payoff">
+            <i class="fa-solid fa-plus"></i> Tambah Sarana
+          </button>
+        </div>
+
+        <div class="chart-container">
+          <canvas class="payoff-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 3. Modal -->
+      <!-- ====================================================== -->
+      <div class="finance-block payoff-section" data-payoff="modal">
+        <h3><i class="fa-solid fa-sack-dollar"></i> 3. Modal</h3>
+        <p class="field-desc">
+          Sebutkan sumber modal yang akan diperlukan, serta tingkat efisiensi dan kesulitan mendapatkannya. Cara pengisiannya sama seperti faktor-faktor sebelumnya.
+        </p>
+
+        <div class="payoff-table-wrapper">
+          <table class="payoff-table">
+            <thead>
+              <tr>
+                <th class="col-no">No</th>
+                <th>Faktor Modal yang Diperlukan</th>
+                <th class="col-score">Efisiensi<span class="score-hint">Tinggi: 0–5 · Rendah: -5–0</span></th>
+                <th class="col-score">Kesulitan<span class="score-hint">Mudah: 0–5 · Sulit: -5–0</span></th>
+                <th class="col-action"></th>
+              </tr>
+            </thead>
+            <tbody class="payoff-rows-container"></tbody>
+          </table>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn-add-payoff">
+            <i class="fa-solid fa-plus"></i> Tambah Modal
+          </button>
+        </div>
+
+        <div class="chart-container">
+          <canvas class="payoff-chart"></canvas>
+        </div>
+      </div>
+
+    </section>
   </main>
 
-  <script src="js/header-route.js"></script>
-<div id="footer-container"></div>
+  <div id="footer-container"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> </body>
-</html>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="js/header-route.js"></script>
+  <script src="js/step8.js"></script>
 </body>
 </html>
