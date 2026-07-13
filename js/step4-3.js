@@ -27,14 +27,26 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // --- 入力ボックスHTML生成関数 ---
+  // Format titik ribuan (mis. 1.000.000) — helper bersama
+  function formatRibuan(value) {
+    const digitsOnly = String(value).replace(/\D/g, '');
+    if (digitsOnly === '') return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function parseAngka(value) {
+    return Number(String(value).replace(/\D/g, '')) || 0;
+  }
+
   function createRpInputHtml(className, month, value, textStyle = "", hasCopyBtn = false) {
     const paddingRight = hasCopyBtn ? "22px" : "6px";
     const copyIconHtml = hasCopyBtn ? `<i class="fa-solid fa-copy btn-copy-fast" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); color:#94A3B8; cursor:pointer; font-size:0.75rem;" title="Copy ke semua bulan"></i>` : "";
-    
+    const displayValue = formatRibuan(value);
+
     return `
       <div style="position: relative; display: flex; align-items: center; width: 105px; height: 30px; margin: 0 auto; box-sizing: border-box;">
         <span style="position: absolute; left: 6px; color: #94A3B8; font-size: 0.8rem; font-weight: normal; pointer-events: none;">Rp</span>
-        <input type="number" class="matrix-input ${className}" data-month="${month}" value="${value}" placeholder="0" 
+        <input type="text" inputmode="numeric" class="matrix-input ${className}" data-month="${month}" value="${displayValue}" placeholder="0" 
           style="width: 100%; height: 100%; padding: 2px ${paddingRight} 2px 24px; font-size: 0.8rem; font-weight: normal; border-radius: 4px; border: 1px solid #CBD5E1; text-align: right; ${textStyle} box-sizing: border-box;">
         ${copyIconHtml}
       </div>
@@ -109,7 +121,9 @@ document.addEventListener("DOMContentLoaded", function() {
       tbody.appendChild(newRow);
     }
 
-    newRow.querySelectorAll('.matrix-input, .item-name-input').forEach(i => i.addEventListener('input', window.calcFinancials));
+    newRow.querySelectorAll('.item-name-input').forEach(i => i.addEventListener('input', window.calcFinancials));
+    // .matrix-input sudah ditangani oleh delegated listener di tbody
+    // (memformat titik ribuan sambil mengetik, lalu memanggil calcFinancials)
     window.calcFinancials();
   };
 
@@ -151,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const vals = [];
       for (let m = 1; m <= 36; m++) {
         const inp = document.getElementById(`label-cell-${id}-m${m}`)?.querySelector('input');
-        vals.push(parseFloat(inp?.value) || 0);
+        vals.push(parseAngka(inp?.value));
       }
       localStorage.setItem(`step4-3-fixed-${id}`, JSON.stringify(vals));
     });
@@ -161,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
       tbody.querySelectorAll(`.dynamic-row-item-${type}`).forEach(row => {
         const label = row.querySelector('.item-name-input').value;
         const months = [];
-        row.querySelectorAll('.matrix-input').forEach(inp => months.push(parseFloat(inp.value) || 0));
+        row.querySelectorAll('.matrix-input').forEach(inp => months.push(parseAngka(inp.value)));
         cached.push({ label, months });
       });
       localStorage.setItem(`step4-3-dynamic-${type}`, JSON.stringify(cached));
@@ -177,13 +191,13 @@ document.addEventListener("DOMContentLoaded", function() {
     let remainCapital = 0, accumAssetReserve = 0;
 
     for (let m = 1; m <= 36; m++) {
-      const modalIn = parseFloat(tbody.querySelector(`.cell-input-fund-source-amount[data-month="${m}"]`)?.value || 0);
-      const upah = parseFloat(tbody.querySelector(`.cell-input-upah-diharapkan[data-month="${m}"]`)?.value || 0);
-      const useCadangan = parseFloat(tbody.querySelector(`.cell-input-penggunaan-cadangan[data-month="${m}"]`)?.value || 0);
+      const modalIn = parseAngka(tbody.querySelector(`.cell-input-fund-source-amount[data-month="${m}"]`)?.value);
+      const upah = parseAngka(tbody.querySelector(`.cell-input-upah-diharapkan[data-month="${m}"]`)?.value);
+      const useCadangan = parseAngka(tbody.querySelector(`.cell-input-penggunaan-cadangan[data-month="${m}"]`)?.value);
 
       let rev = 0, cost = 0;
-      tbody.querySelectorAll('.dynamic-row-item-komoditas').forEach(r => rev += parseFloat(r.querySelector(`.matrix-input[data-month="${m}"]`)?.value || 0));
-      tbody.querySelectorAll('.dynamic-row-item-biaya').forEach(r => cost += parseFloat(r.querySelector(`.matrix-input[data-month="${m}"]`)?.value || 0));
+      tbody.querySelectorAll('.dynamic-row-item-komoditas').forEach(r => rev += parseAngka(r.querySelector(`.matrix-input[data-month="${m}"]`)?.value));
+      tbody.querySelectorAll('.dynamic-row-item-biaya').forEach(r => cost += parseAngka(r.querySelector(`.matrix-input[data-month="${m}"]`)?.value));
 
       // 1. 総収入合計
       const revCell = document.getElementById(`label-cell-total-penjualan-total-m${m}`);
@@ -343,7 +357,20 @@ document.addEventListener("DOMContentLoaded", function() {
   if (savedBiaya.length > 0) savedBiaya.forEach(item => window.addDynamicRow('biaya', item.label, item.months));
   else window.addDynamicRow('biaya', "", null);
 
-  tbody.addEventListener('input', (e) => { 
-    if (e.target.classList.contains('matrix-input') || e.target.classList.contains('item-name-input')) window.calcFinancials(); 
+  tbody.addEventListener('input', (e) => {
+    if (e.target.classList.contains('matrix-input')) {
+      // Format titik ribuan sambil mengetik, sambil menjaga posisi kursor
+      // tetap wajar (dihitung dari jarak ke akhir teks, bukan dari awal,
+      // supaya tidak "loncat" ke depan tiap kali titik baru disisipkan).
+      const input = e.target;
+      const distanceFromEnd = input.value.length - input.selectionStart;
+      input.value = formatRibuan(input.value);
+      const newPos = Math.max(input.value.length - distanceFromEnd, 0);
+      input.setSelectionRange(newPos, newPos);
+    }
+
+    if (e.target.classList.contains('matrix-input') || e.target.classList.contains('item-name-input')) {
+      window.calcFinancials();
+    }
   });
 });
