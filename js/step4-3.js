@@ -273,7 +273,7 @@ if (a.isExisting) {
       if (resMonthCell) resMonthCell.querySelector('.label-text-val').innerText = `Rp ${monthlyAssetReserveTotal.toLocaleString('id-ID')}`;
 
       // 6. 積立累計額
-      accumAssetReserve = accumAssetReserve + monthlyAssetReserveTotal - useCadangan - investEventAmount;
+      accumAssetReserve = accumAssetReserve + monthlyAssetReserveTotal - useCadangan;
       const resAccumCell = document.getElementById(`label-cell-akumulasi-cadangan-aset-m${m}`);
       if (resAccumCell) resAccumCell.querySelector('.label-text-val').innerText = `Rp ${accumAssetReserve.toLocaleString('id-ID')}`;
 
