@@ -336,16 +336,16 @@ document.addEventListener("DOMContentLoaded", function() {
     ['cadangan-aset-bulan', '5. Cadangan Aset / Bln'],
     ['akumulasi-cadangan-aset', '6. Akumulasi Cadangan'], 
     ['penggunaan-cadangan', '7. Penggunaan Cadangan'], 
-
-    ['upah-diharapkan', '8. Biaya Hidup (Upah)'],      
-    ['fund-source-amount', '9. Penambahan Modal'],     
+    ['fund-source-amount', '8. Penambahan Modal'], 
+    ['upah-diharapkan', '9. Biaya Hidup (Upah)'],          
     ['modal-tersisa', '10. Sisa Kas']
   ];
   fixedRows.forEach(r => addFixedRow(r[0], r[1]));
 
   injectManualInputs('penggunaan-cadangan', "color: #EF4444;");
-  injectManualInputs('upah-diharapkan', "color: #EF4444;");
   injectManualInputs('fund-source-amount', "color: #10B981;");
+  injectManualInputs('upah-diharapkan', "color: #EF4444;");
+ 
 
   // --- 8. データの復元ロード ---
   const savedKomoditas = JSON.parse(localStorage.getItem('step4-3-dynamic-komoditas') || "[]");
