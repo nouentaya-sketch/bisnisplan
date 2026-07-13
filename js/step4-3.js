@@ -282,8 +282,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const resAccumCell = document.getElementById(`label-cell-akumulasi-cadangan-aset-m${m}`);
       if (resAccumCell) resAccumCell.querySelector('.label-text-val').innerText = `Rp ${accumAssetReserve.toLocaleString('id-ID')}`;
 
-      // 10. 最終手元資金の残高計算
-      const cashFlowReal = (modalIn + laba) - (investEventAmount + monthlyAssetReserveTotal + upah);
+      // 10. 最終手元資金の残高計算　3(laba) - 4(investEventAmount) - 5(monthlyAssetReserveTotal) - 7(useCadangan) + 8(modalIn) - 9(upah)
+      const cashFlowReal = laba - investEventAmount - monthlyAssetReserveTotal - useCadangan + modalIn - upah;
       remainCapital = (m === 1) ? cashFlowReal : remainCapital + cashFlowReal;
 
       const capCell = document.getElementById(`label-cell-modal-tersisa-m${m}`);
