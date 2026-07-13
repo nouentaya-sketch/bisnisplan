@@ -234,16 +234,11 @@ document.addEventListener("DOMContentLoaded", function() {
       assetPlans.forEach(a => {
         if (a.price <= 0) return;
 
-        if (a.isExisting) {
-          // Aset Lama: "span" = Sisa Bulan hingga aset perlu diganti.
-          // Simpanan berjalan dari bulan 1 s/d bulan ke-"span", lalu dibeli SEKALI di bulan itu.
-          // Setelah lewat bulan itu: tidak ada simpanan lagi, tidak ada pembelian ulang.
+if (a.isExisting) {
+          // Aset Lama: Hanya mengumpulkan cadangan sampai Sisa Masa Pakai (span), TANPA pembelian ulang di matrix
           const cycle = a.span;
           if (cycle > 0) {
-            if (m === cycle) {
-              investEventAmount += a.price;
-              assetBoughtLabels.push(a.name);
-            }
+            // 5. Cadangan Aset / Bln (Hanya melakukan simpanan dari bulan 1 s/d bulan sisa masa pakai)
             if (m <= cycle) {
               monthlyAssetReserveTotal += Math.round(a.price / cycle);
             }
