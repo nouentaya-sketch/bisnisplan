@@ -39,6 +39,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
+  // Helper: format titik ribuan untuk input angka (mis. 1.000.000)
+  // ==========================================
+  function formatRibuan(value) {
+    const digitsOnly = String(value).replace(/\D/g, '');
+    if (digitsOnly === '') return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function parseAngka(value) {
+    return Number(String(value).replace(/\D/g, '')) || 0;
+  }
+
+  function formatCurrencyInput(input) {
+    const distanceFromEnd = input.value.length - input.selectionStart;
+    input.value = formatRibuan(input.value);
+    const newPos = Math.max(input.value.length - distanceFromEnd, 0);
+    input.setSelectionRange(newPos, newPos);
+  }
+
+  // ==========================================
   // 2. Dynamic Section Factory
   // ==========================================
   function setupDynamicSection({
@@ -66,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rows.forEach(row => {
 
         const name = row.querySelector('.item-name').value;
-        const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+        const amount = parseAngka(row.querySelector('.item-amount').value);
 
         total += amount;
 
@@ -99,12 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="rp-text">Rp</span>
 
           <input
-            type="number"
+            type="text"
+            inputmode="numeric"
             class="item-amount"
             data-save="true"
             placeholder="0"
-            min="0"
-            value="${amount}">
+            value="${formatRibuan(amount)}">
         </div>
 
         ${
@@ -126,7 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       newRow
         .querySelector('.item-amount')
-        .addEventListener('input', calculateSectionTotal);
+        .addEventListener('input', (e) => {
+          formatCurrencyInput(e.target);
+          calculateSectionTotal();
+        });
 
       if (!isFirst) {
 

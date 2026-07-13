@@ -24,8 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     modal: 'Faktor Modal yang akan diperlukan'
   };
 
-  // Rentang sumbu tetap per kategori, disesuaikan dengan contoh grafik
-  // (bukan auto-scale lagi supaya hasilnya persis sama tiap kali dibuka)
+  // Rentang sumbu tetap per kategori, disesuaikan dengan contoh grafik.
+  // PENTING: kalau kamu mengisi angka Efisiensi/Kesulitan di luar rentang
+  // ini, titiknya TIDAK akan kelihatan (sengaja dipatok, bukan auto-scale).
+  // Sesuaikan angka min/max di bawah ini kalau butuh rentang yang lebih lebar.
   const CHART_AXIS_RANGES = {
     keterampilan: { xMin: 0, xMax: 6, yMin: -2, yMax: 5 },
     sarana: { xMin: 0, xMax: 6, yMin: 0, yMax: 6 },

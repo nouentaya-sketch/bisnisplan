@@ -370,6 +370,42 @@ function exportPageToPDF() {
   const fullWidth = Math.max(document.documentElement.scrollWidth, target.scrollWidth);
   const fullHeight = Math.max(document.documentElement.scrollHeight, target.scrollHeight);
 
+  // 🩹 Fix teks input kepotong: html2canvas sering merender teks di dalam
+  // <input>/<textarea> dengan terpotong vertikal — solusinya ganti jadi
+  // <div> biasa saat capture. TAPI banyak CSS di project ini pakai selector
+  // berbasis tag ("... input { padding-left: ... }") untuk menyisakan ruang
+  // bagi prefix "Rp" atau ikon copy yang posisinya absolute. Begitu elemen
+  // diganti <div>, selector tag itu tidak lagi cocok, jadi padding-nya
+  // hilang dan teks jadi numpuk/tabrakan dengan elemen lain.
+  //
+  // Solusi: ambil dulu COMPUTED STYLE asli tiap input/textarea (hasil akhir
+  // CSS yang benar-benar dipakai browser, apapun cara CSS itu ditulis),
+  // simpan, lalu terapkan langsung sebagai style eksplisit ke <div>
+  // penggantinya — jadi tidak bergantung lagi pada selector yang mungkin
+  // sudah tidak cocok.
+  const pdfFields = Array.from(target.querySelectorAll("input, textarea"));
+  const fieldComputedStyles = pdfFields.map(field => {
+    const cs = window.getComputedStyle(field);
+    return {
+      padding: cs.padding,
+      border: cs.border,
+      borderRadius: cs.borderRadius,
+      font: cs.font,
+      color: cs.color,
+      textAlign: cs.textAlign,
+      backgroundColor: cs.backgroundColor,
+      boxSizing: cs.boxSizing,
+      width: cs.width,
+      height: cs.height,
+      lineHeight: cs.lineHeight
+    };
+  });
+  pdfFields.forEach((field, idx) => field.setAttribute("data-pdf-idx", idx));
+
+  function cleanupPdfFieldMarkers() {
+    pdfFields.forEach(field => field.removeAttribute("data-pdf-idx"));
+  }
+
   // pdf-print-mode dipakai kalau ada style khusus (mis. sembunyikan tombol)
   // yang ingin diterapkan hanya saat capture berlangsung.
   document.body.classList.add("pdf-print-mode");
@@ -383,10 +419,48 @@ function exportPageToPDF() {
     width: fullWidth,       // 🔑 paksa area render selebar ini, bukan cuma kotak asli target
     height: fullHeight,
     scrollX: 0,
-    scrollY: 0
+    scrollY: 0,
+    onclone: (clonedDoc) => {
+      const clonedFields = clonedDoc.querySelectorAll("[data-pdf-idx]");
+      clonedFields.forEach(field => {
+        const idx = field.getAttribute("data-pdf-idx");
+        const cs = fieldComputedStyles[idx];
+        if (!cs) return;
+
+        const replacement = clonedDoc.createElement("div");
+        if (field.className) replacement.className = field.className;
+
+        Object.assign(replacement.style, {
+          padding: cs.padding,
+          border: cs.border,
+          borderRadius: cs.borderRadius,
+          font: cs.font,
+          color: cs.color,
+          textAlign: cs.textAlign,
+          backgroundColor: cs.backgroundColor,
+          boxSizing: cs.boxSizing,
+          width: cs.width,
+          height: cs.height,
+          lineHeight: cs.lineHeight,
+          display: "flex",
+          alignItems: "center",
+          whiteSpace: "pre-wrap",
+          overflow: "hidden"
+        });
+
+        const hasValue = field.value && field.value.trim() !== "";
+        replacement.textContent = hasValue ? field.value : (field.placeholder || "");
+        if (!hasValue) {
+          replacement.style.color = "#94A3B8"; // mirip warna placeholder asli
+        }
+
+        field.parentNode.replaceChild(replacement, field);
+      });
+    }
   }).then(canvas => {
     document.body.classList.remove("pdf-print-mode");
     restoreStyles();
+    cleanupPdfFieldMarkers();
 
     const { jsPDF } = window.jspdf;
     const imgData = canvas.toDataURL("image/png");
@@ -409,6 +483,7 @@ function exportPageToPDF() {
   }).catch(err => {
     document.body.classList.remove("pdf-print-mode");
     restoreStyles();
+    cleanupPdfFieldMarkers();
     console.error("Gagal membuat PDF:", err);
     alert("Gagal membuat PDF. Coba lagi, atau gunakan tombol print browser (Ctrl+P) sebagai alternatif.");
   });

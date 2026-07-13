@@ -26,6 +26,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'Rp ' + Math.floor(value).toLocaleString('id-ID');
   }
 
+  // === Helper: format titik ribuan untuk input angka (mis. 1.000.000) ===
+  function formatRibuan(value) {
+    const digitsOnly = String(value).replace(/\D/g, '');
+    if (digitsOnly === '') return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function parseAngka(value) {
+    return Number(String(value).replace(/\D/g, '')) || 0;
+  }
+
+  function formatCurrencyInput(input) {
+    const distanceFromEnd = input.value.length - input.selectionStart;
+    input.value = formatRibuan(input.value);
+    const newPos = Math.max(input.value.length - distanceFromEnd, 0);
+    input.setSelectionRange(newPos, newPos);
+  }
+
   // === 2. Core Logic for Calendar Table Matrix ===
   function setupCalendarEngine({ containerId, buttonId, storageKey, isExpense = false }) {
     const container = document.getElementById(containerId);
@@ -50,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let rowSum = 0;
 
         monthInputs.forEach((input, mIdx) => {
-          const val = parseFloat(input.value) || 0;
+          const val = parseAngka(input.value);
           monthsData.push(val);
           rowSum += val;
           monthlyTotals[mIdx] += val;
@@ -109,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let monthCellsHtml = `
         <td>
           <div style="display: flex; align-items: center; gap: 4px; min-width: 105px;">
-            <input type="number" class="month-input jan-input" data-save="true" placeholder="0" min="0" value="${janVal}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
+            <input type="text" inputmode="numeric" class="month-input jan-input" data-save="true" placeholder="0" value="${formatRibuan(janVal)}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
             <button type="button" class="btn-copy-all" title="Salin ke semua bulan" style="background:#FFFFFF; color:#64748B; border:none; padding:6px; border-radius:50%; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; transition: all 0.2s ease;">
               <i class="fa-regular fa-copy"></i>
             </button>
@@ -119,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       for (let i = 1; i < 12; i++) {
         const val = monthsArray[i] !== undefined ? monthsArray[i] : '';
-        monthCellsHtml += `<td><input type="number" class="month-input" data-save="true" placeholder="0" min="0" value="${val}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
+        monthCellsHtml += `<td><input type="text" inputmode="numeric" class="month-input" data-save="true" placeholder="0" value="${formatRibuan(val)}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
       }
 
       // 💡 1行目なら「プラスボタン」、2行目以降なら「ゴミ箱ボタン」を Nama item の右隣にインライン配置
@@ -167,7 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // 入力監視
       tr.querySelector('.item-name').addEventListener('input', calculateCalendar);
       tr.querySelectorAll('.month-input').forEach(input => {
-        input.addEventListener('input', calculateCalendar);
+        input.addEventListener('input', () => {
+          formatCurrencyInput(input);
+          calculateCalendar();
+        });
       });
 
       // 削除イベント

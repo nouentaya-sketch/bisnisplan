@@ -13,6 +13,34 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (!existingContainer || !newAssetContainer) return;
 
+  // --- Helper format titik ribuan (mis. 1.000.000), sama pola dengan step4-3.js ---
+  function formatRibuan(value) {
+    const digitsOnly = String(value).replace(/\D/g, '');
+    if (digitsOnly === '') return '';
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function parseAngka(value) {
+    return Number(String(value).replace(/\D/g, '')) || 0;
+  }
+
+  function formatCurrencyInput(input) {
+    const distanceFromEnd = input.value.length - input.selectionStart;
+    input.value = formatRibuan(input.value);
+    const newPos = Math.max(input.value.length - distanceFromEnd, 0);
+    input.setSelectionRange(newPos, newPos);
+  }
+
+  // Field nominal uang tetap (Modal Usaha Awal & Biaya Hidup) diubah jadi
+  // text+inputmode="numeric" supaya bisa menampilkan titik ribuan
+  // (type="number" bawaan HTML tidak mengizinkan karakter selain angka).
+  [fundSourceInput, salaryInput].forEach(inp => {
+    if (!inp) return;
+    inp.type = 'text';
+    inp.setAttribute('inputmode', 'numeric');
+    inp.addEventListener('input', () => formatCurrencyInput(inp));
+  });
+
   // --- 1. LocalStorage 一括保存 ---
   function saveAllToStorage() {
     if (nameInput) localStorage.setItem('sim-user-name', nameInput.value);
@@ -25,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // A. 既存アセット回収
     existingContainer.querySelectorAll('.existing-row').forEach(row => {
       const name = row.querySelector('.ex-name')?.value || "";
-      const price = parseFloat(row.querySelector('.ex-price')?.value) || 0;
+      const price = parseAngka(row.querySelector('.ex-price')?.value);
       const span = parseInt(row.querySelector('.ex-span')?.value) || 0;
       if (name || price > 0) {
         allAssetItems.push({ name, price, shopMonth: 1, span, isExisting: true });
@@ -35,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // B. 新規アセット回収
     newAssetContainer.querySelectorAll('.new-row').forEach(row => {
       const name = row.querySelector('.new-name')?.value || "";
-      const price = parseFloat(row.querySelector('.new-price')?.value) || 0;
+      const price = parseAngka(row.querySelector('.new-price')?.value);
       const shopMonth = parseInt(row.querySelector('.new-month')?.value) || 1;
       const span = parseInt(row.querySelector('.inv-span')?.value) || 0;
       if (name || price > 0) {
@@ -49,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // --- 2. 各行のリアルタイム自動計算 ---
   function calculateTotals() {
     existingContainer.querySelectorAll('.existing-row').forEach(row => {
-      const price = parseFloat(row.querySelector('.ex-price')?.value) || 0;
+      const price = parseAngka(row.querySelector('.ex-price')?.value);
       const span = parseInt(row.querySelector('.ex-span')?.value) || 0;
       let reserve = (price > 0 && span > 0) ? Math.round(price / span) : 0;
       const resInput = row.querySelector('.ex-reserve-needed');
@@ -57,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     newAssetContainer.querySelectorAll('.new-row').forEach(row => {
-      const price = parseFloat(row.querySelector('.new-price')?.value) || 0;
+      const price = parseAngka(row.querySelector('.new-price')?.value);
       const shopMonth = parseInt(row.querySelector('.new-month')?.value) || 1;
       let reserve = (price > 0 && shopMonth > 0) ? Math.round(price / shopMonth) : 0;
       const resInput = row.querySelector('.new-reserve-needed');
@@ -93,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <td><input type="text" class="ex-name" placeholder="Nama Item Aset (Lama)" value="${name}"></td>
       <td class="td-currency">
         <span>Rp</span>
-        <input type="number" class="ex-price" placeholder="Harga" value="${price}">
+        <input type="text" inputmode="numeric" class="ex-price" placeholder="Harga" value="${formatRibuan(price)}">
         <i class="fa-solid fa-copy btn-copy-fast" title="Copy ke semua"></i>
       </td>
       <td><input type="number" class="ex-span font-center" placeholder="Sisa" value="${span}"></td>
@@ -115,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <td><input type="text" class="new-name" placeholder="Nama Komponen Aset Baru" value="${name}"></td>
       <td class="td-currency">
         <span>Rp</span>
-        <input type="number" class="new-price" placeholder="Harga" value="${price}">
+        <input type="text" inputmode="numeric" class="new-price" placeholder="Harga" value="${formatRibuan(price)}">
         <i class="fa-solid fa-copy btn-copy-fast" title="Copy ke semua"></i>
       </td>
       <td><input type="number" class="new-month font-center" placeholder="Beli" min="1" value="${shopMonth}"></td>
@@ -132,8 +160,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // --- 5. 初期ロード時のデータ復元展開 ---
   if (nameInput) nameInput.value = localStorage.getItem('sim-user-name') || "";
   if (startDateInput) startDateInput.value = localStorage.getItem('sim-start-date') || "2026-04";
-  if (fundSourceInput) fundSourceInput.value = localStorage.getItem('fund-source-amount') || "";
-  if (salaryInput) salaryInput.value = localStorage.getItem('sim-expected-salary') || "";
+  if (fundSourceInput) fundSourceInput.value = formatRibuan(localStorage.getItem('fund-source-amount') || "");
+  if (salaryInput) salaryInput.value = formatRibuan(localStorage.getItem('sim-expected-salary') || "");
 
   const savedItems = JSON.parse(localStorage.getItem('invest-items') || "[]");
   if (savedItems.length > 0) {
@@ -151,8 +179,19 @@ document.addEventListener("DOMContentLoaded", function() {
     if (inp) inp.addEventListener('input', saveAllToStorage);
   });
 
-  existingContainer.addEventListener('input', calculateTotals);
-  newAssetContainer.addEventListener('input', calculateTotals);
+  existingContainer.addEventListener('input', (e) => {
+    if (e.target.classList.contains('ex-price')) {
+      formatCurrencyInput(e.target);
+    }
+    calculateTotals();
+  });
+
+  newAssetContainer.addEventListener('input', (e) => {
+    if (e.target.classList.contains('new-price')) {
+      formatCurrencyInput(e.target);
+    }
+    calculateTotals();
+  });
 
   if (btnAddExisting) btnAddExisting.addEventListener('click', () => { createExistingRowHtml(); calculateTotals(); });
   if (btnAddNewAsset) btnAddNewAsset.addEventListener('click', () => { createNewRowHtml(); calculateTotals(); });
