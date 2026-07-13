@@ -248,20 +248,20 @@ document.addEventListener("DOMContentLoaded", function() {
               monthlyAssetReserveTotal += Math.round(a.price / cycle);
             }
           }
-        } else {
-          // Aset Baru: simpanan berjalan dari bulan 1 s/d "shopMonth" (Beli Bulan),
-          // lalu dibeli SEKALI di bulan itu. Setelah itu (termasuk setelah "Masa Pakai"
-          // habis): tidak ada simpanan lagi, tidak ada pembelian ulang.
-          const firstShop = a.shopMonth;
+} else {
+          // Aset Baru: Pembayaran sekaligus di bulan beli, lalu simpanan dimulai sejak bulan beli selama Masa Pakai
+          const firstShop = a.shopMonth; // Bulan pembelian
+          const usageSpan = a.span;      // Masa Pakai (Umur Ekonomis)
 
-          if (m <= firstShop) {
-            if (firstShop > 0) {
-              monthlyAssetReserveTotal += Math.round(a.price / firstShop);
-            }
-            if (m === firstShop) {
-              investEventAmount += a.price;
-              assetBoughtLabels.push(a.name);
-            }
+          // 4. Rencana Sarana Investasi (Pembayaran sekaligus/One-time payment di bulan beli)
+          if (m === firstShop) {
+            investEventAmount += a.price;
+            assetBoughtLabels.push(a.name);
+          }
+
+          // 5. Cadangan Aset / Bln (Simpanan dimulai dari bulan beli sebanyak bulan Masa Pakai)
+          if (usageSpan > 0 && m >= firstShop && m < (firstShop + usageSpan)) {
+            monthlyAssetReserveTotal += Math.round(a.price / usageSpan);
           }
         }
       });
