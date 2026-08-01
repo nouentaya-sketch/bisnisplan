@@ -10,22 +10,95 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/step6.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
   <div id="header-container"></div>
 
   <main class="main-container">
-    <h1>Tahap 6 : Struktur Bisnis</h1>
+    <div class="page-header">
+      <h1>Tahap 6 : Struktur Bisnis</h1>
+      <p class="page-desc">
+        Review dan analisis ringkasan struktur keuangan bisnis Anda dalam 36 bulan ke depan.
+      </p>
+    </div>
+
+    <div class="finance-block dashboard-summary-block">
+      <h3 class="block-title">
+        <i class="fa-solid fa-chart-pie icon-blue"></i> 1. Ringkasan Proyeksi 36 Bulan
+      </h3>
+      
+      <div class="summary-cards-grid">
+        <div class="card-item">
+          <span class="card-label">Total Pendapatan Bersih</span>
+          <strong id="summary-total-revenue" class="card-value txt-green">Rp 0</strong>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Total Biaya Operasional</span>
+          <strong id="summary-total-cost" class="card-value txt-red">Rp 0</strong>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Akumulasi Cadangan Aset</span>
+          <strong id="summary-accum-reserve" class="card-value txt-blue">Rp 0</strong>
+        </div>
+        <div class="card-item">
+          <span class="card-label">Sisa Kas Akhir (Bulan 36)</span>
+          <strong id="summary-final-cash" class="card-value txt-dark">Rp 0</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="finance-block feasibility-block">
+      <h3 class="block-title">
+        <i class="fa-solid fa-gauge-high icon-green"></i> 2. Indikator Kelayakan & Kesehatan Bisnis
+      </h3>
+      <p class="field-desc">
+        Analisis otomatis berdasarkan simulasi arus kas yang telah Anda susun di tahap sebelumnya.
+      </p>
+
+      <div class="table-container">
+        <table class="feasibility-table">
+          <thead>
+            <tr>
+              <th>Indikator Pengujian</th>
+              <th class="col-value">Nilai Proyeksi</th>
+              <th class="col-status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <strong>Rasio Profitabilitas (Margin Laba Bersih)</strong><br>
+                <span class="sub-text">Menunjukkan persentase laba bersih dari total pendapatan yang masuk.</span>
+              </td>
+              <td id="val-profit-margin" class="val-bold">0%</td>
+              <td><span id="badge-profit-margin" class="status-badge">Calculating</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Ketahanan Defisit (Bulan Aliran Kas Negatif)</strong><br>
+                <span class="sub-text">Jumlah bulan di mana saldo kas akhir (Sisa Kas) bernilai minus di bawah nol.</span>
+              </td>
+              <td id="val-negative-months" class="val-bold">0 Bulan</td>
+              <td><span id="badge-negative-months" class="status-badge">Calculating</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="action-container">
+      <button type="button" id="btn-export-pdf" class="btn-pdf">
+        <i class="fa-solid fa-file-pdf"></i> Cetak PDF Laporan
+      </button>
+    </div>
   </main>
 
-  <script src="js/header-route.js"></script>
-<div id="footer-container"></div>
+  <div id="footer-container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> </body>
-</html>
+  <script src="js/header-route.js"></script>
+  <script src="js/step6.js"></script>
 </body>
 </html>

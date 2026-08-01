@@ -84,10 +84,10 @@ document.addEventListener("DOMContentLoaded", function() {
       if (resInput) resInput.value = reserve > 0 ? "Rp " + reserve.toLocaleString('id-ID') : "Rp 0";
     });
 
-    newAssetContainer.querySelectorAll('.new-row').forEach(row => {
+newAssetContainer.querySelectorAll('.new-row').forEach(row => {
       const price = parseAngka(row.querySelector('.new-price')?.value);
-      const shopMonth = parseInt(row.querySelector('.new-month')?.value) || 1;
-      let reserve = (price > 0 && shopMonth > 0) ? Math.round(price / shopMonth) : 0;
+      const span = parseInt(row.querySelector('.inv-span')?.value) || 0; 
+      let reserve = (price > 0 && span > 0) ? Math.round(price / span) : 0; 
       const resInput = row.querySelector('.new-reserve-needed');
       if (resInput) resInput.value = reserve > 0 ? "Rp " + reserve.toLocaleString('id-ID') : "Rp 0";
     });

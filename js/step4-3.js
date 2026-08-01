@@ -234,34 +234,29 @@ document.addEventListener("DOMContentLoaded", function() {
       assetPlans.forEach(a => {
         if (a.price <= 0) return;
 
-        if (a.isExisting) {
-          // Aset Lama: "span" = Sisa Bulan hingga aset perlu diganti.
-          // Simpanan berjalan dari bulan 1 s/d bulan ke-"span", lalu dibeli SEKALI di bulan itu.
-          // Setelah lewat bulan itu: tidak ada simpanan lagi, tidak ada pembelian ulang.
+if (a.isExisting) {
+          // Aset Lama: Hanya mengumpulkan cadangan sampai Sisa Masa Pakai (span), TANPA pembelian ulang di matrix
           const cycle = a.span;
           if (cycle > 0) {
-            if (m === cycle) {
-              investEventAmount += a.price;
-              assetBoughtLabels.push(a.name);
-            }
+            // 5. Cadangan Aset / Bln (Hanya melakukan simpanan dari bulan 1 s/d bulan sisa masa pakai)
             if (m <= cycle) {
               monthlyAssetReserveTotal += Math.round(a.price / cycle);
             }
           }
-        } else {
-          // Aset Baru: simpanan berjalan dari bulan 1 s/d "shopMonth" (Beli Bulan),
-          // lalu dibeli SEKALI di bulan itu. Setelah itu (termasuk setelah "Masa Pakai"
-          // habis): tidak ada simpanan lagi, tidak ada pembelian ulang.
-          const firstShop = a.shopMonth;
+} else {
+          // Aset Baru: Pembayaran sekaligus di bulan beli, lalu simpanan dimulai sejak bulan beli selama Masa Pakai
+          const firstShop = a.shopMonth; // Bulan pembelian
+          const usageSpan = a.span;      // Masa Pakai (Umur Ekonomis)
 
-          if (m <= firstShop) {
-            if (firstShop > 0) {
-              monthlyAssetReserveTotal += Math.round(a.price / firstShop);
-            }
-            if (m === firstShop) {
-              investEventAmount += a.price;
-              assetBoughtLabels.push(a.name);
-            }
+          // 4. Rencana Sarana Investasi (Pembayaran sekaligus/One-time payment di bulan beli)
+          if (m === firstShop) {
+            investEventAmount += a.price;
+            assetBoughtLabels.push(a.name);
+          }
+
+          // 5. Cadangan Aset / Bln (Simpanan dimulai dari bulan beli sebanyak bulan Masa Pakai)
+          if (usageSpan > 0 && m >= firstShop && m < (firstShop + usageSpan)) {
+            monthlyAssetReserveTotal += Math.round(a.price / usageSpan);
           }
         }
       });
@@ -278,15 +273,12 @@ document.addEventListener("DOMContentLoaded", function() {
       if (resMonthCell) resMonthCell.querySelector('.label-text-val').innerText = `Rp ${monthlyAssetReserveTotal.toLocaleString('id-ID')}`;
 
       // 6. 積立累計額
-      accumAssetReserve = accumAssetReserve + monthlyAssetReserveTotal - useCadangan - investEventAmount;
+      accumAssetReserve = accumAssetReserve + monthlyAssetReserveTotal - useCadangan;
       const resAccumCell = document.getElementById(`label-cell-akumulasi-cadangan-aset-m${m}`);
       if (resAccumCell) resAccumCell.querySelector('.label-text-val').innerText = `Rp ${accumAssetReserve.toLocaleString('id-ID')}`;
 
-      // 10. 最終手元資金の残高計算
-      // Sisa Kas TIDAK lagi dikurangi oleh "Simpanan Bulanan" (cadangan) —
-      // cadangan sekarang murni catatan/informasi terpisah (baris 5 & 6).
-      // Sisa Kas hanya berkurang saat aset BENAR-BENAR dibeli (investEventAmount).
-      const cashFlowReal = (modalIn + laba) - (investEventAmount + upah);
+      // 10. 最終手元資金の残高計算　3(laba) - 4(investEventAmount) - 5(monthlyAssetReserveTotal) - 7(useCadangan) + 8(modalIn) - 9(upah)
+      const cashFlowReal = laba - investEventAmount - monthlyAssetReserveTotal - useCadangan + modalIn - upah;
       remainCapital = (m === 1) ? cashFlowReal : remainCapital + cashFlowReal;
 
       const capCell = document.getElementById(`label-cell-modal-tersisa-m${m}`);
@@ -339,16 +331,16 @@ document.addEventListener("DOMContentLoaded", function() {
     ['cadangan-aset-bulan', '5. Cadangan Aset / Bln'],
     ['akumulasi-cadangan-aset', '6. Akumulasi Cadangan'], 
     ['penggunaan-cadangan', '7. Penggunaan Cadangan'], 
-
-    ['upah-diharapkan', '8. Biaya Hidup (Upah)'],      
-    ['fund-source-amount', '9. Penambahan Modal'],     
+    ['fund-source-amount', '8. Penambahan Modal'], 
+    ['upah-diharapkan', '9. Biaya Hidup (Upah)'],          
     ['modal-tersisa', '10. Sisa Kas']
   ];
   fixedRows.forEach(r => addFixedRow(r[0], r[1]));
 
   injectManualInputs('penggunaan-cadangan', "color: #EF4444;");
-  injectManualInputs('upah-diharapkan', "color: #EF4444;");
   injectManualInputs('fund-source-amount', "color: #10B981;");
+  injectManualInputs('upah-diharapkan', "color: #EF4444;");
+ 
 
   // --- 8. データの復元ロード ---
   const savedKomoditas = JSON.parse(localStorage.getItem('step4-3-dynamic-komoditas') || "[]");
