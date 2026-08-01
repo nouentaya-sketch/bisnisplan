@@ -283,7 +283,10 @@ document.addEventListener("DOMContentLoaded", function() {
       if (resAccumCell) resAccumCell.querySelector('.label-text-val').innerText = `Rp ${accumAssetReserve.toLocaleString('id-ID')}`;
 
       // 10. 最終手元資金の残高計算
-      const cashFlowReal = (modalIn + laba) - (investEventAmount + monthlyAssetReserveTotal + upah);
+      // Sisa Kas TIDAK lagi dikurangi oleh "Simpanan Bulanan" (cadangan) —
+      // cadangan sekarang murni catatan/informasi terpisah (baris 5 & 6).
+      // Sisa Kas hanya berkurang saat aset BENAR-BENAR dibeli (investEventAmount).
+      const cashFlowReal = (modalIn + laba) - (investEventAmount + upah);
       remainCapital = (m === 1) ? cashFlowReal : remainCapital + cashFlowReal;
 
       const capCell = document.getElementById(`label-cell-modal-tersisa-m${m}`);
