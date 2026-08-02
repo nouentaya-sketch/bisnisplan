@@ -1,31 +1,104 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 7 : Analisa SWOT</title> 
-  
+  <title>Tahap 7 : Analisis SWOT</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step7.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body data-page="step7">
 
   <div id="header-container"></div>
 
   <main class="main-container">
-    <h1>Tahap 7 : Analisa SWOT</h1>
+    <section class="sheet-section">
+
+      <div class="tab-header">
+        <h2><i class="fa-solid fa-magnifying-glass-chart"></i> Tahap 7: Analisis SWOT</h2>
+        <p>
+          Analisis SWOT membantu mengidentifikasi kekuatan, kelemahan, peluang, dan ancaman
+          untuk bisnis Anda. Isi setiap tabel di bawah untuk merencanakan bisnis secara strategis
+          dan tetap dapat mengikuti tren pasar.
+        </p>
+      </div>
+
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="nama-lengkap">
+            <i class="fa-solid fa-user"></i> Nama Lengkap
+          </label>
+          <input type="text" id="nama-lengkap" data-save="true" placeholder="Masukkan nama lengkap Anda" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 1. ANALISIS LINGKUNGAN ALAM -->
+      <!-- ====================================================== -->
+      <div class="finance-block swot-section">
+        <h3><i class="fa-solid fa-leaf icon-green"></i> 1. Analisa Lingkungan Alam</h3>
+
+        <p class="field-desc">
+          Untuk meningkatkan kesempatan kita harus bisa menangkap peluang (faktor eksternal) dari
+          lingkungan serta memanfaatkannya menggunakan kekuatan (faktor internal).
+        </p>
+        <div id="swot-alam-kesempatan-wrap"></div>
+
+        <p class="field-desc mt-25">
+          Untuk meminimalkan ancaman, kita harus bisa mengatasi ancaman (faktor eksternal) dari
+          lingkungan serta menggunakan kekuatan (faktor internal).
+        </p>
+        <div id="swot-alam-ancaman-wrap"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 2. ANALISIS PASAR -->
+      <!-- ====================================================== -->
+      <div class="finance-block swot-section">
+        <h3><i class="fa-solid fa-store icon-blue"></i> 2. Analisa Pasar</h3>
+
+        <p class="field-desc">
+          Selanjutnya, meningkatkan kesempatan dalam peluang pasar menggunakan kekuatan (faktor internal).
+        </p>
+        <div id="swot-pasar-kesempatan-wrap"></div>
+
+        <p class="field-desc mt-25">
+          Adapun cara untuk meminimalkan ancaman pasar dapat dilakukan dengan memaksimalkan kekuatan.
+        </p>
+        <div id="swot-pasar-ancaman-wrap"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 3. ANALISIS SOSIAL & PRASARANA -->
+      <!-- ====================================================== -->
+      <div class="finance-block swot-section">
+        <h3><i class="fa-solid fa-people-group icon-amber"></i> 3. Analisa Sosial & Prasarana</h3>
+
+        <p class="field-desc">
+          Selanjutnya, memaksimalkan kesempatan dengan kelebihan yang dimiliki dalam faktor sosial
+          dan prasarana.
+        </p>
+        <div id="swot-sosial-kesempatan-wrap"></div>
+
+        <p class="field-desc mt-25">
+          Adapun cara untuk meminimalkan kelemahan dapat dilakukan dengan memaksimalkan kekuatan.
+        </p>
+        <div id="swot-sosial-ancaman-wrap"></div>
+      </div>
+
+    </section>
   </main>
 
-  <script src="js/header-route.js"></script>
-<div id="footer-container"></div>
+  <div id="footer-container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> </body>
-</html>
+  <script src="js/header-route.js"></script>
+  <script src="js/step7.js"></script>
 </body>
 </html>

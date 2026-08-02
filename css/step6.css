@@ -1,0 +1,593 @@
+/* ==========================================
+   css/step6.css
+   Styling untuk Tahap 6: Struktur Bisnis
+   ========================================== */
+
+.mt-16 { margin-top: 16px; }
+
+/* ---------- Icon coloring ---------- */
+.icon-green { color: #4a7c1f; }
+.icon-orange { color: #b5590e; }
+.icon-gold { color: #b8860b; }
+
+/* ---------- Finance Block base ---------- */
+.finance-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.struktur-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  margin-bottom: 14px;
+}
+
+.field-desc {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.finance-block input[type="text"] {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.finance-block input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ==========================================
+   Tabel 2 kolom (Keterampilan, Sarana, Modal,
+   Lingkungan Alam, Pasar, Sosial & Prasarana)
+   ========================================== */
+
+.struktur-table-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.struktur-table-scroll {
+  overflow-x: auto;
+}
+
+.struktur-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.struktur-table thead th {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.struktur-table .no-col {
+  width: 50px;
+  text-align: center;
+}
+
+.struktur-table .action-col {
+  width: 44px;
+  background: #f9fafb;
+}
+
+.struktur-table td {
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  vertical-align: top;
+  padding: 0;
+}
+
+.struktur-table td:last-child {
+  border-right: none;
+}
+
+.struktur-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.no-cell {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 6px !important;
+  vertical-align: middle !important;
+  width: 50px;
+}
+
+/* Tema Hijau — Keterampilan, Sarana, Modal (faktor Internal) */
+.theme-green .no-cell,
+.theme-green thead th.no-col,
+.theme-green thead th:nth-child(2) {
+  background: #92D050;
+  color: #234000;
+}
+
+/* Tema Oranye — Lingkungan Alam, Pasar, Sosial & Prasarana (faktor Eksternal) */
+.theme-orange .no-cell,
+.theme-orange thead th.no-col,
+.theme-orange thead th:nth-child(2) {
+  background: #F99945;
+  color: #4a2c00;
+}
+
+/* Kolom "Penjelasan" — netral abu-abu muda */
+.struktur-table thead th:nth-child(3) {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* ---------- Textarea di dalam sel ---------- */
+.struktur-input,
+.analisa-input {
+  width: 100%;
+  min-height: 46px;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.struktur-input:focus,
+.analisa-input:focus {
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+/* ---------- Kolom aksi (hapus baris) ---------- */
+.action-cell {
+  text-align: center;
+  vertical-align: middle !important;
+  padding: 8px !important;
+  width: 44px;
+}
+
+.btn-remove-row {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s ease;
+}
+
+.btn-remove-row:hover {
+  background: #fecaca;
+}
+
+.btn-remove-text {
+  display: none; /* hanya tampil di mode kartu mobile */
+}
+
+/* ---------- Tombol Tambah Baris ---------- */
+.button-row {
+  display: flex;
+  justify-content: flex-start;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-add:hover {
+  background: #374151;
+}
+
+/* ==========================================
+   Tabel "Analisa" (7. Struktur Bisnis Anda)
+   ========================================== */
+
+.analisa-table-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.analisa-title-bar {
+  background: #FFC000;
+  color: #4a3300;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+}
+
+.analisa-group-bar {
+  display: flex;
+}
+
+.analisa-group-cell {
+  flex: 1;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px;
+}
+
+.group-internal {
+  background: #b7dd80;
+  color: #234000;
+}
+
+.group-eksternal {
+  background: #fbc48a;
+  color: #4a2c00;
+}
+
+.analisa-scroll {
+  overflow-x: auto;
+}
+
+.analisa-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 780px;
+}
+
+.analisa-table thead th {
+  padding: 10px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.analisa-table thead th.theme-green {
+  background: #eaf7d9;
+  color: #234000;
+}
+
+.analisa-table thead th.theme-orange {
+  background: #fdebdc;
+  color: #4a2c00;
+}
+
+.analisa-table thead th.action-col {
+  width: 44px;
+  background: #f9fafb;
+}
+
+.analisa-table td {
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  vertical-align: top;
+  padding: 0;
+}
+
+.analisa-table td:last-child {
+  border-right: none;
+}
+
+.analisa-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Tint lembut per kolom, sama seperti template Excel */
+.analisa-tbody-a td:nth-child(1),
+.analisa-tbody-a td:nth-child(2),
+.analisa-tbody-a td:nth-child(3),
+.analisa-tbody-b td:nth-child(1),
+.analisa-tbody-b td:nth-child(2),
+.analisa-tbody-b td:nth-child(3) {
+  background: #f4fbec;
+}
+
+.analisa-tbody-a td:nth-child(4),
+.analisa-tbody-a td:nth-child(5),
+.analisa-tbody-a td:nth-child(6),
+.analisa-tbody-b td:nth-child(4),
+.analisa-tbody-b td:nth-child(5),
+.analisa-tbody-b td:nth-child(6) {
+  background: #fef6ee;
+}
+
+/* ==========================================================
+   MODE MOBILE (<= 720px)
+   - Tabel 2 kolom → kartu bertumpuk (No jadi badge bulat).
+   - Tabel Analisa 6 kolom → kartu bertumpuk, tiap field diberi
+     label jelas dari data-label, ditandai "Baris 1", "Baris 2", dst
+     karena tabel ini tidak punya kolom No.
+   ========================================================== */
+@media (max-width: 720px) {
+
+  .struktur-input,
+  .analisa-input {
+    font-size: 0.9rem;
+    padding: 10px 12px;
+  }
+
+  /* ---------------------------------------------------
+     1) Tabel 2 kolom (Keterampilan, Sarana, Modal, dst)
+     --------------------------------------------------- */
+  .struktur-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .struktur-table,
+  .struktur-table tbody,
+  .struktur-table tr,
+  .struktur-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .struktur-table td {
+    border-right: none !important;
+  }
+
+  .struktur-table tbody tr {
+    position: relative;
+    padding: 46px 14px 12px;
+    border-bottom: 8px solid #f8fafc; /* jarak antar kartu */
+  }
+
+  .struktur-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .struktur-table tbody td {
+    padding: 6px 0 !important;
+    border-bottom: none !important;
+  }
+
+  /* Badge nomor bulat — hanya ubah bentuk/posisi, warna tetap ikut
+     tema (diwariskan dari .theme-green/.theme-orange .no-cell di atas) */
+  .struktur-table tbody td.no-cell {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 28px;
+    height: 28px;
+    padding: 0 !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+  }
+
+  .struktur-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #6b7280;
+    margin-bottom: 6px;
+  }
+
+  .struktur-table .action-cell {
+    width: 100%;
+    text-align: left;
+    padding-top: 10px !important;
+  }
+
+  .struktur-table .btn-remove-row {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .struktur-table .btn-remove-text {
+    display: inline;
+  }
+
+  /* ---------------------------------------------------
+     2) Tabel Analisa (6 kolom gabungan)
+     --------------------------------------------------- */
+  .analisa-group-bar {
+    font-size: 0.8rem;
+  }
+
+  .analisa-scroll {
+    overflow-x: visible;
+  }
+
+  .analisa-table {
+    min-width: 0;
+  }
+
+  .analisa-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .analisa-table,
+  .analisa-table tbody,
+  .analisa-table tr,
+  .analisa-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .analisa-table td {
+    border-right: none !important;
+  }
+
+  /* Reset tint background per-kolom (nth-child) karena kolom sudah
+     tidak berdampingan lagi di mode kartu — tint dipindah ke label */
+  .analisa-tbody-a td,
+  .analisa-tbody-b td {
+    background: #ffffff !important;
+  }
+
+  .analisa-table tbody {
+    counter-reset: analisaRow;
+  }
+
+  .analisa-table tbody tr {
+    counter-increment: analisaRow;
+    position: relative;
+    padding: 40px 14px 14px;
+    border-bottom: 10px solid #f8fafc;
+  }
+
+  .analisa-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  /* Penanda "Baris N" sebagai judul kartu, karena tabel ini tidak
+     punya kolom No seperti tabel 2 kolom di atas */
+  .analisa-table tbody tr::before {
+    content: "Baris " counter(analisaRow);
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: #1f2937;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .analisa-table td {
+    padding: 8px 0 !important;
+    border-bottom: none !important;
+  }
+
+  /* Label tiap field, warnanya mengikuti tema kolom (hijau/oranye)
+     supaya tetap terlihat mana Internal & mana Eksternal */
+  .analisa-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+
+  .analisa-tbody-a td:nth-child(1)::before,
+  .analisa-tbody-a td:nth-child(2)::before,
+  .analisa-tbody-a td:nth-child(3)::before,
+  .analisa-tbody-b td:nth-child(1)::before,
+  .analisa-tbody-b td:nth-child(2)::before,
+  .analisa-tbody-b td:nth-child(3)::before {
+    color: #4a7c1f;
+  }
+
+  .analisa-tbody-a td:nth-child(4)::before,
+  .analisa-tbody-a td:nth-child(5)::before,
+  .analisa-tbody-a td:nth-child(6)::before,
+  .analisa-tbody-b td:nth-child(4)::before,
+  .analisa-tbody-b td:nth-child(5)::before,
+  .analisa-tbody-b td:nth-child(6)::before {
+    color: #b5590e;
+  }
+
+  .analisa-input {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    min-height: 56px;
+  }
+
+  .analisa-input:focus {
+    box-shadow: 0 0 0 2px #2563eb;
+  }
+
+  .analisa-table .action-cell {
+    width: 100%;
+    text-align: left;
+    padding-top: 6px !important;
+  }
+
+  .analisa-table .btn-remove-row {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .analisa-table .btn-remove-text {
+    display: inline;
+  }
+
+  /* ---------------------------------------------------
+     3) Umum: tombol tambah baris full-width, lebih mudah disentuh
+     --------------------------------------------------- */
+  .button-row {
+    padding: 12px;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- Layar sangat sempit (HP kecil, <= 380px) ---------- */
+@media (max-width: 380px) {
+  .struktur-table tbody tr {
+    padding: 42px 10px 10px;
+  }
+
+  .analisa-table tbody tr {
+    padding: 38px 10px 12px;
+  }
+
+  .finance-block {
+    padding: 16px;
+  }
+}

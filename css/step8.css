@@ -87,10 +87,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
 
 .btn-delete-payoff-row:hover {
   color: #B91C1C;
+}
+
+.btn-delete-text {
+  display: none; /* hanya tampil di mode kartu mobile */
 }
 
 .button-row {
@@ -125,16 +130,164 @@
   padding: 1rem;
 }
 
+/* 🌟 Wrapper rasio-tetap untuk kanvas grafik.
+   Ini yang menggantikan opsi `aspectRatio` Chart.js + resize() manual
+   yang sebelumnya menyebabkan grafik tergambar miring/skewed di HP.
+   Dengan `aspect-ratio` CSS + Chart.js `maintainAspectRatio:false`,
+   kanvas selalu mengisi penuh wrapper ini dan Chart.js memakai
+   ResizeObserver bawaannya sendiri untuk menjaga proporsi tetap benar. */
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+}
+
+.chart-canvas-wrap canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ==========================================================
+   MODE MOBILE (<= 640px)
+   - Tabel payoff (No | Faktor | Efisiensi | Kesulitan) → kartu
+     bertumpuk, No jadi badge bulat, tiap field diberi label.
+   - Chart: container full-width tanpa max-width, dan JS (step8.js)
+     otomatis mengecilkan aspectRatio + ukuran font grafik supaya
+     titik & labelnya tidak numpuk di layar sempit.
+   ========================================================== */
 @media (max-width: 640px) {
+
+  .payoff-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .payoff-table,
+  .payoff-table tbody,
+  .payoff-table tr,
+  .payoff-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .payoff-table-wrapper {
+    overflow-x: visible;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
   .payoff-table {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
-  .payoff-table .col-score {
-    width: 110px;
+  .payoff-table tbody tr.payoff-row {
+    position: relative;
+    padding: 46px 14px 12px;
+    border-bottom: 8px solid #F8FAFC; /* jarak antar kartu */
   }
 
-  .payoff-table .score-hint {
-    font-size: 0.62rem;
+  .payoff-table tbody tr.payoff-row:last-child {
+    border-bottom: none;
+  }
+
+  .payoff-table td {
+    border: none !important;
+    padding: 6px 0 !important;
+  }
+
+  /* Badge nomor bulat di pojok kiri-atas kartu */
+  .payoff-table td.no-cell {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 28px;
+    height: 28px;
+    padding: 0 !important;
+    border-radius: 50%;
+    background-color: #10B981;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+  }
+
+  /* Label kecil di atas tiap isian, diambil dari data-label */
+  .payoff-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #64748B;
+    margin-bottom: 6px;
+  }
+
+  .payoff-row input {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+
+  .payoff-row input.efisiensi-input,
+  .payoff-row input.kesulitan-input {
+    text-align: left; /* lebih mudah dibaca di kartu lebar penuh */
+  }
+
+  .payoff-table .action-cell {
+    padding-top: 10px !important;
+  }
+
+  .btn-delete-payoff-row {
+    width: 100%;
+    justify-content: center;
+    border: 1px solid #FECACA;
+    background: #FEF2F2;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .btn-delete-text {
+    display: inline;
+  }
+
+  .button-row {
+    margin: 0.75rem 0 1rem;
+  }
+
+  .btn-add-payoff {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  /* Grafik: lepas batas max-width supaya memenuhi lebar layar HP,
+     rasio dibuat lebih "kotak" (bukan gepeng lebar) supaya titik &
+     label tidak terlalu berdesakan */
+  .chart-container {
+    max-width: 100%;
+    padding: 0.75rem 0.5rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .chart-canvas-wrap {
+    aspect-ratio: 1.15 / 1;
+  }
+}
+
+@media (max-width: 380px) {
+  .payoff-table tbody tr.payoff-row {
+    padding: 42px 10px 10px;
   }
 }

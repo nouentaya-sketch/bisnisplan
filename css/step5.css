@@ -1,0 +1,446 @@
+/* ==========================================
+   css/step5.css
+   Styling khusus untuk Tahap 5: Hasil Riset Bisnis Superstar
+   ========================================== */
+
+/* ---------- Utility Spacing ---------- */
+.mt-10 { margin-top: 10px; }
+.mt-25 { margin-top: 25px; }
+.mt-40 { margin-top: 40px; }
+
+/* ---------- Utility Flex ---------- */
+.flex-column { display: flex; flex-direction: column; }
+.flex-space-between { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.items-start { align-items: flex-start; }
+.gap-10 { gap: 10px; }
+
+.flex-grow-1 { flex: 1 1 0; min-width: 0; }
+.flex-grow-1-5 { flex: 1.5 1 0; min-width: 0; }
+.flex-grow-2 { flex: 2 1 0; min-width: 0; }
+
+/* ---------- Textarea height helpers ---------- */
+.height-mid { min-height: 90px; resize: vertical; }
+.height-large { min-height: 130px; resize: vertical; }
+
+/* ---------- Tab Header (judul & deskripsi tahap) ----------
+   Ukuran default h1 ini biasanya diatur di style.css (global) untuk
+   desktop. Di sini kita timpa khusus untuk mobile karena di layar kecil
+   judul 2-3 kata pun bisa numpuk jadi 3 baris raksasa kalau masih pakai
+   ukuran desktop. */
+.tab-header h1,
+.tab-header p {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ---------- Icon coloring ---------- */
+.icon-blue { color: #2563eb; }
+.icon-amber { color: #d97706; }
+
+/* ---------- Finance Block base ---------- */
+.finance-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.finance-block h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.field-desc {
+  color: #6b7280;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ---------- Anti teks kepotong ----------
+   Judul, deskripsi, label total, dan nilai akhir dipaksa membungkus
+   kata (bukan terpotong rapi di tepi kontainer) di lebar berapa pun. */
+.finance-block h3,
+.field-desc,
+.total-bar span,
+.final-title,
+.final-amount,
+.table-like-header > div {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.finance-block input[type="text"],
+.finance-block input[type="url"],
+.finance-block input[type="number"],
+.finance-block textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.finance-block input:focus,
+.finance-block textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Highlight block (bagian 12: Perbedaan) */
+.highlight-block {
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+/* ---------- List container & dynamic rows ---------- */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dynamic-row {
+  display: flex;
+  align-items: center;
+}
+
+.dynamic-row textarea.item-textarea {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+}
+
+.dynamic-row.flex-row-inputs {
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dynamic-row.flex-row-inputs input {
+  min-width: 0;
+}
+
+/* ---------- Currency Input ---------- */
+.currency-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 10px;
+  flex: 1 1 0;
+  min-width: 140px;
+  background: #fff;
+}
+
+.currency-wrapper span {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-right: 6px;
+}
+
+.currency-wrapper input.currency-input {
+  border: none !important;
+  padding: 10px 0 !important;
+  flex: 1;
+  min-width: 0; /* supaya input tidak memaksa wrapper melebar/terpotong */
+}
+
+.currency-wrapper input.currency-input:focus {
+  box-shadow: none !important;
+}
+
+/* ---------- Remove row button ---------- */
+.btn-remove-row {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.btn-remove-row:hover {
+  background: #fecaca;
+}
+
+/* ---------- Button row & Tambah button ---------- */
+.button-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-add:hover {
+  background: #374151;
+}
+
+/* ---------- Table-like header (bagian 15: Komoditas) ---------- */
+.table-like-header {
+  display: flex;
+  gap: 10px;
+  padding: 0 2px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.table-like-header .flex-grow-1,
+.table-like-header .flex-grow-1-5,
+.table-like-header .flex-grow-2 {
+  min-width: 0;
+}
+
+/* ---------- Total Bar ---------- */
+.total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.total-bar.bg-red {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* ---------- Final Profit Block ---------- */
+.final-profit-block {
+  background: linear-gradient(135deg, #065f46, #047857);
+  color: #fff;
+  border: none;
+}
+
+.final-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.final-amount {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* ==========================================
+   ---------- Responsive (Mobile / HP) ----------
+   Breakpoint dinaikkan ke 768px (bukan 640px) supaya HP layar besar
+   dan tablet kecil ikut kena aturan "tumpuk vertikal", bukan cuma
+   HP kecil. Semua nilai lebar dipaksa 100% + min-width:0 supaya
+   tidak ada elemen yang mempertahankan lebar minimum lama dan
+   akhirnya bikin teks/kolom lain kepotong.
+   ========================================== */
+@media (max-width: 768px) {
+  .tab-header h1 {
+    font-size: 1.35rem;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .tab-header p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .finance-block {
+    padding: 14px;
+  }
+
+  .finance-block h3 {
+    font-size: 0.98rem;
+    flex-wrap: wrap;
+  }
+
+  .field-desc {
+    font-size: 0.85rem;
+  }
+
+  /* Font-size input dipaksa minimal 16px: mencegah Safari iOS auto-zoom
+     saat fokus (yang efeknya bikin layout/teks lain jadi terlihat
+     "kepotong" karena viewport tiba-tiba membesar). */
+  .finance-block input[type="text"],
+  .finance-block input[type="url"],
+  .finance-block input[type="number"],
+  .finance-block textarea,
+  .currency-wrapper input.currency-input {
+    font-size: 16px;
+  }
+
+  /* Baris input berjajar (nama barang + harga, atau nama + angka +
+     satuan + harga satuan) ditumpuk vertikal, tiap field dapat lebar
+     penuh, supaya isi/placeholder tidak terjepit dan kepotong. */
+  .dynamic-row.flex-row-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dynamic-row.flex-row-inputs > * {
+    width: 100%;
+  }
+
+  /* Tombol hapus (ikon tempat sampah) ikut jadi "ketiban" aturan
+     width:100% di atas kalau dia ada di dalam .flex-row-inputs, jadi
+     melebar penuh selebar baris (bukan kotak kecil seperti semestinya).
+     Dikecualikan di sini supaya ukurannya tetap 38x38px seperti semula. */
+  .dynamic-row.flex-row-inputs > .btn-remove-row {
+    width: 38px;
+    flex: 0 0 38px;
+  }
+
+  .currency-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Header kolom (Nama Komoditas / Angka / Satuan / Harga Satuan)
+     disembunyikan karena kolomnya sudah ditumpuk vertikal per baris,
+     bukan sejajar seperti di desktop. */
+  .table-like-header {
+    display: none;
+  }
+
+  .total-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .final-title {
+    font-size: 0.95rem;
+  }
+
+  .final-amount {
+    font-size: 1.2rem;
+  }
+
+  .button-row {
+    justify-content: stretch;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-remove-row {
+    align-self: flex-end;
+  }
+
+  /* ---------- Bagian 15 (Hasil Komoditas): tetap 1 baris, tapi
+     Angka & Satuan dipersempit ----------
+     Angka biasanya cuma 1-3 digit dan Satuan cuma kata pendek (kg, pcs,
+     liter), jadi keduanya tidak perlu lebar sebesar Nama/Harga. Ruang
+     yang dihemat dari keduanya dialihkan ke Nama Komoditas dan Harga
+     Satuan supaya isinya terlihat penuh, tidak ke-cut. */
+  .dynamic-finance-group[data-group="komoditas"] .flex-row-inputs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  /* Tombol hapus dipaksa minta lebar 100% baris. Karena Nama, Angka,
+     Satuan, dan Harga di atas sudah pas mengisi satu baris penuh,
+     tombol hapus otomatis "terlempar" turun ke barisnya sendiri di
+     bawah form (bukan nempel di ujung samping sejajar input). */
+  .dynamic-finance-group[data-group="komoditas"] .flex-row-inputs > .btn-remove-row {
+    flex: 1 1 100%;
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .dynamic-finance-group[data-group="komoditas"] .item-name {
+    flex: 1.6 1 0;
+    min-width: 0;
+  }
+
+  .dynamic-finance-group[data-group="komoditas"] .item-qty {
+    flex: 0 0 46px;
+    min-width: 0;
+    padding-left: 6px;
+    padding-right: 4px;
+    text-align: center;
+  }
+
+  .dynamic-finance-group[data-group="komoditas"] .item-unit {
+    flex: 0 0 54px;
+    min-width: 0;
+    padding-left: 6px;
+    padding-right: 4px;
+    text-align: center;
+  }
+
+  .dynamic-finance-group[data-group="komoditas"] .currency-wrapper {
+    flex: 1.6 1 0;
+    min-width: 0;
+  }
+}
+
+/* HP kecil (mis. iPhone SE, ~360-375px ke bawah) */
+@media (max-width: 380px) {
+  .tab-header h1 {
+    font-size: 1.15rem;
+  }
+
+  .finance-block {
+    padding: 12px;
+  }
+
+  .finance-block h3 {
+    font-size: 0.92rem;
+  }
+
+  .field-desc {
+    font-size: 0.8rem;
+  }
+
+  .final-amount {
+    font-size: 1.05rem;
+  }
+
+  /* Di layar sekecil ini, Angka & Satuan dipersempit lagi supaya Nama
+     dan Harga Satuan dapat lebih banyak ruang. */
+  .dynamic-finance-group[data-group="komoditas"] .item-qty {
+    flex-basis: 38px;
+    padding-left: 4px;
+    padding-right: 2px;
+  }
+
+  .dynamic-finance-group[data-group="komoditas"] .item-unit {
+    flex-basis: 44px;
+    padding-left: 4px;
+    padding-right: 2px;
+  }
+}

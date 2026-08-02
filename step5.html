@@ -13,11 +13,13 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/step5.css">
+  <!-- 🌟 Responsive override, di-load PALING TERAKHIR supaya menang di layar HP -->
+  <link rel="stylesheet" href="css/responsive.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body data-page="step5">
 
   <!-- Header -->
   <div id="header-container"></div>
@@ -54,7 +56,7 @@
         <div class="finance-block profile-block">
           <h3><i class="fa-solid fa-store icon-blue"></i> 2. Nama Bisnis Superstar</h3>
           <p class="field-desc">Nama bisnis yang menjadi contoh bagi usaha anda.</p>
-          <input type="text" id="superstar-name" placeholder="Masukkan nama bisnis...">
+          <input type="text" id="superstar-business-name" placeholder="Masukkan nama bisnis...">
         </div>
 
         <div class="finance-block profile-block">
@@ -97,12 +99,9 @@
         </div>
       </div>
 
-
-
-
       <!-- 8. Pemasaran -->
       <div class="finance-block dynamic-group mt-25" data-prefix="pemasaran" data-placeholder="Tuliskan poin penjelasan pemasaran...">
-        <h3><i class="fa-solid fa-chart-pie" icon-blue"></i> 8. Pemasaran (Penjelasan)</h3>
+        <h3><i class="fa-solid fa-chart-pie icon-blue"></i> 8. Pemasaran (Penjelasan)</h3>
         <p class="field-desc">Tempat memasarkan/menjual produk serta target pembeli utama.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row">
@@ -113,7 +112,7 @@
 
       <!-- 9. Sumber Informasi -->
       <div class="finance-block dynamic-group mt-25" data-prefix="informasi" data-placeholder="Tuliskan poin sumber informasi bisnis...">
-        <h3><i class="fa-solid fa-circle-info" icon-blue"></i> 9. Sumber Informasi Bisnis</h3>
+        <h3><i class="fa-solid fa-circle-info icon-blue"></i> 9. Sumber Informasi Bisnis</h3>
         <p class="field-desc">Tempat atau orang untuk memperoleh informasi dan memecahkan masalah usaha.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row">
@@ -124,7 +123,7 @@
 
       <!-- 10. Hambatan -->
       <div class="finance-block dynamic-group mt-25" data-prefix="hambatan" data-placeholder="Tuliskan poin hambatan bisnis...">
-        <h3><i class="fa-solid fa-hand-back-fist" icon-blue"></i> 10. Hambatan Pebisnis Pada Saat Ini</h3>
+        <h3><i class="fa-solid fa-hand-back-fist icon-blue"></i> 10. Hambatan Pebisnis Pada Saat Ini</h3>
         <p class="field-desc">Permasalahan yang sedang dan akan dihadapi dalam kegiatan usaha.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row">
@@ -135,7 +134,7 @@
 
       <!-- 11. Risiko -->
       <div class="finance-block dynamic-group mt-25" data-prefix="risiko" data-placeholder="Tuliskan poin risiko bisnis...">
-        <h3><i class="fa-solid fa-triangle-exclamation" icon-blue"></i> 11. Risiko Bisnis</h3>
+        <h3><i class="fa-solid fa-triangle-exclamation icon-blue"></i> 11. Risiko Bisnis</h3>
         <p class="field-desc">Kemungkinan-kemungkinan masalah yang akan terjadi dalam kegiatan usaha.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row">
@@ -179,7 +178,7 @@
 
       <!-- 14. Sumber Dana -->
       <div class="finance-block dynamic-finance-group mt-25" data-group="dana">
-        <h3><i class="fa-solid fa-piggy-bank" icon-blue"></i> 14. Sumber Dana</h3>
+        <h3><i class="fa-solid fa-piggy-bank icon-blue"></i> 14. Sumber Dana</h3>
         <p class="field-desc">Dana yang akan dipakai baik dari hasil magang, tabungan maupun pinjaman.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row flex-row-inputs">
@@ -193,11 +192,15 @@
         <div class="button-row mt-10">
           <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Sumber Dana</button>
         </div>
+        <div class="total-bar bg-red">
+          <span>Total Sumber Dana</span>
+          <span id="total-dana">Rp 0</span>
+        </div>
       </div>
 
       <!-- 15. Hasil Komoditas -->
       <div class="finance-block dynamic-finance-group mt-25" data-group="komoditas">
-        <h3><i class="fa-solid fa-boxes-stacked" icon-blue"></i> 15. Hasil Komoditas per Bulan (Pendapatan Kotor)</h3>
+        <h3><i class="fa-solid fa-boxes-stacked icon-blue"></i> 15. Hasil Komoditas per Bulan (Pendapatan Kotor)</h3>
         <p class="field-desc">Hasil yang diperoleh dari bisnis beserta besar pendapatannya.</p>
         
         <div class="table-like-header">
@@ -210,8 +213,8 @@
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row flex-row-inputs">
             <input type="text" class="item-name flex-grow-2" placeholder="Sayur Sawi...">
-            <input type="number" class="item-qty flex-grow-1 input-calc" placeholder="0">
-            <input type="text" class="item-unit flex-grow-1" placeholder="kg">
+            <input type="number" class="item-qty flex-grow-1 input-calc" placeholder="Jumlah">
+            <input type="text" class="item-unit flex-grow-1" placeholder="Satuan (kg)">
             <div class="currency-wrapper flex-grow-1-5">
               <span>Rp</span>
               <input type="text" class="item-price currency-input input-calc" placeholder="Harga..." inputmode="numeric">
@@ -229,7 +232,7 @@
 
       <!-- 16. Biaya Bisnis -->
       <div class="finance-block dynamic-finance-group mt-25" data-group="biaya">
-        <h3><i class="fa-solid fa-file-invoice-dollar" icon-blue"></i> 16. Biaya Bisnis / Bulan (Pengeluaran Operasional)</h3>
+        <h3><i class="fa-solid fa-file-invoice-dollar icon-blue"></i> 16. Biaya Bisnis / Bulan (Pengeluaran Operasional)</h3>
         <p class="field-desc">Biaya rutin yang dikeluarkan dalam usaha tersebut setiap bulannya.</p>
         <div class="list-container flex-column gap-10">
           <div class="dynamic-row flex-row-inputs">
@@ -266,6 +269,9 @@
   <div id="footer-container"></div>
 
   <!-- JAVASCRIPT -->
+  <!-- 🌟 html2canvas WAJIB ada supaya PDF export (di common.js) menghasilkan
+       PDF ter-kompresi, bukan cuma fallback window.print() -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/header-route.js"></script> 
   <script src="js/step5.js"></script> 

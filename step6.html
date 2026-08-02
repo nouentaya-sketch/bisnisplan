@@ -3,96 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 6 : Struktur Bisnis</title> 
-  
+  <title>Tahap 6 : Struktur Bisnis</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/step6.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/step6.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body data-page="step6">
 
   <div id="header-container"></div>
 
   <main class="main-container">
-    <div class="page-header">
-      <h1>Tahap 6 : Struktur Bisnis</h1>
-      <p class="page-desc">
-        Review dan analisis ringkasan struktur keuangan bisnis Anda dalam 36 bulan ke depan.
-      </p>
-    </div>
+    <section class="sheet-section">
 
-    <div class="finance-block dashboard-summary-block">
-      <h3 class="block-title">
-        <i class="fa-solid fa-chart-pie icon-blue"></i> 1. Ringkasan Proyeksi 36 Bulan
-      </h3>
-      
-      <div class="summary-cards-grid">
-        <div class="card-item">
-          <span class="card-label">Total Pendapatan Bersih</span>
-          <strong id="summary-total-revenue" class="card-value txt-green">Rp 0</strong>
-        </div>
-        <div class="card-item">
-          <span class="card-label">Total Biaya Operasional</span>
-          <strong id="summary-total-cost" class="card-value txt-red">Rp 0</strong>
-        </div>
-        <div class="card-item">
-          <span class="card-label">Akumulasi Cadangan Aset</span>
-          <strong id="summary-accum-reserve" class="card-value txt-blue">Rp 0</strong>
-        </div>
-        <div class="card-item">
-          <span class="card-label">Sisa Kas Akhir (Bulan 36)</span>
-          <strong id="summary-final-cash" class="card-value txt-dark">Rp 0</strong>
+      <div class="tab-header">
+        <h2><i class="fa-solid fa-sitemap"></i> Tahap 6: Struktur Bisnis</h2>
+        <p>
+          Petakan struktur bisnis Anda dari sisi internal (keterampilan, sarana, modal) dan
+          eksternal (lingkungan alam, pasar, sosial & prasarana), lalu simpulkan dalam tabel
+          Analisa di bagian akhir.
+        </p>
+      </div>
+
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="nama-lengkap">
+            <i class="fa-solid fa-user"></i> Nama Lengkap
+          </label>
+          <input type="text" id="nama-lengkap" data-save="true" placeholder="Masukkan nama lengkap Anda" autocomplete="off">
         </div>
       </div>
-    </div>
 
-    <div class="finance-block feasibility-block">
-      <h3 class="block-title">
-        <i class="fa-solid fa-gauge-high icon-green"></i> 2. Indikator Kelayakan & Kesehatan Bisnis
-      </h3>
-      <p class="field-desc">
-        Analisis otomatis berdasarkan simulasi arus kas yang telah Anda susun di tahap sebelumnya.
-      </p>
-
-      <div class="table-container">
-        <table class="feasibility-table">
-          <thead>
-            <tr>
-              <th>Indikator Pengujian</th>
-              <th class="col-value">Nilai Proyeksi</th>
-              <th class="col-status">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <strong>Rasio Profitabilitas (Margin Laba Bersih)</strong><br>
-                <span class="sub-text">Menunjukkan persentase laba bersih dari total pendapatan yang masuk.</span>
-              </td>
-              <td id="val-profit-margin" class="val-bold">0%</td>
-              <td><span id="badge-profit-margin" class="status-badge">Calculating</span></td>
-            </tr>
-            <tr>
-              <td>
-                <strong>Ketahanan Defisit (Bulan Aliran Kas Negatif)</strong><br>
-                <span class="sub-text">Jumlah bulan di mana saldo kas akhir (Sisa Kas) bernilai minus di bawah nol.</span>
-              </td>
-              <td id="val-negative-months" class="val-bold">0 Bulan</td>
-              <td><span id="badge-negative-months" class="status-badge">Calculating</span></td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- ====================================================== -->
+      <!-- 1. KETERAMPILAN -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-user-gear icon-green"></i> 1. Faktor Keterampilan</h3>
+        <div id="struktur-keterampilan-sudah-wrap"></div>
+        <div id="struktur-keterampilan-akan-wrap" class="mt-16"></div>
       </div>
-    </div>
 
-    <div class="action-container">
-      <button type="button" id="btn-export-pdf" class="btn-pdf">
-        <i class="fa-solid fa-file-pdf"></i> Cetak PDF Laporan
-      </button>
-    </div>
+      <!-- ====================================================== -->
+      <!-- 2. SARANA -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-screwdriver-wrench icon-green"></i> 2. Faktor Sarana</h3>
+        <div id="struktur-sarana-sudah-wrap"></div>
+        <div id="struktur-sarana-akan-wrap" class="mt-16"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 3. MODAL -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-sack-dollar icon-green"></i> 3. Faktor Modal</h3>
+        <div id="struktur-modal-sekarang-wrap"></div>
+        <div id="struktur-modal-akan-wrap" class="mt-16"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 4. LINGKUNGAN ALAM -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-leaf icon-orange"></i> 4. Faktor Lingkungan Alam</h3>
+        <div id="struktur-alam-kelebihan-wrap"></div>
+        <div id="struktur-alam-kelemahan-wrap" class="mt-16"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 5. PASAR -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-store icon-orange"></i> 5. Faktor Pasar</h3>
+        <div id="struktur-pasar-kelebihan-wrap"></div>
+        <div id="struktur-pasar-kelemahan-wrap" class="mt-16"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 6. SOSIAL & PRASARANA -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-people-group icon-orange"></i> 6. Faktor Sosial & Prasarana</h3>
+        <div id="struktur-sosial-kelebihan-wrap"></div>
+        <div id="struktur-sosial-kelemahan-wrap" class="mt-16"></div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 7. ANALISA (Ringkasan Struktur Bisnis) -->
+      <!-- ====================================================== -->
+      <div class="finance-block struktur-section">
+        <h3><i class="fa-solid fa-diagram-project icon-gold"></i> 7. Analisa: Struktur Bisnis Anda</h3>
+        <p class="field-desc">
+          Gabungkan poin-poin dari tabel di atas untuk menyimpulkan struktur bisnis Anda secara
+          keseluruhan, baik dari sisi yang sudah dimiliki maupun yang direncanakan.
+        </p>
+        <div id="struktur-analisa-wrap"></div>
+      </div>
+
+    </section>
   </main>
 
   <div id="footer-container"></div>

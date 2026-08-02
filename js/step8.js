@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
     modal: 'Faktor Modal yang akan diperlukan'
   };
 
+  // Label kolom "Faktor" per kategori, dipakai sbg data-label di mode kartu mobile
+  const FACTOR_COL_LABELS = {
+    keterampilan: 'Faktor Keterampilan yang Diperlukan',
+    sarana: 'Faktor Sarana yang Diperlukan',
+    modal: 'Faktor Modal yang Diperlukan'
+  };
+
   // Rentang sumbu tetap per kategori, disesuaikan dengan contoh grafik.
   // PENTING: kalau kamu mengisi angka Efisiensi/Kesulitan di luar rentang
   // ini, titiknya TIDAK akan kelihatan (sengaja dipatok, bukan auto-scale).
@@ -40,6 +47,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
+  // 🌟 Helper responsif untuk grafik
+  // Di layar sempit (HP), ukuran huruf/label diperkecil supaya tidak
+  // numpuk/kepotong. CATATAN: rasio tinggi-lebar grafik TIDAK lagi diatur
+  // lewat JS (chart.resize() manual sebelumnya menyebabkan kanvas
+  // tergambar miring/skewed di beberapa HP). Sekarang rasio diatur murni
+  // lewat CSS `aspect-ratio` pada .chart-canvas-wrap (lihat step8.css),
+  // dan Chart.js dibiarkan pakai ResizeObserver bawaannya sendiri
+  // (options: maintainAspectRatio:false) supaya selalu sinkron dengan
+  // ukuran wrapper — jauh lebih stabil daripada resize() manual.
+  // ==========================================
+  function isMobileView() {
+    return window.matchMedia('(max-width: 640px)').matches;
+  }
+
+  function getChartResponsiveSettings() {
+    const mobile = isMobileView();
+    return {
+      titleFontSize: mobile ? 12 : 15,
+      axisTitleFontSize: mobile ? 10 : 12,
+      tickFontSize: mobile ? 9 : 11,
+      dataLabelFontSize: mobile ? 9 : 11,
+      dataLabelOffset: mobile ? 4 : 6,
+      paddingRight: mobile ? 34 : 60,
+      paddingTop: mobile ? 20 : 30,
+      pointRadius: mobile ? 4 : 5
+    };
+  }
+
+  // ==========================================
   // 2. Setup tiap section Payoff Matrix
   //    (Keterampilan / Sarana / Modal)
   // ==========================================
@@ -53,29 +89,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tbody || !addBtn || !canvas) return;
 
     const axisRange = CHART_AXIS_RANGES[category] || { xMin: 0, xMax: 6, yMin: -5, yMax: 5 };
+    const factorColLabel = FACTOR_COL_LABELS[category] || 'Faktor';
+    const rs = getChartResponsiveSettings();
 
     const chart = new Chart(canvas.getContext('2d'), {
       type: 'scatter',
-      data: { datasets: [{ data: [], backgroundColor: '#4472C4', pointRadius: 5 }] },
+      data: { datasets: [{ data: [], backgroundColor: '#4472C4', pointRadius: rs.pointRadius }] },
       options: {
         responsive: true,
-        aspectRatio: 2,
+        // 🌟 Rasio tinggi grafik sekarang ditentukan oleh CSS
+        // `aspect-ratio` di .chart-canvas-wrap, bukan opsi Chart.js ini.
+        maintainAspectRatio: false,
         layout: {
-          padding: { right: 60, top: 30 } // ruang ekstra supaya label teks tidak terpotong
+          padding: { right: rs.paddingRight, top: rs.paddingTop } // ruang ekstra supaya label teks tidak terpotong
         },
         scales: {
           x: {
-            title: { display: true, text: 'Efisiensi' },
+            title: { display: true, text: 'Efisiensi', font: { size: rs.axisTitleFontSize } },
             min: axisRange.xMin,
             max: axisRange.xMax,
-            ticks: { stepSize: 1 },
+            ticks: { stepSize: 1, font: { size: rs.tickFontSize } },
             grid: { color: '#E5E7EB' }
           },
           y: {
-            title: { display: true, text: 'Kesulitan' },
+            title: { display: true, text: 'Kesulitan', font: { size: rs.axisTitleFontSize } },
             min: axisRange.yMin,
             max: axisRange.yMax,
-            ticks: { stepSize: 1 },
+            ticks: { stepSize: 1, font: { size: rs.tickFontSize } },
             grid: { color: '#E5E7EB' }
           }
         },
@@ -83,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: {
             display: true,
             text: CHART_TITLES[category] || 'Payoff Matrix',
-            font: { size: 15, weight: 'bold' },
+            font: { size: rs.titleFontSize, weight: 'bold' },
             padding: { bottom: 16 }
           },
           legend: { display: false },
@@ -100,8 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
             color: '#374151',
             anchor: 'end',
             align: 'right',
-            offset: 6,
-            font: { style: 'italic', size: 11 },
+            offset: rs.dataLabelOffset,
+            font: { style: 'italic', size: rs.dataLabelFontSize },
             formatter: (value, ctx) => {
               const labels = ctx.dataset.itemLabels || [];
               return labels[ctx.dataIndex] || '';
@@ -153,6 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ------------------------------------
     // Buat baris baru (dipakai oleh tombol + dan saat restore)
+    // 🌟 data-label pada td dipakai CSS untuk mode kartu di HP.
+    // Sel nomor sengaja TIDAK diberi data-label (jadi badge bulat polos).
     // ------------------------------------
     function createRow(name = '', efisiensi = '', kesulitan = '', isFirst = false) {
       const tr = document.createElement('tr');
@@ -160,11 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       tr.innerHTML = `
         <td class="no-cell font-center">1</td>
-        <td><input type="text" class="factor-name" placeholder="Nama faktor..." value="${name}"></td>
-        <td><input type="number" class="efisiensi-input font-center" min="-5" max="5" step="1" placeholder="0" value="${efisiensi}"></td>
-        <td><input type="number" class="kesulitan-input font-center" min="-5" max="5" step="1" placeholder="0" value="${kesulitan}"></td>
-        <td class="font-center">
-          ${isFirst ? '' : '<button type="button" class="btn-delete-payoff-row"><i class="fa-solid fa-trash-can"></i></button>'}
+        <td data-label="${factorColLabel}"><input type="text" class="factor-name" placeholder="Nama faktor..." value="${name}"></td>
+        <td data-label="Efisiensi"><input type="number" class="efisiensi-input font-center" min="-5" max="5" step="1" placeholder="0" value="${efisiensi}"></td>
+        <td data-label="Kesulitan"><input type="number" class="kesulitan-input font-center" min="-5" max="5" step="1" placeholder="0" value="${kesulitan}"></td>
+        <td class="font-center action-cell">
+          ${isFirst ? '' : '<button type="button" class="btn-delete-payoff-row"><i class="fa-solid fa-trash-can"></i> <span class="btn-delete-text">Hapus Baris</span></button>'}
         </td>
       `;
 

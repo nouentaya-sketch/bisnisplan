@@ -1,0 +1,315 @@
+/* ==========================================================
+   step7.css — Tahap 7: Analisis SWOT
+   Fokus: layout tabel yang tetap nyaman & mudah diisi di HP.
+   Strategi: di layar lebar tampil sebagai tabel biasa;
+   di layar sempit (<= 720px) tabel "berubah bentuk" jadi
+   kartu bertumpuk per baris, memakai data-label dari JS
+   sebagai judul kecil di atas tiap isian.
+   ========================================================== */
+
+/* ---------- Warna aksen ikon section ---------- */
+.icon-green { color: #10b981; }
+.icon-blue  { color: #3b82f6; }
+.icon-amber { color: #f59e0b; }
+
+.mt-25 { margin-top: 25px; }
+
+/* ---------- Section wrapper ---------- */
+.swot-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+.swot-section .field-desc {
+  font-size: 0.92rem;
+  color: #475569;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+/* ---------- Wrapper tiap tabel ---------- */
+.swot-table-wrapper {
+  margin-bottom: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.swot-table-title {
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.swot-table-scroll {
+  width: 100%;
+}
+
+/* ---------- Tabel: tampilan default (desktop / tablet lebar) ---------- */
+.swot-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.swot-table thead th {
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.swot-table thead th.no-col {
+  width: 48px;
+  text-align: center;
+}
+
+.swot-table thead th.action-col {
+  width: 56px;
+}
+
+.swot-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: top;
+}
+
+.swot-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.no-cell {
+  text-align: center;
+  font-weight: 700;
+  color: #64748b;
+  padding-top: 16px !important;
+}
+
+.swot-input {
+  width: 100%;
+  min-height: 44px;
+  resize: none;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #1e293b;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swot-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.swot-input::placeholder {
+  color: #94a3b8;
+}
+
+.action-cell {
+  text-align: center;
+  padding-top: 14px !important;
+}
+
+.btn-remove-row {
+  border: none;
+  background: #fef2f2;
+  color: #ef4444;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.btn-remove-row:hover {
+  background: #fee2e2;
+}
+
+.btn-remove-text {
+  display: none; /* hanya muncul di mode kartu mobile */
+}
+
+/* ---------- Tombol Tambah Baris ---------- */
+.swot-table-wrapper .button-row {
+  padding: 12px 14px 14px;
+}
+
+.swot-table-wrapper .btn-add-row {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px dashed #a5b4fc;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.swot-table-wrapper .btn-add-row:hover {
+  background: #e0e7ff;
+}
+
+/* ==========================================================
+   MODE MOBILE (<= 720px)
+   Tabel diubah jadi kartu bertumpuk per baris supaya:
+   - tidak perlu scroll horizontal
+   - tiap isian punya label yang jelas di atasnya
+   - tombol hapus mudah disentuh (full width, ada teksnya)
+   ========================================================== */
+@media (max-width: 720px) {
+
+  .swot-table-title {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+
+  .swot-table thead {
+    /* Sembunyikan header tabel asli, digantikan data-label per sel */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .swot-table,
+  .swot-table tbody,
+  .swot-table tr,
+  .swot-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .swot-table tbody tr {
+    position: relative;
+    padding: 14px 14px 12px;
+    margin-bottom: 10px;
+    border-bottom: 8px solid #f8fafc; /* jarak antar "kartu" */
+  }
+
+  .swot-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .swot-table tbody td {
+    padding: 6px 0;
+    border-bottom: none;
+  }
+
+  /* Nomor baris ditampilkan sebagai badge bulat kecil di pojok kiri atas
+     kartu. Selector dibuat lebih spesifik (tbody + td + class) supaya
+     pasti "menang" melawan aturan umum ".swot-table td { width:100% }"
+     di atas — kalau tidak, badge akan melebar jadi bar penuh selebar
+     kartu (bug yang sempat terjadi). */
+  .swot-table tbody td.no-cell {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 0 !important;
+    margin: 0;
+    width: 26px;
+    height: 26px;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  /* Sel nomor tidak diberi data-label dari JS, jadi tidak perlu label
+     "No" di atasnya — cukup pastikan tidak ada ::before nyasar. */
+  .swot-table tbody td.no-cell::before {
+    content: none;
+  }
+
+  /* Beri ruang di kartu supaya tidak tertutup badge nomor */
+  .swot-table tbody tr {
+    padding-top: 46px;
+  }
+
+  /* Label kecil di atas tiap isian, diambil dari atribut data-label */
+  .swot-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+
+  .swot-input {
+    min-height: 64px;
+    font-size: 0.95rem;
+  }
+
+  /* Tombol hapus jadi full-width dengan teks, lebih mudah disentuh di HP */
+  .action-cell {
+    padding-top: 10px !important;
+    text-align: left;
+  }
+
+  .btn-remove-row {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    padding: 10px 12px;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .btn-remove-text {
+    display: inline;
+  }
+
+  .swot-table-wrapper .btn-add-row {
+    padding: 13px;
+    font-size: 0.92rem;
+  }
+}
+
+/* ---------- Layar sangat sempit (HP kecil, <= 380px) ---------- */
+@media (max-width: 380px) {
+  .swot-table-wrapper .button-row {
+    padding: 10px 10px 12px;
+  }
+
+  .swot-table tbody tr {
+    padding: 44px 10px 10px;
+  }
+
+  .swot-table-title {
+    font-size: 0.8rem;
+  }
+}

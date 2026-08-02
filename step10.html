@@ -1,31 +1,180 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tahap 10 : Pengajuan Sertifikat</title> 
-  
+  <title>Tahap 10 : Pengajuan Sertifikat</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step10.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body data-page="step10">
 
   <div id="header-container"></div>
 
   <main class="main-container">
-    <h1>Tahap 10 : Pengajuan Sertifikat</h1>
+    <section class="sheet-section">
+
+      <div class="tab-header">
+        <h1><i class="fa-solid fa-certificate"></i> Tahap 10: Pengajuan Sertifikat</h1>
+        <p>Lengkapi format berikut untuk mengajukan Sertifikat Bisnis Plan Anda.</p>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 1. NAMA LENGKAP -->
+      <!-- ====================================================== -->
+      <div class="finance-block">
+        <div class="field-item">
+          <label>1. Nama Lengkap Anda</label>
+          <p class="field-desc">Nama Lengkap diisi dengan nama Anda.</p>
+          <input type="text" id="nama-lengkap" data-save="true" placeholder="Masukkan nama lengkap Anda" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 2. NAMA BISNIS PLAN 1-4 -->
+      <!-- ====================================================== -->
+      <div class="finance-block">
+        <div class="field-item">
+          <label>2. Nama Bisnis Plan</label>
+          <p class="field-desc">
+            Apabila memiliki Bisnis Plan lebih dari satu (maksimal 4), tambahkan Nama Bisnis Plan
+            satu per satu memakai tombol di bawah. Apabila hanya memiliki satu bisnis plan saja,
+            cukup isi Nama Bisnis Plan 1.
+          </p>
+
+          <div id="list-bisnis-plan-wrap"></div>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 3. LOKASI BISNIS (ALAMAT) 1-4 -->
+      <!-- ====================================================== -->
+      <div class="finance-block">
+        <div class="field-item">
+          <label>3. Lokasi Bisnis (Alamat)</label>
+          <p class="field-desc">
+            Lokasi bisnis diisi dengan alamat lokasi bisnis yang akan dijalankan, sesuai dengan urutan
+            nama bisnis di atas (maksimal 4). Tambahkan lokasi lain memakai tombol di bawah jika Bisnis
+            Plan Anda lebih dari satu.
+          </p>
+
+          <div id="list-lokasi-wrap"></div>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 4-7. DATA MAGANG JEPANG -->
+      <!-- ====================================================== -->
+      <div class="finance-block">
+
+        <div class="field-item">
+          <label>4. Skema Magang</label>
+          <p class="field-desc">Program magang yang diikuti.</p>
+          <select id="skema-magang" data-save="true">
+            <option value="">-- Pilih Skema Magang --</option>
+            <option value="IAEA">IAEA</option>
+            <option value="JAEC">JAEC</option>
+            <option value="ICE">ICE</option>
+            <option value="NAEC">NAEC</option>
+          </select>
+        </div>
+
+        <div class="field-item">
+          <label>5. Tahun Keberangkatan Jepang</label>
+          <p class="field-desc">Tahun berapa Anda berangkat ke Jepang.</p>
+          <input type="number" id="tahun-berangkat" data-save="true" placeholder="Contoh: 2022" min="1990" max="2100">
+        </div>
+
+        <div class="field-item">
+          <label>6. Tahun Kepulangan Indonesia</label>
+          <p class="field-desc">Tahun berapa Anda pulang ke Indonesia.</p>
+          <input type="number" id="tahun-pulang" data-save="true" placeholder="Contoh: 2025" min="1990" max="2100">
+        </div>
+
+        <div class="field-item">
+          <label>7. Tanggal Lahir</label>
+          <p class="field-desc">Tanggal lahir Anda secara lengkap.</p>
+          <input type="date" id="tanggal-lahir" data-save="true">
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 8. CHECKLIST FORMAT BISNIS PLAN -->
+      <!-- ====================================================== -->
+      <div class="finance-block">
+        <h3 class="section-title"><i class="fa-solid fa-list-check"></i> 8. Format Bisnis Plan Anda yang Sudah Selesai</h3>
+        <p class="field-desc">
+          Centang (✓) format bisnis plan yang sudah Anda selesaikan dari Tahap 1 sampai dengan Tahap 9.
+        </p>
+
+        <div class="checklist-note">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>
+            <strong>Catatan:</strong> Untuk mengajukan sertifikat Bisnis Plan, minimal Tahap 1-4 sudah
+            selesai. Meskipun Tahap 5-9 belum selesai, Anda tetap bisa mengajukan sertifikat.
+          </span>
+        </div>
+
+        <div class="checklist-container" id="checklist-container">
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-1">
+            <span>Tahap 1. Literasi Keuangan</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-2">
+            <span>Tahap 2. Riset Keluarga</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-3">
+            <span>Tahap 3. Idea Bisnis</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-4">
+            <span>Tahap 4. Bisnis Plan</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-5">
+            <span>Tahap 5. Riset Bisnis Superstar Indonesia</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-6">
+            <span>Tahap 6. Struktur Bisnis</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-7">
+            <span>Tahap 7. Payoff Matriks</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-8">
+            <span>Tahap 8. Analisa SWOT</span>
+          </label>
+          <label class="checklist-item">
+            <input type="checkbox" data-save="true" id="chk-tahap-9">
+            <span>Tahap 9. Riset Bisnis Superstar Jepang</span>
+          </label>
+        </div>
+
+        <div class="checklist-summary">
+          <span id="checklist-progress-text">0 dari 9 tahap selesai</span>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="checklist-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
   </main>
 
-  <script src="js/header-route.js"></script>
-<div id="footer-container"></div>
+  <div id="footer-container"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="script.js"></script>
-  <script src="js/header-route.js"></script> </body>
-</html>
+  <script src="js/header-route.js"></script>
+  <script src="js/step10.js"></script>
 </body>
 </html>

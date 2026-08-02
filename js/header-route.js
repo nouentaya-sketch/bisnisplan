@@ -290,10 +290,149 @@ function importCSVToPage(file) {
   reader.readAsText(file, "UTF-8");
 }
 
+// ==========================================
+// 7. 🌟 PDF Helpers: kompresi ukuran file & skala aman untuk HP
+// ==========================================
+
+// Perkiraan ukuran byte dari sebuah data URL base64 (tanpa perlu decode penuh)
+function estimateDataUrlBytes(dataUrl) {
+  const base64 = dataUrl.split(',')[1] || '';
+  // setiap 4 karakter base64 ≈ 3 byte data asli
+  const padding = (base64.endsWith('==')) ? 2 : (base64.endsWith('=') ? 1 : 0);
+  return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+}
+
+// Membuat canvas baru yang lebih kecil (dipakai kalau kompresi JPEG saja
+// masih belum cukup untuk turun di bawah batas ukuran)
+function downscaleCanvas(sourceCanvas, factor) {
+  const newCanvas = document.createElement('canvas');
+  newCanvas.width = Math.max(1, Math.round(sourceCanvas.width * factor));
+  newCanvas.height = Math.max(1, Math.round(sourceCanvas.height * factor));
+  const ctx = newCanvas.getContext('2d');
+  ctx.drawImage(sourceCanvas, 0, 0, newCanvas.width, newCanvas.height);
+  return newCanvas;
+}
+
+// Skala capture html2canvas: dikecilkan otomatis di layar HP supaya tidak
+// berat/crash saat merender tabel lebar (mis. matriks 36 bulan) di memori
+// terbatas milik browser mobile.
+function getCaptureScale() {
+  const isSmallScreen = window.innerWidth < 768;
+  const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  if (isSmallScreen || isMobileUA) return 1.5;
+  return 2;
+}
+
+// 🩹 FIX "PDF cuma kebuka preview, tidak langsung terdownload":
+// pdf.save() bawaan jsPDF kadang membuka tab baru dulu di sebagian browser
+// HP alih-alih langsung mengunduh. Solusinya: ambil file sebagai Blob,
+// lalu paksa download lewat <a download> yang diklik otomatis — pola yang
+// sama persis dipakai di exportPageToCSV() supaya perilakunya konsisten.
+//
+// Catatan jujur: di Safari iOS, membuka PDF di tab (dengan tombol
+// share/download di viewer bawaan) adalah batasan sistem dari Apple
+// sendiri — tidak ada cara dari sisi website untuk memaksa auto-save ke
+// Files di iOS. Untuk Chrome/Edge Android dan browser desktop, fungsi ini
+// akan langsung mengunduh.
+function forceDownloadPDF(pdf, fileName) {
+  const pdfBlob = pdf.output("blob");
+
+  // 🩹 FIX "masih buka preview dulu, tidak langsung download":
+  // Banyak browser (terutama Chrome Android) mengenali tipe MIME
+  // "application/pdf" lalu otomatis membukanya di PDF viewer bawaan
+  // browser, meskipun link-nya sudah punya atribut `download`. Trik
+  // umum untuk memaksa dialog "Simpan File": bungkus ulang byte yang
+  // SAMA PERSIS ke dalam Blob baru dengan tipe generik
+  // "application/octet-stream" (bukan "application/pdf"). Browser jadi
+  // tidak tahu cara menampilkannya inline, sehingga langsung
+  // menawarkan unduh/simpan. Isi filenya tetap PDF valid — hanya label
+  // tipe MIME saat proses download ini saja yang disamarkan.
+  const octetBlob = new Blob([pdfBlob], { type: "application/octet-stream" });
+
+  const blobUrl = URL.createObjectURL(octetBlob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = fileName;
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+}
+
+// Mengubah canvas hasil html2canvas menjadi PDF yang dijamin (sebisa mungkin)
+// berada di bawah MAX_BYTES, dengan menurunkan kualitas JPEG dulu, baru
+// menurunkan resolusi kalau kualitas saja belum cukup.
+function buildCompressedPDF(canvas, formattedTitle) {
+  const { jsPDF } = window.jspdf;
+  const MAX_BYTES = 1024 * 1024; // 1 MB
+  const qualitySteps = [0.85, 0.7, 0.55, 0.4, 0.3, 0.2];
+
+  let workingCanvas = canvas;
+  let dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[0]);
+  let qi = 0;
+
+  // Tahap 1: turunkan kualitas JPEG dulu (paling murah, tidak mengurangi ukuran gambar)
+  while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && qi < qualitySteps.length - 1) {
+    qi++;
+    dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[qi]);
+  }
+
+  // Tahap 2: kalau kualitas terendah masih kebesaran, turunkan resolusi canvas
+  let scaleFactor = 1;
+  while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && scaleFactor > 0.25) {
+    scaleFactor -= 0.15;
+    workingCanvas = downscaleCanvas(canvas, scaleFactor);
+    qi = 1; // mulai lagi dari kualitas menengah untuk resolusi baru ini
+    dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[qi]);
+    while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && qi < qualitySteps.length - 1) {
+      qi++;
+      dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[qi]);
+    }
+  }
+
+  const pdfWidth = workingCanvas.width * 0.75;
+  const pdfHeight = workingCanvas.height * 0.75;
+  const orientation = pdfWidth > pdfHeight ? "l" : "p";
+
+  const pdf = new jsPDF({
+    orientation,
+    unit: "pt",
+    format: [pdfWidth, pdfHeight],
+    compress: true
+  });
+
+  pdf.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
+
+  const fileName = `${formattedTitle || "Kalender_Bisnis"}.pdf`;
+
+  // Cek akhir terhadap ukuran blob PDF sesungguhnya (bisa sedikit berbeda
+  // dari perkiraan base64). Kalau masih di atas batas, kompres sekali lagi
+  // lebih agresif sebagai upaya terakhir.
+  const finalBlob = pdf.output('blob');
+  if (finalBlob.size > MAX_BYTES && scaleFactor > 0.2) {
+    const lastScale = Math.max(0.2, scaleFactor - 0.15);
+    const lastCanvas = downscaleCanvas(canvas, lastScale);
+    const lastDataUrl = lastCanvas.toDataURL('image/jpeg', 0.35);
+    const w2 = lastCanvas.width * 0.75;
+    const h2 = lastCanvas.height * 0.75;
+    const orientation2 = w2 > h2 ? "l" : "p";
+    const pdf2 = new jsPDF({ orientation: orientation2, unit: "pt", format: [w2, h2], compress: true });
+    pdf2.addImage(lastDataUrl, "JPEG", 0, 0, w2, h2);
+    forceDownloadPDF(pdf2, fileName); // 🩹 download paksa, bukan pdf2.save()
+    return;
+  }
+
+  forceDownloadPDF(pdf, fileName); // 🩹 download paksa, bukan pdf.save()
+}
+
 // 📕 共通PDF出力ロジック
 // Menggunakan html2canvas + jsPDF (bukan window.print()) supaya tabel lebar
 // (mis. matriks 36 bulan) ikut tercetak SELURUHNYA di PDF, tanpa terpotong
 // oleh lebar kertas atau oleh scroll container di layar.
+// 🌟 File PDF dijaga maksimal ±1 MB (lihat buildCompressedPDF), skala
+// capture disesuaikan otomatis di HP (lihat getCaptureScale), dan hasil
+// akhirnya dipaksa langsung terdownload (lihat forceDownloadPDF).
 function exportPageToPDF() {
   const dateElement = document.getElementById("current-print-date");
 
@@ -411,7 +550,7 @@ function exportPageToPDF() {
   document.body.classList.add("pdf-print-mode");
 
   html2canvas(target, {
-    scale: 2,               // resolusi lebih tajam
+    scale: getCaptureScale(), // 🌟 otomatis lebih kecil di HP supaya tidak berat/crash
     useCORS: true,
     backgroundColor: "#ffffff",
     windowWidth: fullWidth,
@@ -462,24 +601,9 @@ function exportPageToPDF() {
     restoreStyles();
     cleanupPdfFieldMarkers();
 
-    const { jsPDF } = window.jspdf;
-    const imgData = canvas.toDataURL("image/png");
-
-    // Ukuran halaman PDF dibuat mengikuti ukuran gambar hasil capture
-    // (dalam satuan pt, 1px canvas ≈ 0.75pt), supaya tidak ada bagian
-    // yang harus dipotong ke halaman berikutnya.
-    const pdfWidth = canvas.width * 0.75;
-    const pdfHeight = canvas.height * 0.75;
-    const orientation = pdfWidth > pdfHeight ? "l" : "p";
-
-    const pdf = new jsPDF({
-      orientation,
-      unit: "pt",
-      format: [pdfWidth, pdfHeight]
-    });
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`${formattedTitle || "Kalender_Bisnis"}.pdf`);
+    // 🌟 Bangun PDF dengan kompresi bertahap sampai maksimal ±1 MB,
+    // lalu paksa langsung download (bukan buka tab preview).
+    buildCompressedPDF(canvas, formattedTitle);
   }).catch(err => {
     document.body.classList.remove("pdf-print-mode");
     restoreStyles();
@@ -488,3 +612,50 @@ function exportPageToPDF() {
     alert("Gagal membuat PDF. Coba lagi, atau gunakan tombol print browser (Ctrl+P) sebagai alternatif.");
   });
 }
+
+// ==========================================
+// 8. 🌟 Auto-resize Textarea (universal, semua halaman)
+// ==========================================
+// Membuat SEMUA <textarea> di halaman otomatis melebar mengikuti
+// panjang tulisan, supaya tidak ada teks yang "hilang"/kepotong saat
+// diketik di layar HP. Berlaku juga untuk textarea yang dibuat belakangan
+// lewat JavaScript (mis. tombol "Tambah Baris" di Tahap 6, 7, 9).
+(function () {
+
+  function autoResizeTextarea(el) {
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }
+
+  function initAutosizeTextareas(root = document) {
+    root.querySelectorAll("textarea").forEach(el => {
+      if (el.dataset.autosizeBound === "true") return;
+      el.dataset.autosizeBound = "true";
+
+      autoResizeTextarea(el);
+      el.addEventListener("input", () => autoResizeTextarea(el));
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initAutosizeTextareas();
+
+    // Pantau textarea baru yang muncul belakangan (dibuat dinamis oleh
+    // stepX.js saat user klik "Tambah Baris", dsb).
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return;
+          if (node.tagName === "TEXTAREA") {
+            initAutosizeTextareas(node.parentElement || document);
+          } else if (node.querySelectorAll) {
+            initAutosizeTextareas(node);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+
+})();

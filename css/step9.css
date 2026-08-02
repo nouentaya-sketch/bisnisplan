@@ -1,0 +1,411 @@
+/* ==========================================
+   css/step9.css
+   Styling untuk Tahap 9: Hasil Riset Bisnis Superstar Jepang
+   ========================================== */
+
+.tab-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.35rem;
+  margin-bottom: 8px;
+}
+
+/* ---------- Finance Block base ---------- */
+.finance-block {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.field-item {
+  margin-bottom: 20px;
+}
+
+.field-item:last-child {
+  margin-bottom: 0;
+}
+
+.field-item > label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.94rem;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.field-desc {
+  color: #6b7280;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.finance-block input[type="text"],
+.finance-block input[type="url"],
+.finance-block textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.finance-block input:focus,
+.finance-block textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ==========================================
+   Tabel item 9-17 (dengan huruf a, b, c, ...)
+   Desktop/tablet: tabel normal.
+   Mobile (<=680px): berubah jadi kartu bertumpuk
+   lewat data-label, tanpa perlu markup terpisah.
+   ========================================== */
+
+.riset-table-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.riset-table-scroll {
+  overflow-x: auto;
+}
+
+.riset-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.riset-table thead th {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: left;
+  background: #dcfce7;
+  color: #14532d;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.riset-table thead th.huruf-col {
+  width: 40px;
+  background: #86e3ab;
+}
+
+.riset-table thead th.action-col {
+  width: 44px;
+  background: #f9fafb;
+}
+
+.riset-table td {
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  vertical-align: top;
+  padding: 0;
+}
+
+.riset-table td:last-child {
+  border-right: none;
+}
+
+.riset-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.huruf-cell {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 6px !important;
+  vertical-align: middle !important;
+  width: 40px;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+/* dot ditambahkan lewat CSS supaya markup huruf tetap bersih (a, b, c...)
+   dan gampang dipakai ulang di mode kartu mobile tanpa tanda titik */
+.huruf-cell::after {
+  content: ".";
+}
+
+/* ---------- Textarea di dalam sel ---------- */
+.riset-input {
+  width: 100%;
+  min-height: 44px;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.riset-input:focus {
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+/* ---------- Kolom aksi (hapus baris) ---------- */
+.action-cell {
+  text-align: center;
+  vertical-align: middle !important;
+  padding: 8px !important;
+  width: 44px;
+}
+
+.btn-remove-row {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.btn-remove-row:hover {
+  background: #fecaca;
+}
+
+/* ---------- Tombol Tambah Baris ---------- */
+.button-row {
+  display: flex;
+  justify-content: flex-start;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-add:hover {
+  background: #374151;
+}
+
+/* ==========================================================
+   RESPONSIVE — TABLET (<=768px)
+   Sedikit lebih rapat, tapi tetap format tabel.
+   ========================================================== */
+@media (max-width: 768px) {
+  .finance-block {
+    padding: 18px;
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE — MOBILE (<=680px)
+   Tabel item 9-17 diubah jadi kartu bertumpuk supaya enak
+   diisi pakai jari, tanpa harus scroll horizontal & tanpa
+   textarea yang kegencet sempit.
+   ========================================================== */
+@media (max-width: 680px) {
+
+  .tab-header h1 {
+    font-size: 1.08rem;
+    gap: 8px;
+  }
+
+  .tab-header p {
+    font-size: 0.85rem;
+  }
+
+  .finance-block {
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 0.98rem;
+    margin-bottom: 12px;
+  }
+
+  .field-item {
+    margin-bottom: 16px;
+  }
+
+  /* --- kartu mobile untuk tabel item 9-17 --- */
+
+  .riset-table-wrapper {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .riset-table-scroll {
+    overflow-x: visible;
+  }
+
+  .riset-table {
+    table-layout: auto;
+  }
+
+  .riset-table thead {
+    display: none;
+  }
+
+  .riset-table,
+  .riset-table tbody,
+  .riset-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .riset-tbody tr {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px 44px 16px 54px;
+    margin-bottom: 12px;
+  }
+
+  .riset-tbody tr:last-child {
+    margin-bottom: 0;
+  }
+
+  .riset-table td {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+
+  /* huruf jadi lencana bulat di pojok kiri atas kartu.
+     Selector ".riset-table td.huruf-cell" dipakai (bukan ".huruf-cell" saja)
+     supaya specificity-nya menang melawan aturan ".riset-table td" di atas
+     yang men-set width:100% — kalau tidak, badge akan melebar penuh
+     selebar kartu alih-alih jadi lingkaran kecil. */
+  .riset-table td.huruf-cell {
+    position: absolute;
+    top: 16px;
+    left: 12px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #16a34a;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    padding: 0 !important;
+  }
+
+  .huruf-cell::after {
+    content: "";
+  }
+
+  /* label kolom otomatis muncul di atas tiap input, dari attribut data-label */
+  td[data-label] {
+    margin-bottom: 14px;
+  }
+
+  td[data-label]:last-of-type {
+    margin-bottom: 0;
+  }
+
+  td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #166534;
+    margin-bottom: 6px;
+  }
+
+  .riset-input {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f9fafb;
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .riset-input:focus {
+    background: #fff;
+    box-shadow: 0 0 0 2px #2563eb;
+  }
+
+  /* tombol hapus jadi ikon kecil di pojok kanan atas kartu.
+     Sama seperti huruf-cell di atas, perlu ".riset-table td.action-cell"
+     supaya width:auto benar-benar menang. */
+  .riset-table td.action-cell {
+    position: absolute;
+    top: 12px;
+    right: 8px;
+    width: auto;
+    padding: 0 !important;
+  }
+
+  .btn-remove-row {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* tombol tambah baris full width supaya gampang ditekan jari */
+  .button-row {
+    padding: 4px 0 0;
+    background: transparent;
+    border-top: none;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .finance-block {
+    padding: 12px;
+  }
+
+  .riset-tbody tr {
+    padding: 16px 40px 14px 46px;
+  }
+}
