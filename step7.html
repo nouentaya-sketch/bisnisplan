@@ -97,6 +97,10 @@
 
   <div id="footer-container"></div>
 
+  <!-- 🌟 html2canvas WAJIB ada supaya PDF export (di common.js) langsung
+       menghasilkan PDF ter-kompresi & ter-download, bukan fallback ke
+       window.print() (yang tampilannya seperti "preview dulu"). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/header-route.js"></script>
   <script src="js/step7.js"></script>
