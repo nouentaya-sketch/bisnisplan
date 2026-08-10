@@ -9,6 +9,20 @@
 // 🌟 Update layout mobile: tiap <td> yang berisi input diberi atribut
 // data-label supaya di layar HP, tabel bisa berubah jadi kartu bertumpuk
 // dengan label kecil di atas tiap isian (lihat css/step6.css).
+//
+// 🌟 Update contoh otomatis: tiap tabel sekarang punya placeholder yang
+// berisi CONTOH konkret (bukan cuma instruksi generik "Tuliskan
+// faktornya..."), supaya pengguna langsung tahu jenis jawaban yang
+// diharapkan begitu form dibuka — tanpa perlu baca penjelasan terpisah.
+//
+// 🌟 Update tabel "Analisa" (bagian 7): dulu diisi MANUAL (user ngetik
+// ulang ringkasan), sekarang tabel ini OTOMATIS terisi dari kolom
+// "Faktor" pada tabel 1–6 di atasnya. Tiap kali user mengetik/menambah/
+// menghapus baris di salah satu tabel Faktor, event 'struktur:rows-changed'
+// dipancarkan lewat document, dan tabel Analisa mendengarkan event itu
+// untuk langsung merender ulang isinya — tanpa reload halaman. Textarea
+// di tabel Analisa dibuat readonly karena isinya sekarang turunan
+// (derived), bukan data yang diketik langsung di situ.
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -40,34 +54,101 @@ document.addEventListener('DOMContentLoaded', () => {
   // BAGIAN A — Tabel 2 kolom (No | Faktor | Penjelasan)
   // Dipakai untuk 6 kategori: Keterampilan, Sarana, Modal,
   // Lingkungan Alam, Pasar, Sosial & Prasarana
+  //
+  // 🌟 extPlaceholder / intPlaceholder = contoh konkret yang otomatis
+  // tampil di kolom "Faktor" dan "Penjelasan" sebelum pengguna mengetik.
+  //
+  // 🌟 storageKey di sini JUGA dipakai sebagai kunci pemetaan ke tabel
+  // Analisa di bagian bawah (lihat ANALISA_COLUMNS_A / _B) — jangan
+  // ubah storageKey tanpa menyesuaikan pemetaan itu juga.
   // ==========================================================
   const twoColTables = [
     // ---- 1. Keterampilan (hijau) ----
-    { containerId: 'struktur-keterampilan-sudah-wrap', storageKey: 'struktur-keterampilan-sudah', theme: 'green', colLabel: 'Faktor Keterampilan yang Sudah Dimiliki' },
-    { containerId: 'struktur-keterampilan-akan-wrap', storageKey: 'struktur-keterampilan-akan', theme: 'green', colLabel: 'Faktor Keterampilan yang Akan Dimiliki' },
+    {
+      containerId: 'struktur-keterampilan-sudah-wrap', storageKey: 'struktur-keterampilan-sudah', theme: 'green',
+      colLabel: 'Faktor Keterampilan yang Sudah Dimiliki',
+      extPlaceholder: 'Contoh: Menjahit, Mengelas, Bertani Organik, Memasak...',
+      intPlaceholder: 'Contoh: Sudah dikuasai sejak 2 tahun lalu dan terbiasa dipakai membantu usaha keluarga.'
+    },
+    {
+      containerId: 'struktur-keterampilan-akan-wrap', storageKey: 'struktur-keterampilan-akan', theme: 'green',
+      colLabel: 'Faktor Keterampilan yang Akan Dimiliki',
+      extPlaceholder: 'Contoh: Pemasaran Digital, Akuntansi Dasar, Manajemen Stok...',
+      intPlaceholder: 'Contoh: Akan dipelajari lewat pelatihan online sebelum kembali ke Indonesia.'
+    },
 
     // ---- 2. Sarana (hijau) ----
-    { containerId: 'struktur-sarana-sudah-wrap', storageKey: 'struktur-sarana-sudah', theme: 'green', colLabel: 'Faktor Sarana yang Sudah Dimiliki' },
-    { containerId: 'struktur-sarana-akan-wrap', storageKey: 'struktur-sarana-akan', theme: 'green', colLabel: 'Faktor Sarana yang Akan Dimiliki' },
+    {
+      containerId: 'struktur-sarana-sudah-wrap', storageKey: 'struktur-sarana-sudah', theme: 'green',
+      colLabel: 'Faktor Sarana yang Sudah Dimiliki',
+      extPlaceholder: 'Contoh: Traktor Tangan, Mesin Jahit, Lahan Sawah...',
+      intPlaceholder: 'Contoh: Dibeli tahun 2023, kondisi masih layak pakai.'
+    },
+    {
+      containerId: 'struktur-sarana-akan-wrap', storageKey: 'struktur-sarana-akan', theme: 'green',
+      colLabel: 'Faktor Sarana yang Akan Dimiliki',
+      extPlaceholder: 'Contoh: Cold Storage, Kendaraan Pengangkut, Gudang...',
+      intPlaceholder: 'Contoh: Akan dibeli dari hasil tabungan magang setelah kembali.'
+    },
 
     // ---- 3. Modal (hijau) ----
-    { containerId: 'struktur-modal-sekarang-wrap', storageKey: 'struktur-modal-sekarang', theme: 'green', colLabel: 'Faktor Modal yang Dapat Diakses Sekarang' },
-    { containerId: 'struktur-modal-akan-wrap', storageKey: 'struktur-modal-akan', theme: 'green', colLabel: 'Faktor Modal yang Akan Dapat Diakses' },
+    {
+      containerId: 'struktur-modal-sekarang-wrap', storageKey: 'struktur-modal-sekarang', theme: 'green',
+      colLabel: 'Faktor Modal yang Dapat Diakses Sekarang',
+      extPlaceholder: 'Contoh: Tabungan Pribadi, Modal dari Keluarga...',
+      intPlaceholder: 'Contoh: Rp 20.000.000 dari hasil menabung selama magang.'
+    },
+    {
+      containerId: 'struktur-modal-akan-wrap', storageKey: 'struktur-modal-akan', theme: 'green',
+      colLabel: 'Faktor Modal yang Akan Dapat Diakses',
+      extPlaceholder: 'Contoh: Pinjaman KUR, Investor, Koperasi Desa...',
+      intPlaceholder: 'Contoh: Akan diajukan setelah usaha berjalan stabil ± 6 bulan.'
+    },
 
     // ---- 4. Lingkungan Alam (oranye) ----
-    { containerId: 'struktur-alam-kelebihan-wrap', storageKey: 'struktur-alam-kelebihan', theme: 'orange', colLabel: 'Faktor Lingkungan Alam: Kelebihan' },
-    { containerId: 'struktur-alam-kelemahan-wrap', storageKey: 'struktur-alam-kelemahan', theme: 'orange', colLabel: 'Faktor Lingkungan Alam: Kelemahan' },
+    {
+      containerId: 'struktur-alam-kelebihan-wrap', storageKey: 'struktur-alam-kelebihan', theme: 'orange',
+      colLabel: 'Faktor Lingkungan Alam: Kelebihan',
+      extPlaceholder: 'Contoh: Tanah Subur, Sumber Air Melimpah, Iklim Sejuk...',
+      intPlaceholder: 'Contoh: Curah hujan stabil sepanjang tahun sehingga cocok untuk pertanian.'
+    },
+    {
+      containerId: 'struktur-alam-kelemahan-wrap', storageKey: 'struktur-alam-kelemahan', theme: 'orange',
+      colLabel: 'Faktor Lingkungan Alam: Kelemahan',
+      extPlaceholder: 'Contoh: Rawan Banjir, Cuaca Ekstrem, Tanah Kering...',
+      intPlaceholder: 'Contoh: Sering terjadi kekeringan panjang saat musim kemarau.'
+    },
 
     // ---- 5. Pasar (oranye) ----
-    { containerId: 'struktur-pasar-kelebihan-wrap', storageKey: 'struktur-pasar-kelebihan', theme: 'orange', colLabel: 'Faktor Pasar: Kelebihan' },
-    { containerId: 'struktur-pasar-kelemahan-wrap', storageKey: 'struktur-pasar-kelemahan', theme: 'orange', colLabel: 'Faktor Pasar: Kelemahan' },
+    {
+      containerId: 'struktur-pasar-kelebihan-wrap', storageKey: 'struktur-pasar-kelebihan', theme: 'orange',
+      colLabel: 'Faktor Pasar: Kelebihan',
+      extPlaceholder: 'Contoh: Permintaan Tinggi, Harga Jual Stabil...',
+      intPlaceholder: 'Contoh: Dekat dengan pasar tradisional dan pusat perbelanjaan.'
+    },
+    {
+      containerId: 'struktur-pasar-kelemahan-wrap', storageKey: 'struktur-pasar-kelemahan', theme: 'orange',
+      colLabel: 'Faktor Pasar: Kelemahan',
+      extPlaceholder: 'Contoh: Persaingan Ketat, Harga Fluktuatif...',
+      intPlaceholder: 'Contoh: Banyak pesaing menjual produk sejenis di area yang sama.'
+    },
 
     // ---- 6. Sosial & Prasarana (oranye) ----
-    { containerId: 'struktur-sosial-kelebihan-wrap', storageKey: 'struktur-sosial-kelebihan', theme: 'orange', colLabel: 'Faktor Sosial & Prasarana: Kelebihan' },
-    { containerId: 'struktur-sosial-kelemahan-wrap', storageKey: 'struktur-sosial-kelemahan', theme: 'orange', colLabel: 'Faktor Sosial & Prasarana: Kelemahan' }
+    {
+      containerId: 'struktur-sosial-kelebihan-wrap', storageKey: 'struktur-sosial-kelebihan', theme: 'orange',
+      colLabel: 'Faktor Sosial & Prasarana: Kelebihan',
+      extPlaceholder: 'Contoh: Akses Jalan Baik, Dukungan Warga Sekitar...',
+      intPlaceholder: 'Contoh: Jalan desa sudah diaspal sehingga distribusi lebih mudah.'
+    },
+    {
+      containerId: 'struktur-sosial-kelemahan-wrap', storageKey: 'struktur-sosial-kelemahan', theme: 'orange',
+      colLabel: 'Faktor Sosial & Prasarana: Kelemahan',
+      extPlaceholder: 'Contoh: Listrik Sering Padam, Jalan Rusak, Sinyal Lemah...',
+      intPlaceholder: 'Contoh: Sinyal internet lemah sehingga menyulitkan pemasaran online.'
+    }
   ];
 
-  function createTwoColTable({ containerId, storageKey, theme, colLabel }) {
+  function createTwoColTable({ containerId, storageKey, theme, colLabel, extPlaceholder, intPlaceholder }) {
 
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -105,8 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = container.querySelector('.struktur-tbody');
     const btnAddRow = container.querySelector('.btn-add-row');
 
+    // 🌟 Setiap kali data tabel Faktor ini berubah (ketik/tambah/hapus
+    // baris), simpan ke localStorage LALU beri tahu bagian lain halaman
+    // (khususnya tabel Analisa di bagian 7) lewat custom event, supaya
+    // ringkasan otomatis di Analisa ikut ter-update tanpa reload.
     function saveRows() {
       localStorage.setItem(dataKey, JSON.stringify(rows));
+      document.dispatchEvent(new CustomEvent('struktur:rows-changed', { detail: { storageKey } }));
     }
 
     function renderRows() {
@@ -117,10 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 🌟 data-label pada td dipakai CSS untuk mode kartu di HP.
         // Sel nomor sengaja TIDAK diberi data-label (jadi badge bulat polos).
+        // 🌟 placeholder textarea sekarang berisi CONTOH konkret (bukan
+        // instruksi generik), muncul otomatis selama sel masih kosong.
         tr.innerHTML = `
           <td class="no-cell">${index + 1}</td>
-          <td data-label="${colLabel}"><textarea class="struktur-input ext-input" placeholder="Tuliskan faktornya...">${rowData.ext || ''}</textarea></td>
-          <td data-label="Penjelasan"><textarea class="struktur-input int-input" placeholder="Tuliskan penjelasan...">${rowData.int || ''}</textarea></td>
+          <td data-label="${colLabel}"><textarea class="struktur-input ext-input" placeholder="${extPlaceholder}">${rowData.ext || ''}</textarea></td>
+          <td data-label="Penjelasan"><textarea class="struktur-input int-input" placeholder="${intPlaceholder}">${rowData.int || ''}</textarea></td>
           <td class="action-cell">
             ${rows.length > 1 ? `<button type="button" class="btn-remove-row" title="Hapus baris"><i class="fa-solid fa-trash"></i> <span class="btn-remove-text">Hapus Baris</span></button>` : ''}
           </td>
@@ -176,44 +264,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ==========================================================
   // BAGIAN B — Tabel "Analisa" (6 kolom gabungan)
+  //
+  // 🌟 Sekarang tabel ini TIDAK diisi manual lagi. Tiap kolom memetakan
+  // ke salah satu tabel Faktor di bagian 1–6 (lewat storageKey yang
+  // sama persis dengan yang dipakai di twoColTables di atas), dan
+  // isinya diambil otomatis dari kolom "Faktor" (bukan "Penjelasan")
+  // tabel sumber tsb — digabung jadi daftar bertanda "•" per baris.
   // ==========================================================
   function createAnalisaTable() {
 
     const container = document.getElementById('struktur-analisa-wrap');
     if (!container) return;
 
-    const keyA = `${PAGE_KEY}-struktur-analisa-a-rows`;
-    const keyB = `${PAGE_KEY}-struktur-analisa-b-rows`;
-
-    const emptyRow = () => ({ c1: '', c2: '', c3: '', c4: '', c5: '', c6: '' });
-
-    let rowsA = JSON.parse(localStorage.getItem(keyA) || 'null') || [emptyRow()];
-    let rowsB = JSON.parse(localStorage.getItem(keyB) || 'null') || [emptyRow()];
-    if (rowsA.length < 1) rowsA = [emptyRow()];
-    if (rowsB.length < 1) rowsB = [emptyRow()];
-
-    // Label per kolom untuk masing-masing grup (dipakai sbg data-label di
-    // mode kartu mobile, harus sesuai persis dengan header tabel desktop).
-    const labelsA = [
-      'Keterampilan yang Sudah Dimiliki',
-      'Sarana yang Sudah Dimiliki',
-      'Modal yang Sudah Dimiliki',
-      'Lingkungan Alam: Kelebihan',
-      'Pasar: Kelebihan',
-      'Sosial & Prasarana: Kelebihan'
+    // Grup A = sisi "Sudah Dimiliki / Kelebihan" (baris atas tiap kategori)
+    const ANALISA_COLUMNS_A = [
+      { storageKey: 'struktur-keterampilan-sudah', label: 'Keterampilan yang Sudah Dimiliki', theme: 'theme-green' },
+      { storageKey: 'struktur-sarana-sudah', label: 'Sarana yang Sudah Dimiliki', theme: 'theme-green' },
+      { storageKey: 'struktur-modal-sekarang', label: 'Modal yang Sudah Dimiliki', theme: 'theme-green' },
+      { storageKey: 'struktur-alam-kelebihan', label: 'Lingkungan Alam: Kelebihan', theme: 'theme-orange' },
+      { storageKey: 'struktur-pasar-kelebihan', label: 'Pasar: Kelebihan', theme: 'theme-orange' },
+      { storageKey: 'struktur-sosial-kelebihan', label: 'Sosial & Prasarana: Kelebihan', theme: 'theme-orange' }
     ];
-    const labelsB = [
-      'Keterampilan yang Akan Dimiliki',
-      'Sarana yang Akan Dimiliki',
-      'Modal yang Akan Dapat Diakses',
-      'Lingkungan Alam: Kelemahan',
-      'Pasar: Kelemahan',
-      'Sosial & Prasarana: Kelemahan'
+
+    // Grup B = sisi "Akan Dimiliki / Kelemahan" (baris bawah tiap kategori)
+    const ANALISA_COLUMNS_B = [
+      { storageKey: 'struktur-keterampilan-akan', label: 'Keterampilan yang Akan Dimiliki', theme: 'theme-green' },
+      { storageKey: 'struktur-sarana-akan', label: 'Sarana yang Akan Dimiliki', theme: 'theme-green' },
+      { storageKey: 'struktur-modal-akan', label: 'Modal yang Akan Dapat Diakses', theme: 'theme-green' },
+      { storageKey: 'struktur-alam-kelemahan', label: 'Lingkungan Alam: Kelemahan', theme: 'theme-orange' },
+      { storageKey: 'struktur-pasar-kelemahan', label: 'Pasar: Kelemahan', theme: 'theme-orange' },
+      { storageKey: 'struktur-sosial-kelemahan', label: 'Sosial & Prasarana: Kelemahan', theme: 'theme-orange' }
     ];
 
     container.innerHTML = `
       <div class="analisa-table-wrapper">
         <div class="analisa-title-bar">Struktur Bisnis Anda</div>
+        <p class="analisa-auto-note">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          Kolom di bawah ini terisi otomatis dari kolom "Faktor" pada tabel 1–6 di atas.
+        </p>
 
         <div class="analisa-group-bar">
           <div class="analisa-group-cell group-internal">Internal</div>
@@ -224,112 +313,81 @@ document.addEventListener('DOMContentLoaded', () => {
           <table class="analisa-table">
             <thead>
               <tr class="head-a">
-                <th class="theme-green">Keterampilan yang Sudah Dimiliki</th>
-                <th class="theme-green">Sarana yang Sudah Dimiliki</th>
-                <th class="theme-green">Modal yang Sudah Dimiliki</th>
-                <th class="theme-orange">Lingkungan Alam: Kelebihan</th>
-                <th class="theme-orange">Pasar: Kelebihan</th>
-                <th class="theme-orange">Sosial & Prasarana: Kelebihan</th>
-                <th class="action-col"></th>
+                ${ANALISA_COLUMNS_A.map(c => `<th class="${c.theme}">${c.label}</th>`).join('')}
               </tr>
             </thead>
             <tbody class="analisa-tbody-a"></tbody>
           </table>
-        </div>
-        <div class="button-row">
-          <button type="button" class="btn-add btn-add-analisa-a">
-            <i class="fa-solid fa-plus"></i> Tambah Baris
-          </button>
         </div>
 
         <div class="analisa-scroll mt-16">
           <table class="analisa-table">
             <thead>
               <tr class="head-b">
-                <th class="theme-green">Keterampilan yang Akan Dimiliki</th>
-                <th class="theme-green">Sarana yang Akan Dimiliki</th>
-                <th class="theme-green">Modal yang Akan Dapat Diakses</th>
-                <th class="theme-orange">Lingkungan Alam: Kelemahan</th>
-                <th class="theme-orange">Pasar: Kelemahan</th>
-                <th class="theme-orange">Sosial & Prasarana: Kelemahan</th>
-                <th class="action-col"></th>
+                ${ANALISA_COLUMNS_B.map(c => `<th class="${c.theme}">${c.label}</th>`).join('')}
               </tr>
             </thead>
             <tbody class="analisa-tbody-b"></tbody>
           </table>
-        </div>
-        <div class="button-row">
-          <button type="button" class="btn-add btn-add-analisa-b">
-            <i class="fa-solid fa-plus"></i> Tambah Baris
-          </button>
         </div>
       </div>
     `;
 
     const tbodyA = container.querySelector('.analisa-tbody-a');
     const tbodyB = container.querySelector('.analisa-tbody-b');
-    const btnAddA = container.querySelector('.btn-add-analisa-a');
-    const btnAddB = container.querySelector('.btn-add-analisa-b');
 
-    function saveA() { localStorage.setItem(keyA, JSON.stringify(rowsA)); }
-    function saveB() { localStorage.setItem(keyB, JSON.stringify(rowsB)); }
+    // Ambil daftar isian kolom "Faktor" (ext) yang tidak kosong dari
+    // tabel sumber tertentu, langsung dari localStorage (sumber
+    // kebenarannya sama dengan yang dipakai createTwoColTable di atas).
+    function getFactorList(storageKey) {
+      const dataKey = `${PAGE_KEY}-${storageKey}-rows`;
+      let rows = [];
+      try {
+        rows = JSON.parse(localStorage.getItem(dataKey) || '[]');
+        if (!Array.isArray(rows)) rows = [];
+      } catch (e) {
+        rows = [];
+      }
+      return rows
+        .map(row => (row.ext || '').trim())
+        .filter(text => text !== '');
+    }
 
-    function renderGroup(tbody, rows, saveFn, labels) {
+    function renderGroup(tbody, columns) {
       tbody.innerHTML = '';
+      const tr = document.createElement('tr');
 
-      rows.forEach((rowData, index) => {
-        const tr = document.createElement('tr');
+      tr.innerHTML = columns.map(c => `
+        <td data-label="${c.label}">
+          <textarea
+            class="analisa-input analisa-input-auto"
+            data-source="${c.storageKey}"
+            readonly
+            placeholder="Otomatis muncul di sini setelah kolom Faktor pada tabel di atas diisi..."
+          ></textarea>
+        </td>
+      `).join('');
 
-        const keys = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
-        const cellsHtml = keys.map((key, i) => `
-          <td data-label="${labels[i]}"><textarea class="analisa-input" data-key="${key}" placeholder="...">${rowData[key] || ''}</textarea></td>
-        `).join('');
+      tbody.appendChild(tr);
 
-        tr.innerHTML = `
-          ${cellsHtml}
-          <td class="action-cell">
-            ${rows.length > 1 ? `<button type="button" class="btn-remove-row" title="Hapus baris"><i class="fa-solid fa-trash"></i> <span class="btn-remove-text">Hapus Baris</span></button>` : ''}
-          </td>
-        `;
-
-        tr.querySelectorAll('.analisa-input').forEach(input => {
-          autoResize(input);
-          input.addEventListener('input', () => {
-            rowData[input.dataset.key] = input.value;
-            autoResize(input);
-            saveFn();
-          });
-        });
-
-        const btnRemove = tr.querySelector('.btn-remove-row');
-        if (btnRemove) {
-          btnRemove.addEventListener('click', () => {
-            rows.splice(index, 1);
-            saveFn();
-            renderGroup(tbody, rows, saveFn, labels);
-          });
-        }
-
-        tbody.appendChild(tr);
+      columns.forEach(c => {
+        const textarea = tr.querySelector(`textarea[data-source="${c.storageKey}"]`);
+        const items = getFactorList(c.storageKey);
+        textarea.value = items.map(item => `• ${item}`).join('\n');
+        autoResize(textarea);
       });
     }
 
-    btnAddA.addEventListener('click', () => {
-      rowsA.push(emptyRow());
-      saveA();
-      renderGroup(tbodyA, rowsA, saveA, labelsA);
-    });
+    function renderAll() {
+      renderGroup(tbodyA, ANALISA_COLUMNS_A);
+      renderGroup(tbodyB, ANALISA_COLUMNS_B);
+    }
 
-    btnAddB.addEventListener('click', () => {
-      rowsB.push(emptyRow());
-      saveB();
-      renderGroup(tbodyB, rowsB, saveB, labelsB);
-    });
+    renderAll();
 
-    renderGroup(tbodyA, rowsA, saveA, labelsA);
-    renderGroup(tbodyB, rowsB, saveB, labelsB);
-    saveA();
-    saveB();
+    // 🌟 Render ulang setiap kali salah satu tabel Faktor di atas
+    // berubah (event dipancarkan dari saveRows() di createTwoColTable).
+    document.addEventListener('struktur:rows-changed', renderAll);
   }
 
   createAnalisaTable();

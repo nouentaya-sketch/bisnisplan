@@ -31,14 +31,20 @@ document.addEventListener('DOMContentLoaded', () => {
     modal: 'Faktor Modal yang Diperlukan'
   };
 
-  // Rentang sumbu tetap per kategori, disesuaikan dengan contoh grafik.
-  // PENTING: kalau kamu mengisi angka Efisiensi/Kesulitan di luar rentang
-  // ini, titiknya TIDAK akan kelihatan (sengaja dipatok, bukan auto-scale).
-  // Sesuaikan angka min/max di bawah ini kalau butuh rentang yang lebih lebar.
+  // 🌟 Batas nilai Efisiensi & Kesulitan — HARUS sinkron dengan hint di
+  // step8.html ("Tinggi: 0–5 · Rendah: -5–0" / "Mudah: 0–5 · Sulit: -5–0").
+  // Dipakai baik untuk clamp input maupun untuk rentang sumbu grafik,
+  // supaya tidak ada titik yang "hilang" karena kepotong skala.
+  const SCORE_MIN = -5;
+  const SCORE_MAX = 5;
+
+  // 🌟 Rentang sumbu sekarang seragam -5..5 untuk semua kategori (dulu
+  // beda-beda per kategori dan tidak sinkron dengan hint di HTML, jadi
+  // titik yang diisi user di ujung rentang bisa terpotong dari grafik).
   const CHART_AXIS_RANGES = {
-    keterampilan: { xMin: 0, xMax: 6, yMin: -2, yMax: 5 },
-    sarana: { xMin: 0, xMax: 6, yMin: 0, yMax: 6 },
-    modal: { xMin: 0, xMax: 6, yMin: -3, yMax: 4 }
+    keterampilan: { xMin: SCORE_MIN, xMax: SCORE_MAX, yMin: SCORE_MIN, yMax: SCORE_MAX },
+    sarana: { xMin: SCORE_MIN, xMax: SCORE_MAX, yMin: SCORE_MIN, yMax: SCORE_MAX },
+    modal: { xMin: SCORE_MIN, xMax: SCORE_MAX, yMin: SCORE_MIN, yMax: SCORE_MAX }
   };
 
   // Daftarkan plugin datalabels sekali di awal (kalau library-nya ke-load)
@@ -75,6 +81,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // 🌟 Kunci angka Efisiensi/Kesulitan ke rentang SCORE_MIN..SCORE_MAX.
+  // Dipanggil setiap kali user mengetik di kolom input number, supaya
+  // "min"/"max" di HTML (yang tidak mengunci ketikan manual) benar-benar
+  // ditegakkan di JS.
+  function clampScoreInput(input) {
+    if (input.value === '' || input.value === '-') return; // biarkan user masih mengetik
+    let num = parseFloat(input.value);
+    if (isNaN(num)) return;
+    if (num > SCORE_MAX) num = SCORE_MAX;
+    if (num < SCORE_MIN) num = SCORE_MIN;
+    if (String(num) !== input.value) input.value = num;
+  }
+
   // ==========================================
   // 2. Setup tiap section Payoff Matrix
   //    (Keterampilan / Sarana / Modal)
@@ -88,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!tbody || !addBtn || !canvas) return;
 
-    const axisRange = CHART_AXIS_RANGES[category] || { xMin: 0, xMax: 6, yMin: -5, yMax: 5 };
+    const axisRange = CHART_AXIS_RANGES[category] || { xMin: SCORE_MIN, xMax: SCORE_MAX, yMin: SCORE_MIN, yMax: SCORE_MAX };
     const factorColLabel = FACTOR_COL_LABELS[category] || 'Faktor';
     const rs = getChartResponsiveSettings();
 
@@ -181,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
       );
 
       chart.data.datasets[0].data = validItems.map(item => ({
-        x: parseFloat(item.efisiensi) || 0,
-        y: parseFloat(item.kesulitan) || 0
+        x: Math.min(SCORE_MAX, Math.max(SCORE_MIN, parseFloat(item.efisiensi) || 0)),
+        y: Math.min(SCORE_MAX, Math.max(SCORE_MIN, parseFloat(item.kesulitan) || 0))
       }));
       chart.data.datasets[0].itemLabels = validItems.map(item => item.name);
 
@@ -203,8 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
       tr.innerHTML = `
         <td class="no-cell font-center">1</td>
         <td data-label="${factorColLabel}"><input type="text" class="factor-name" placeholder="Nama faktor..." value="${name}"></td>
-        <td data-label="Efisiensi"><input type="number" class="efisiensi-input font-center" min="-5" max="5" step="1" placeholder="0" value="${efisiensi}"></td>
-        <td data-label="Kesulitan"><input type="number" class="kesulitan-input font-center" min="-5" max="5" step="1" placeholder="0" value="${kesulitan}"></td>
+        <td data-label="Efisiensi"><input type="number" class="efisiensi-input font-center" min="${SCORE_MIN}" max="${SCORE_MAX}" step="1" placeholder="0" value="${efisiensi}"></td>
+        <td data-label="Kesulitan"><input type="number" class="kesulitan-input font-center" min="${SCORE_MIN}" max="${SCORE_MAX}" step="1" placeholder="0" value="${kesulitan}"></td>
         <td class="font-center action-cell">
           ${isFirst ? '' : '<button type="button" class="btn-delete-payoff-row"><i class="fa-solid fa-trash-can"></i> <span class="btn-delete-text">Hapus Baris</span></button>'}
         </td>
@@ -212,9 +231,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
       tbody.appendChild(tr);
 
-      tr.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', updateChartAndSave);
+      const efisiensiInput = tr.querySelector('.efisiensi-input');
+      const kesulitanInput = tr.querySelector('.kesulitan-input');
+
+      // 🌟 Clamp khusus untuk kolom skor (Efisiensi & Kesulitan) — dipanggil
+      // SEBELUM updateChartAndSave supaya nilai yang tersimpan & tergambar
+      // di grafik sudah pasti berada di rentang -5..5.
+      [efisiensiInput, kesulitanInput].forEach(input => {
+        input.addEventListener('input', () => {
+          clampScoreInput(input);
+          updateChartAndSave();
+        });
+        // Jaga-jaga: kalau user paste angka di luar rentang lalu klik
+        // keluar (blur) tanpa memicu event 'input' tambahan.
+        input.addEventListener('blur', () => {
+          clampScoreInput(input);
+          updateChartAndSave();
+        });
       });
+
+      tr.querySelector('.factor-name').addEventListener('input', updateChartAndSave);
 
       const deleteBtn = tr.querySelector('.btn-delete-payoff-row');
       if (deleteBtn) {

@@ -158,7 +158,7 @@
   box-shadow: inset 0 0 0 2px #2563eb;
 }
 
-/* ---------- Kolom aksi (hapus baris) ---------- */
+/* ---------- Kolom aksi (hapus baris) — dipakai tabel Faktor 1–6 ---------- */
 .action-cell {
   text-align: center;
   vertical-align: middle !important;
@@ -218,6 +218,9 @@
 
 /* ==========================================
    Tabel "Analisa" (7. Struktur Bisnis Anda)
+   🌟 Sekarang tabel ini otomatis terisi dari tabel Faktor 1–6 di atas
+   (lihat step6.js) — tidak ada lagi tombol tambah/hapus baris di sini,
+   karena isinya adalah ringkasan turunan (derived), bukan input manual.
    ========================================== */
 
 .analisa-table-wrapper {
@@ -233,6 +236,25 @@
   font-weight: 700;
   font-size: 0.95rem;
   padding: 12px 16px;
+}
+
+/* 🌟 Catatan kecil di bawah judul, menjelaskan bahwa kolom di bawah
+   ini otomatis, supaya user tidak bingung kenapa tidak bisa diketik. */
+.analisa-auto-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 16px;
+  background: #fffbeb;
+  border-bottom: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.analisa-auto-note i {
+  flex: none;
 }
 
 .analisa-group-bar {
@@ -286,11 +308,6 @@
   color: #4a2c00;
 }
 
-.analisa-table thead th.action-col {
-  width: 44px;
-  background: #f9fafb;
-}
-
 .analisa-table td {
   border-bottom: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
@@ -323,6 +340,24 @@
 .analisa-tbody-b td:nth-child(5),
 .analisa-tbody-b td:nth-child(6) {
   background: #fef6ee;
+}
+
+/* 🌟 Textarea auto-fill (readonly) di tabel Analisa: kursor default
+   (bukan kursor teks) dan tanpa highlight fokus biru, supaya terlihat
+   jelas beda dari textarea yang bisa diketik di tabel Faktor 1–6. */
+.analisa-input-auto {
+  cursor: default;
+  min-height: 60px;
+}
+
+.analisa-input-auto:focus {
+  background: transparent;
+  box-shadow: none;
+}
+
+.analisa-input-auto::placeholder {
+  color: #9ca3af;
+  font-style: italic;
 }
 
 /* ==========================================================
@@ -426,7 +461,7 @@
   }
 
   /* ---------------------------------------------------
-     2) Tabel Analisa (6 kolom gabungan)
+     2) Tabel Analisa (6 kolom gabungan, otomatis)
      --------------------------------------------------- */
   .analisa-group-bar {
     font-size: 0.8rem;
@@ -468,34 +503,14 @@
     background: #ffffff !important;
   }
 
-  .analisa-table tbody {
-    counter-reset: analisaRow;
-  }
-
   .analisa-table tbody tr {
-    counter-increment: analisaRow;
     position: relative;
-    padding: 40px 14px 14px;
+    padding: 14px 14px;
     border-bottom: 10px solid #f8fafc;
   }
 
   .analisa-table tbody tr:last-child {
     border-bottom: none;
-  }
-
-  /* Penanda "Baris N" sebagai judul kartu, karena tabel ini tidak
-     punya kolom No seperti tabel 2 kolom di atas */
-  .analisa-table tbody tr::before {
-    content: "Baris " counter(analisaRow);
-    position: absolute;
-    top: 12px;
-    left: 14px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #ffffff;
-    background: #1f2937;
-    padding: 3px 10px;
-    border-radius: 999px;
   }
 
   .analisa-table td {
@@ -543,23 +558,8 @@
     box-shadow: 0 0 0 2px #2563eb;
   }
 
-  .analisa-table .action-cell {
-    width: 100%;
-    text-align: left;
-    padding-top: 6px !important;
-  }
-
-  .analisa-table .btn-remove-row {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .analisa-table .btn-remove-text {
-    display: inline;
+  .analisa-input-auto:focus {
+    box-shadow: none;
   }
 
   /* ---------------------------------------------------
@@ -584,7 +584,7 @@
   }
 
   .analisa-table tbody tr {
-    padding: 38px 10px 12px;
+    padding: 12px 10px;
   }
 
   .finance-block {
