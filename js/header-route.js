@@ -13,6 +13,8 @@ const STEP_TITLES = {
   "4-2": "Tahap 4-2 : Struktur Modal & Aset",
   "4-3": "Tahap 4-3 : Kalender Bisnis",
   5: "Tahap 5 : Hasil Riset Bisnis Superstar",
+  "5-1": "Tahap 5-1 : Analisis Bisnis Superstar",
+  "5-2": "Tahap 5-2 : Analisis Keuangan Bisnis Superstar",
   6: "Tahap 6 : Struktur Bisnis",
   7: "Tahap 7 : Analisa SWOT",
   8: "Tahap 8 : Payoff Matriks Bisnis Plan",
@@ -656,6 +658,71 @@ function exportPageToPDF() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+  });
+
+})();
+
+// ==========================================
+// 9. 🌟 Sinkronisasi "Nama Lengkap" antar semua 10 Tahap
+// ==========================================
+// Selama ini tiap halaman menyimpan Nama Lengkap ke key localStorage yang
+// beda-beda per halaman (mis. "step5-nama-lengkap", "step6-nama-lengkap"),
+// jadi nama yang sudah diisi di satu tahap tidak otomatis muncul di tahap
+// lain. Script ini menambahkan satu key BERSAMA ("global-nama-lengkap")
+// yang disinkronkan ke/dari field Nama Lengkap di halaman manapun:
+//   - Saat halaman dibuka: kalau field Nama Lengkap di halaman ini masih
+//     kosong tapi sudah ada nama tersimpan dari tahap lain, otomatis diisi.
+//   - Saat user mengetik di field ini: nama barunya langsung disebar ke
+//     key bersama, supaya tahap-tahap lain ikut ter-update juga.
+//
+// Dipasang lewat event "load" (bukan "DOMContentLoaded") supaya berjalan
+// SETELAH script masing-masing tahap (stepX.js) selesai memuat data
+// tersimpan miliknya sendiri — jadi tidak saling menimpa.
+(function () {
+
+  const GLOBAL_NAME_KEY = 'global-nama-lengkap';
+
+  // Cari field "Nama Lengkap" di halaman ini, dengan beberapa kemungkinan
+  // id yang dipakai di berbagai tahap, plus fallback lewat teks label
+  // untuk jaga-jaga kalau ada tahap dengan id yang belum terdaftar.
+  function findNamaLengkapFields() {
+    const found = new Set();
+
+    ['nama-lengkap', 'name', 'nama_lengkap', 'namaLengkap'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) found.add(el);
+    });
+
+    document.querySelectorAll('label').forEach(label => {
+      if (!/nama\s*lengkap/i.test(label.textContent || '')) return;
+      const forId = label.getAttribute('for');
+      const input = forId ? document.getElementById(forId) : label.querySelector('input, textarea');
+      if (input) found.add(input);
+    });
+
+    return Array.from(found);
+  }
+
+  window.addEventListener('load', () => {
+    const fields = findNamaLengkapFields();
+    if (fields.length === 0) return;
+
+    const globalValue = localStorage.getItem(GLOBAL_NAME_KEY);
+
+    fields.forEach(field => {
+      // Isi otomatis kalau field ini kosong tapi nama global sudah ada
+      if (globalValue && !field.value) {
+        field.value = globalValue;
+        // Trigger "input" supaya autosave milik stepX.js (kalau ada)
+        // ikut menyimpan nilai ini ke key khusus halaman itu juga.
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      // Setiap kali diketik di field manapun, sebar ke key bersama
+      field.addEventListener('input', () => {
+        localStorage.setItem(GLOBAL_NAME_KEY, field.value);
+      });
+    });
   });
 
 })();

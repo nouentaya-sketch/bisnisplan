@@ -1,4 +1,7 @@
 // js/step5.js
+// Dipakai bersama oleh step5-1.html dan step5-2.html
+// (setiap halaman cuma punya sebagian .dynamic-group / .dynamic-finance-group,
+// jadi querySelectorAll di bawah otomatis hanya memproses yang ada di halaman itu)
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -119,12 +122,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const qtyEl = row.querySelector('.item-qty');
           const unitEl = row.querySelector('.item-unit');
           const priceEl = row.querySelector('.item-price');
+          const subtotalEl = row.querySelector('.item-subtotal');
 
           const qty = Number(qtyEl ? qtyEl.value : 0) || 0;
           const unit = unitEl ? unitEl.value : '';
           const price = parseAngka(priceEl ? priceEl.value : 0);
 
-          total += qty * price;
+          // 🌟 Total per baris = Angka × Harga Satuan
+          const subtotal = qty * price;
+          if (subtotalEl) {
+            subtotalEl.innerText = 'Total: ' + formatRupiah(subtotal);
+          }
+
+          total += subtotal;
 
           saveData.push({ name, qty, unit, price });
 
@@ -154,6 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isKomoditas) {
 
+        const initialSubtotal = (Number(item.qty) || 0) * (parseAngka(item.price) || item.price || 0);
+
         row.innerHTML = `
           <input type="text" class="item-name flex-grow-2" placeholder="Sayur Sawi..." value="${item.name || ''}">
           <input type="number" class="item-qty flex-grow-1 input-calc" placeholder="0" value="${item.qty || ''}">
@@ -162,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>Rp</span>
             <input type="text" class="item-price currency-input input-calc" placeholder="Harga..." inputmode="numeric" value="${formatRibuan(item.price || '')}">
           </div>
+          <div class="item-subtotal flex-grow-1-5">Total: ${formatRupiah(initialSubtotal)}</div>
           ${isFirst ? '' : `<button type="button" class="btn-remove-row"><i class="fa-solid fa-trash"></i></button>`}
         `;
 

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahap 5-2 : Analisis Keuangan Bisnis Superstar</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step5.css">
+  <!-- 🌟 Responsive override, di-load PALING TERAKHIR supaya menang di layar HP -->
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body data-page="step5-2">
+
+  <!-- Header -->
+  <div id="header-container"></div>
+
+  <main class="main-container">
+    <section class="sheet-section">
+
+      <!-- ヘッダー説明文 -->
+      <div class="tab-header">
+        <h1>Tahap 5-2 : Analisis Keuangan Bisnis Superstar</h1>
+        <p>Lanjutan dari Tahap 5-1. Tuliskan data investasi, sumber dana, pendapatan, dan biaya bisnis dari Superstar untuk memperkirakan pendapatan bersihnya.</p>
+      </div>
+
+      <!-- プロフィール -->
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="nama-lengkap">
+            <i class="fa-solid fa-user"></i> Nama Lengkap
+          </label>
+          <input type="text" id="nama-lengkap" placeholder="Masukkan nama lengkap Anda " autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- PART 2: ANALISIS KEUANGAN (item 12-15) -->
+      <!-- ====================================================== -->
+
+      <!-- 12. Harga beli sarana -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="investasi">
+        <h3><i class="fa-solid fa-calculator icon-blue"></i> 12. Harga Beli Sarana & Barang Bisnis</h3>
+        <p class="field-desc">Nama sarana dan barang yang sudah diinvestasikan beserta harga belinya.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Nama barang (Misal: Traktor)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input input-calc" placeholder="Harga..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Total Investasi Sarana dan Barang Bisnis</span>
+          <span id="total-investasi">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 13. Sumber Dana -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="dana">
+        <h3><i class="fa-solid fa-piggy-bank icon-blue"></i> 13. Sumber Dana</h3>
+        <p class="field-desc">Dana yang akan dipakai baik dari hasil magang, tabungan maupun pinjaman.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Sumber dana (Misal: Hasil Magang)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input" placeholder="Nominal..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Sumber Dana</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Total Sumber Dana</span>
+          <span id="total-dana">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 14. Hasil Komoditas -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="komoditas">
+        <h3><i class="fa-solid fa-boxes-stacked icon-blue"></i> 14. Hasil Komoditas per Bulan (Pendapatan Kotor)</h3>
+        <p class="field-desc">Hasil yang diperoleh dari bisnis beserta besar pendapatannya.</p>
+
+        <div class="table-like-header">
+          <div class="flex-grow-2">Nama Komoditas / Layanan</div>
+          <div class="flex-grow-1">Angka</div>
+          <div class="flex-grow-1">Satuan</div>
+          <div class="flex-grow-1-5">Harga Satuan</div>
+          <div class="flex-grow-1-5">Total</div>
+        </div>
+
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Sayur Sawi...">
+            <input type="number" class="item-qty flex-grow-1 input-calc" placeholder="Jumlah">
+            <input type="text" class="item-unit flex-grow-1" placeholder="Satuan (kg)">
+            <div class="currency-wrapper flex-grow-1-5">
+              <span>Rp</span>
+              <input type="text" class="item-price currency-input input-calc" placeholder="Harga..." inputmode="numeric">
+            </div>
+            <!-- 🌟 Total per baris = Angka × Harga Satuan, dihitung otomatis oleh step5.js -->
+            <div class="item-subtotal flex-grow-1-5">Total: Rp 0</div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Komoditas</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Pendapatan dari Bisnis (Total per Bulan)</span>
+          <span id="total-pendapatan-kotor">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 15. Biaya Bisnis -->
+      <div class="finance-block dynamic-finance-group mt-25" data-group="biaya">
+        <h3><i class="fa-solid fa-file-invoice-dollar icon-blue"></i> 15. Biaya Bisnis / Bulan (Pengeluaran Operasional)</h3>
+        <p class="field-desc">Biaya rutin yang dikeluarkan dalam usaha tersebut setiap bulannya.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row flex-row-inputs">
+            <input type="text" class="item-name flex-grow-2" placeholder="Jenis biaya (Misal: Pupuk)...">
+            <div class="currency-wrapper">
+              <span>Rp</span>
+              <input type="text" class="item-amount currency-input input-calc" placeholder="Nominal..." inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="button-row mt-10">
+          <button type="button" class="btn-add"><i class="fa-solid fa-plus"></i> Tambah Biaya</button>
+        </div>
+        <div class="total-bar bg-red">
+          <span>Total Biaya Bisnis</span>
+          <span id="total-biaya">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- 最終純利益サマリー -->
+      <div class="finance-block final-profit-block mt-40">
+        <div class="flex-space-between">
+          <span class="final-title">
+            <i class="fa-solid fa-coins"></i> PENDAPATAN BERSIH / BULAN (Net Profit)
+          </span>
+          <span id="pendapatan-bersih-final" class="final-amount">Rp 0</span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div id="footer-container"></div>
+
+  <!-- JAVASCRIPT -->
+  <!-- 🌟 html2canvas WAJIB ada supaya PDF export (di header-route.js) menghasilkan
+       PDF ter-kompresi, bukan cuma fallback window.print() -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/header-route.js"></script>
+  <script src="js/step5.js"></script>
+</body>
+</html>

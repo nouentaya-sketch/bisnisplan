@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahap 5-1 : Analisis Bisnis Superstar</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/step5.css">
+  <!-- 🌟 Responsive override, di-load PALING TERAKHIR supaya menang di layar HP -->
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body data-page="step5-1">
+
+  <!-- Header -->
+  <div id="header-container"></div>
+
+  <main class="main-container">
+    <section class="sheet-section">
+
+      <!-- ヘッダー説明文 -->
+      <div class="tab-header">
+        <h1>Tahap 5-1 : Analisis Bisnis Superstar</h1>
+        <p>Tuliskan data riset pasar dan analisis bisnis yang diperoleh dari pengusaha yang menjadi contoh (Superstar). Bagian keuangan (investasi, sumber dana, dan pendapatan) dilanjutkan di Tahap 5-2.</p>
+      </div>
+
+      <!-- プロフィール -->
+      <div class="finance-block profile-block">
+        <div class="input-group">
+          <label for="nama-lengkap">
+            <i class="fa-solid fa-user"></i> Nama Lengkap
+          </label>
+          <input type="text" id="nama-lengkap" placeholder="Masukkan nama lengkap Anda " autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- PART 1: ANALISIS BISNIS (item 1-11) -->
+      <!-- ====================================================== -->
+
+      <div class="finance-block profile-block">
+        <h3><i class="fa-solid fa-store"></i> 1. Nama Superstar</h3>
+        <p class="field-desc">Nama Superstar.</p>
+        <input type="text" id="superstar-name" placeholder="Masukkan nama superstar...">
+      </div>
+
+      <div class="finance-block profile-block">
+        <h3><i class="fa-solid fa-store icon-blue"></i> 2. Nama Bisnis Superstar</h3>
+        <p class="field-desc">Nama bisnis yang menjadi contoh bagi usaha anda.</p>
+        <input type="text" id="superstar-business-name" placeholder="Masukkan nama bisnis...">
+      </div>
+
+      <div class="finance-block profile-block">
+        <h3><i class="fa-solid fa-wheat-awn icon-blue"></i> 3. Jenis Komoditas</h3>
+        <p class="field-desc">Jenis komoditas atau jenis usaha apa yang dijalankan.</p>
+        <input type="text" id="superstar-commodity" placeholder="Contoh: Sayur Organik, Hidroponik...">
+      </div>
+
+      <div class="finance-block profile-block">
+        <h3><i class="fa-solid fa-file-lines icon-blue"></i> 4. Ringkasan Bisnis</h3>
+        <p class="field-desc">Gambaran bisnis secara garis besar agar mudah dipahami.</p>
+        <textarea id="superstar-summary" placeholder="Tuliskan ringkasan bisnis..." class="height-mid"></textarea>
+      </div>
+
+      <div class="finance-block profile-block">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> 5. Latar Belakang Bisnis</h3>
+        <p class="field-desc">Alasan mengapa memilih jenis usaha tersebut dan komoditasnya.</p>
+        <textarea id="superstar-background" placeholder="Tuliskan latar belakang..." class="height-mid"></textarea>
+      </div>
+
+      <div class="finance-block mt-25">
+        <h3><i class="fa-solid fa-bullseye icon-blue"></i> 6. Visi dan Misi</h3>
+        <h4 class="field-desc">Visi: Tujuan utama dan tahapan.</h4>
+        <div class="input-group">
+          <textarea id="superstar-vision" placeholder="Tuliskan visi secara detail..." class="height-large"></textarea>
+        </div>
+        <h4 class="field-desc">Misi: Cara mencapainya.</h4>
+        <div class="input-group">
+          <textarea id="superstar-vision-mission" placeholder="Tuliskan visi dan misi secara detail..." class="height-large"></textarea>
+        </div>
+      </div>
+
+      <!-- 7. Pemasaran -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="pemasaran" data-placeholder="Tuliskan poin penjelasan pemasaran...">
+        <h3><i class="fa-solid fa-chart-pie icon-blue"></i> 7. Pemasaran (Penjelasan)</h3>
+        <p class="field-desc">Tempat memasarkan/menjual produk serta target pembeli utama.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <textarea class="item-textarea" placeholder="Tuliskan penjelasan pemasaran..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Sumber Informasi -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="informasi" data-placeholder="Tuliskan poin sumber informasi bisnis...">
+        <h3><i class="fa-solid fa-circle-info icon-blue"></i> 8. Sumber Informasi Bisnis</h3>
+        <p class="field-desc">Tempat atau orang untuk memperoleh informasi dan memecahkan masalah usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <textarea class="item-textarea" placeholder="Tuliskan poin sumber informasi bisnis..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Hambatan -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="hambatan" data-placeholder="Tuliskan poin hambatan bisnis...">
+        <h3><i class="fa-solid fa-hand-back-fist icon-blue"></i> 9. Hambatan Pebisnis Pada Saat Ini</h3>
+        <p class="field-desc">Permasalahan yang sedang dan akan dihadapi dalam kegiatan usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <textarea class="item-textarea" placeholder="Tuliskan poin hambatan bisnis..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Risiko -->
+      <div class="finance-block dynamic-group mt-25" data-prefix="risiko" data-placeholder="Tuliskan poin risiko bisnis...">
+        <h3><i class="fa-solid fa-triangle-exclamation icon-blue"></i> 10. Risiko Bisnis</h3>
+        <p class="field-desc">Kemungkinan-kemungkinan masalah yang akan terjadi dalam kegiatan usaha.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row">
+            <textarea class="item-textarea" placeholder="Tuliskan poin risiko bisnis..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Perbedaan -->
+      <div class="finance-block highlight-block dynamic-group mt-25" data-prefix="perbedaan" data-placeholder="Tuliskan analisis perbedaan bisnis..." data-type="textarea">
+        <h3><i class="fa-solid fa-code-compare icon-amber"></i> 11. Perbedaan Antara Bisnis Superstar dengan Bisnis Anda</h3>
+        <p class="field-desc">Bandingkan untuk mengetahui peluang dan perbaikan yang menjadi inspirasi Anda.</p>
+        <div class="list-container flex-column gap-10">
+          <div class="dynamic-row items-start">
+            <textarea class="item-textarea" placeholder="Tuliskan analisis perbedaan bisnis..."></textarea>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div id="footer-container"></div>
+
+  <!-- JAVASCRIPT -->
+  <!-- 🌟 html2canvas WAJIB ada supaya PDF export (di header-route.js) menghasilkan
+       PDF ter-kompresi, bukan cuma fallback window.print() -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="js/header-route.js"></script>
+  <script src="js/step5.js"></script>
+</body>
+</html>
