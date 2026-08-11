@@ -70,7 +70,9 @@
 
 /* Select dibuat konsisten lintas HP (Android/iOS suka render panah bawaan
    yang beda-beda dan kadang kepotong). Panah custom + appearance:none
-   supaya tinggi & tampilannya sama persis dengan input teks di sebelahnya. */
+   supaya tinggi & tampilannya sama persis dengan input teks di sebelahnya.
+   (Masih dipertahankan meski Skema Magang sekarang input teks manual,
+   siapa tahu ada <select> lain yang dipakai di halaman ini nanti.) */
 .finance-block select {
   appearance: none;
   -webkit-appearance: none;
@@ -80,93 +82,6 @@
   background-position: right 12px center;
   background-size: 16px;
   padding-right: 36px;
-}
-
-/* ==========================================
-   List bernomor (1, 2, 3, ...) yang bisa tambah/hapus baris.
-   Dipakai untuk Nama Bisnis Plan & Lokasi Bisnis (Alamat), yang
-   tadinya 4 field tetap, sekarang mulai dari 1 dan bisa ditambah
-   (maksimal 4, lihat step10.js). Input di dalamnya tetap
-   input[type="text"] biasa, jadi otomatis ikut semua styling &
-   breakpoint mobile dari aturan ".finance-block input[type=text]"
-   di atas — tidak perlu didefinisikan ulang.
-   ========================================== */
-
-.riset-list-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.riset-list-row:last-child {
-  margin-bottom: 0;
-}
-
-.riset-list-row input[type="text"] {
-  flex: 1;
-  min-width: 0; /* cegah input mendorong lebar row melebihi kartu di layar sempit */
-}
-
-.huruf-badge {
-  flex-shrink: 0;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #16a34a;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.btn-remove-row {
-  flex-shrink: 0;
-  border: none;
-  background: #fee2e2;
-  color: #dc2626;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease;
-}
-
-.btn-remove-row:hover {
-  background: #fecaca;
-}
-
-.button-row {
-  margin-top: 4px;
-}
-
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #1f2937;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 16px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.btn-add:hover {
-  background: #374151;
-}
-
-.list-max-note {
-  margin: 8px 0 0;
-  font-size: 0.8rem;
-  color: #9ca3af;
 }
 
 /* ---------- Catatan / Info box ---------- */
@@ -316,18 +231,6 @@
   .finance-block select {
     font-size: 16px;
     padding: 10px 12px;
-  }
-
-  .btn-add {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 16px;
-    font-size: 0.9rem;
-  }
-
-  .btn-remove-row {
-    width: 38px;
-    height: 38px;
   }
 
   .checklist-note {

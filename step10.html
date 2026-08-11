@@ -37,106 +37,43 @@
       </div>
 
       <!-- ====================================================== -->
-      <!-- 2. NAMA BISNIS PLAN 1-4 -->
+      <!-- 2. NAMA BISNIS PLAN -->
       <!-- ====================================================== -->
       <div class="finance-block">
         <div class="field-item">
           <label>2. Nama Bisnis Plan</label>
-          <p class="field-desc">
-            Apabila memiliki Bisnis Plan lebih dari satu, uraikan Nama Bisnis Plan satu per satu (1-4).
-            Apabila hanya memiliki satu bisnis plan saja, silahkan isi pada Nama Bisnis Plan 1.
-          </p>
-
-          <div class="sub-field">
-            <label class="sub-label">Nama Bisnis Plan 1</label>
-            <input type="text" id="biz-plan-1" data-save="true" placeholder="Masukkan nama bisnis plan 1...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Nama Bisnis Plan 2</label>
-            <input type="text" id="biz-plan-2" data-save="true" placeholder="Masukkan nama bisnis plan 2 (opsional)...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Nama Bisnis Plan 3</label>
-            <input type="text" id="biz-plan-3" data-save="true" placeholder="Masukkan nama bisnis plan 3 (opsional)...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Nama Bisnis Plan 4</label>
-            <input type="text" id="biz-plan-4" data-save="true" placeholder="Masukkan nama bisnis plan 4 (opsional)...">
-          </div>
+          <p class="field-desc">Nama Bisnis Plan diisi dengan nama bisnis plan Anda.</p>
+          <input type="text" id="nama-bisnis-plan" data-save="true" placeholder="Masukkan nama bisnis plan..." autocomplete="off">
         </div>
       </div>
 
       <!-- ====================================================== -->
-      <!-- 3. LOKASI BISNIS (ALAMAT) 1-4 -->
+      <!-- 3. LOKASI BISNIS (ALAMAT) -->
       <!-- ====================================================== -->
       <div class="finance-block">
         <div class="field-item">
           <label>3. Lokasi Bisnis (Alamat)</label>
-          <p class="field-desc">
-            Lokasi bisnis diisi dengan alamat lokasi bisnis yang akan dijalankan, sesuai dengan urutan
-            nama bisnis. Apabila hanya memiliki 1 bisnis plan, silahkan isi Lokasi Bisnis (Alamat) 1.
-          </p>
-
-          <div class="sub-field">
-            <label class="sub-label">Lokasi Bisnis (Alamat) 1</label>
-            <input type="text" id="biz-lokasi-1" data-save="true" placeholder="Masukkan alamat lokasi bisnis 1...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Lokasi Bisnis (Alamat) 2</label>
-            <input type="text" id="biz-lokasi-2" data-save="true" placeholder="Masukkan alamat lokasi bisnis 2 (opsional)...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Lokasi Bisnis (Alamat) 3</label>
-            <input type="text" id="biz-lokasi-3" data-save="true" placeholder="Masukkan alamat lokasi bisnis 3 (opsional)...">
-          </div>
-          <div class="sub-field">
-            <label class="sub-label">Lokasi Bisnis (Alamat) 4</label>
-            <input type="text" id="biz-lokasi-4" data-save="true" placeholder="Masukkan alamat lokasi bisnis 4 (opsional)...">
-          </div>
+          <p class="field-desc">Lokasi Bisnis (Alamat) diisi dengan alamat lokasi bisnis yang akan dijalankan.</p>
+          <input type="text" id="lokasi-bisnis" data-save="true" placeholder="Masukkan alamat lokasi bisnis..." autocomplete="off">
         </div>
       </div>
 
       <!-- ====================================================== -->
-      <!-- 4-7. DATA MAGANG JEPANG -->
+      <!-- 4. SKEMA MAGANG -->
       <!-- ====================================================== -->
       <div class="finance-block">
-
         <div class="field-item">
           <label>4. Skema Magang</label>
           <p class="field-desc">Program magang yang diikuti.</p>
-          <select id="skema-magang" data-save="true">
-            <option value="">-- Pilih Skema Magang --</option>
-            <option value="IAEA">IAEA</option>
-            <option value="JAEC">JAEC</option>
-            <option value="ICE">ICE</option>
-            <option value="NAEC">NAEC</option>
-          </select>
-        </div>
-
-        <div class="field-item">
-          <label>5. Tahun Keberangkatan Jepang</label>
-          <p class="field-desc">Tahun berapa Anda berangkat ke Jepang.</p>
-          <input type="number" id="tahun-berangkat" data-save="true" placeholder="Contoh: 2022" min="1990" max="2100">
-        </div>
-
-        <div class="field-item">
-          <label>6. Tahun Kepulangan Indonesia</label>
-          <p class="field-desc">Tahun berapa Anda pulang ke Indonesia.</p>
-          <input type="number" id="tahun-pulang" data-save="true" placeholder="Contoh: 2025" min="1990" max="2100">
-        </div>
-
-        <div class="field-item">
-          <label>7. Tanggal Lahir</label>
-          <p class="field-desc">Tanggal lahir Anda secara lengkap.</p>
-          <input type="date" id="tanggal-lahir" data-save="true">
+          <input type="text" id="skema-magang" data-save="true" placeholder="Contoh: IAEA, JAEC, ICE, NAEC..." autocomplete="off">
         </div>
       </div>
 
       <!-- ====================================================== -->
-      <!-- 8. CHECKLIST FORMAT BISNIS PLAN -->
+      <!-- 5. CHECKLIST FORMAT BISNIS PLAN -->
       <!-- ====================================================== -->
       <div class="finance-block">
-        <h3 class="section-title"><i class="fa-solid fa-list-check"></i> 8. Format Bisnis Plan Anda yang Sudah Selesai</h3>
+        <h3 class="section-title"><i class="fa-solid fa-list-check"></i> 5. Format Bisnis Plan Anda yang Sudah Selesai</h3>
         <p class="field-desc">
           Centang (✓) format bisnis plan yang sudah Anda selesaikan dari Tahap 1 sampai dengan Tahap 9.
         </p>

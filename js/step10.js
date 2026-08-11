@@ -1,17 +1,52 @@
 // js/step10.js
 // Tahap 10: Pengajuan Sertifikat
 // Semua field (text, number, date, select, checkbox) otomatis tersimpan.
-// Checklist di bagian 8 juga menghitung progress secara otomatis.
+// Checklist di bagian 5 juga menghitung progress secara otomatis.
 //
-// Nama Bisnis Plan & Lokasi Bisnis (Alamat) tadinya 4 field tetap
-// (biz-plan-1..4 / biz-lokasi-1..4). Sekarang keduanya jadi list yang
-// mulai dari 1 field dan bisa ditambah lewat tombol, maksimal 4 sesuai
-// aturan sertifikat aslinya. Data lama yang sudah tersimpan di 4 field
-// tetap tersebut otomatis dipindahkan ke list baru (lihat createNumberedList).
+// 🌟 Nama Bisnis Plan & Lokasi Bisnis (Alamat) disederhanakan jadi 1 field
+// saja (sebelumnya sempat berupa 4 field tetap, lalu list bernomor 1-4
+// yang bisa ditambah). Migrasi ringan di bawah memastikan data yang sudah
+// pernah diisi lewat versi-versi sebelumnya tetap muncul di field baru
+// ini, supaya tidak hilang begitu saja.
 
 document.addEventListener('DOMContentLoaded', () => {
 
   const PAGE_KEY = document.body.dataset.page || window.location.pathname;
+
+  // ==========================================
+  // 0. Migrasi data lama → field tunggal baru
+  //    (jalan SEBELUM autosave di bawah supaya nilai hasil migrasi
+  //    ikut ke-render ke input begitu field-nya dibaca).
+  // ==========================================
+  function migrateToSingleField(newId, legacyListStorageKey, legacyFixedIds) {
+    const alreadyHasValue = localStorage.getItem(`${PAGE_KEY}-${newId}`);
+    if (alreadyHasValue !== null && alreadyHasValue !== '') return;
+
+    // Coba ambil dari versi "list bernomor 1-4" dulu (item pertama yang terisi)
+    const listRaw = localStorage.getItem(`${PAGE_KEY}-${legacyListStorageKey}-rows`);
+    if (listRaw) {
+      try {
+        const rows = JSON.parse(listRaw);
+        const firstFilled = (rows || []).find(r => r && r.value && r.value.trim() !== '');
+        if (firstFilled) {
+          localStorage.setItem(`${PAGE_KEY}-${newId}`, firstFilled.value);
+          return;
+        }
+      } catch (e) { /* abaikan, lanjut coba fallback di bawah */ }
+    }
+
+    // Fallback: versi lama sekali, 4 field tetap (mis. biz-plan-1..4)
+    for (const legacyId of legacyFixedIds || []) {
+      const val = localStorage.getItem(`${PAGE_KEY}-${legacyId}`);
+      if (val && val.trim() !== '') {
+        localStorage.setItem(`${PAGE_KEY}-${newId}`, val);
+        return;
+      }
+    }
+  }
+
+  migrateToSingleField('nama-bisnis-plan', 'list-bisnis-plan', ['biz-plan-1', 'biz-plan-2', 'biz-plan-3', 'biz-plan-4']);
+  migrateToSingleField('lokasi-bisnis', 'list-lokasi', ['biz-lokasi-1', 'biz-lokasi-2', 'biz-lokasi-3', 'biz-lokasi-4']);
 
   // ==========================================
   // 1. Autosave semua field (text, number, date, select, checkbox)
@@ -39,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // 2. Progress bar checklist (bagian 8)
+  // 2. Progress bar checklist (bagian 5)
   // ==========================================
   const checklistBoxes = document.querySelectorAll('#checklist-container input[type="checkbox"]');
   const progressText = document.getElementById('checklist-progress-text');
@@ -62,132 +97,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateChecklistProgress();
-
-  // ==========================================
-  // 3. List bernomor (1, 2, 3, ...) yang bisa tambah/hapus baris,
-  //    dipakai untuk Nama Bisnis Plan & Lokasi Bisnis (Alamat).
-  //    Menggantikan 4 field tetap yang lama.
-  // ==========================================
-  function createNumberedList({ containerId, storageKeyPrefix, itemLabel, placeholderPrefix, legacyIds, maxRows }) {
-
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    const dataKey = `${PAGE_KEY}-${storageKeyPrefix}-rows`;
-
-    let rows = JSON.parse(localStorage.getItem(dataKey) || 'null');
-
-    if (!rows) {
-      // Migrasi dari field lama yang jumlahnya tetap (mis. biz-plan-1..4).
-      // Ambil semua nilainya, lalu buang slot kosong di ujung supaya
-      // tampilan awal tidak menampilkan banyak field kosong.
-      const legacyValues = (legacyIds || []).map(id => localStorage.getItem(`${PAGE_KEY}-${id}`) || '');
-
-      while (legacyValues.length > 1 && legacyValues[legacyValues.length - 1] === '') {
-        legacyValues.pop();
-      }
-
-      rows = legacyValues.length ? legacyValues.map(v => ({ value: v })) : [{ value: '' }];
-
-      (legacyIds || []).forEach(id => localStorage.removeItem(`${PAGE_KEY}-${id}`));
-    }
-
-    if (rows.length < 1) rows.push({ value: '' });
-
-    container.innerHTML = `
-      <div class="riset-list-wrapper">
-        <div class="riset-list-items"></div>
-        <div class="button-row">
-          <button type="button" class="btn-add btn-add-list-item">
-            <i class="fa-solid fa-plus"></i> Tambah ${itemLabel}
-          </button>
-          <p class="list-max-note" style="display:none;">Maksimal ${maxRows} ${itemLabel}.</p>
-        </div>
-      </div>
-    `;
-
-    const itemsWrap = container.querySelector('.riset-list-items');
-    const btnAdd = container.querySelector('.btn-add-list-item');
-    const maxNote = container.querySelector('.list-max-note');
-
-    function saveRows() {
-      localStorage.setItem(dataKey, JSON.stringify(rows));
-    }
-
-    function updateAddButtonState() {
-      const atMax = maxRows != null && rows.length >= maxRows;
-      btnAdd.style.display = atMax ? 'none' : '';
-      if (maxNote) maxNote.style.display = atMax ? '' : 'none';
-    }
-
-    function renderRows() {
-      itemsWrap.innerHTML = '';
-
-      rows.forEach((rowData, index) => {
-        const number = index + 1;
-        const row = document.createElement('div');
-        row.className = 'riset-list-row';
-
-        row.innerHTML = `
-          <span class="huruf-badge">${number}</span>
-          <input type="text" class="list-input" placeholder="${placeholderPrefix} ${number}...">
-          ${rows.length > 1 ? `<button type="button" class="btn-remove-row" title="Hapus ${itemLabel.toLowerCase()} ${number}" aria-label="Hapus ${itemLabel.toLowerCase()} ${number}"><i class="fa-solid fa-trash"></i></button>` : ''}
-        `;
-
-        const input = row.querySelector('.list-input');
-        input.value = rowData.value || '';
-        const btnRemove = row.querySelector('.btn-remove-row');
-
-        input.addEventListener('input', () => {
-          rows[index].value = input.value;
-          saveRows();
-        });
-
-        if (btnRemove) {
-          btnRemove.addEventListener('click', () => {
-            rows.splice(index, 1);
-            saveRows();
-            renderRows();
-            updateAddButtonState();
-          });
-        }
-
-        itemsWrap.appendChild(row);
-      });
-    }
-
-    btnAdd.addEventListener('click', () => {
-      if (maxRows != null && rows.length >= maxRows) return;
-      rows.push({ value: '' });
-      saveRows();
-      renderRows();
-      updateAddButtonState();
-      const lastRow = itemsWrap.lastElementChild;
-      const lastInput = lastRow && lastRow.querySelector('.list-input');
-      if (lastInput) lastInput.focus();
-    });
-
-    renderRows();
-    updateAddButtonState();
-    saveRows();
-  }
-
-  createNumberedList({
-    containerId: 'list-bisnis-plan-wrap',
-    storageKeyPrefix: 'list-bisnis-plan',
-    itemLabel: 'Bisnis Plan',
-    placeholderPrefix: 'Masukkan nama bisnis plan',
-    legacyIds: ['biz-plan-1', 'biz-plan-2', 'biz-plan-3', 'biz-plan-4'],
-    maxRows: 4
-  });
-
-  createNumberedList({
-    containerId: 'list-lokasi-wrap',
-    storageKeyPrefix: 'list-lokasi',
-    itemLabel: 'Lokasi Bisnis',
-    placeholderPrefix: 'Masukkan alamat lokasi bisnis',
-    legacyIds: ['biz-lokasi-1', 'biz-lokasi-2', 'biz-lokasi-3', 'biz-lokasi-4'],
-    maxRows: 4
-  });
 
 });
