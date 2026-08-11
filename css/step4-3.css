@@ -16,11 +16,23 @@
   margin-top: 4px;
 }
 
-/* 横スクロールラッパー */
+/* ==========================================
+   🩹 FIX: Sticky header/kolom tidak berfungsi
+   Akar masalah:
+   1) overflow-y: hidden di wrapper ini merusak position:sticky
+      di dalamnya (ancestor overflow:hidden = gotcha CSS terkenal),
+      dan scroll vertikal jadi terjadi di level HALAMAN PENUH, bukan
+      "di dalam tabel" seperti spreadsheet beneran.
+   2) Wrapper juga tidak punya max-height, jadi walaupun overflow
+      diperbaiki, tetap tidak ada area terbatas untuk di-scroll.
+   Solusi: overflow: auto di 2 arah + max-height, supaya tabel
+   men-scroll di dalam kotaknya sendiri — ini juga prasyarat supaya
+   sticky bisa nempel dengan benar.
+   ========================================== */
 .matrix-scroll-wrapper {
   width: 100%;
-  overflow-x: auto; /* スマホや画面が狭い時に横スクロールを強制 */
-  overflow-y: hidden;
+  max-height: 70vh; /* 🩹 batas tinggi, supaya ada area scroll sendiri (sesuaikan angka ini kalau ingin lebih tinggi/rendah) */
+  overflow: auto;   /* 🩹 sebelumnya: overflow-x: auto; overflow-y: hidden; */
   margin-top: 16px;
   border: 1px solid #CBD5E1;
   border-radius: 6px;
@@ -38,6 +50,19 @@
   padding: 0;
 }
 
+/* ==========================================
+   🩹 FIX: Header bulan (36 <th> hasil generate JS) belum sticky.
+   Ditarget lewat "thead th" (bukan class khusus) karena th bulan
+   dibuat murni oleh JS dengan inline style (cuma background-color,
+   dsb) — position/top/z-index BELUM diisi inline, jadi aman diatur
+   dari sini tanpa bentrok.
+   ========================================== */
+.matrix-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
 /* 左端の「KATEGORI / PERIODE」ヘッダーの幅ロック */
 .matrix-table th.col-kategori-header {
   min-width: 160px;
@@ -52,9 +77,27 @@
   border-bottom: 2px solid #CBD5E1;
   border-right: 1px solid #CBD5E1;
   box-sizing: border-box;
-  position: sticky; /* スクロールしても項目名が見えるように固定したい場合はここを起点にできます */
+  /* 🩹 Sel pojok kiri-atas: dobel-sticky (atas + kiri), z-index
+     PALING TINGGI supaya tidak ketiban header bulan maupun kolom
+     kategori lain saat scroll ke dua arah sekaligus. */
+  position: sticky;
+  top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 4;
+}
+
+/* ==========================================
+   🩹 FIX: Kolom pertama tiap baris body (nama kategori/item) belum
+   sticky ke kiri. Ditarget lewat "tbody > tr > td:first-child" supaya
+   berlaku ke SEMUA baris — baik baris tetap (addFixedRow) maupun
+   baris dinamis (createDynamicRow) — tanpa perlu ubah step4-3.js,
+   karena background-color tiap baris itu sendiri sudah diisi inline
+   oleh JS dan tetap dipertahankan (CSS ini cuma menambah posisi).
+   ========================================== */
+.matrix-table tbody > tr > td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
 }
 
 /* 共通セルの枠線ルール */
@@ -91,6 +134,7 @@
 /* スクロールバーの見た目をスマホライクでスマートに */
 .matrix-scroll-wrapper::-webkit-scrollbar {
   height: 8px;
+  width: 8px; /* 🩹 tambahan: sebelumnya cuma diatur untuk scrollbar horizontal, sekarang scrollbar vertikal juga ada (karena overflow-y sekarang "auto", bukan "hidden") */
 }
 .matrix-scroll-wrapper::-webkit-scrollbar-track {
   background: #F1F5F9;
