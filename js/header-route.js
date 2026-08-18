@@ -36,6 +36,15 @@ function getStepKeyFromURL() {
   return match ? match[1] : "1";
 }
 
+// 🌟 Key localStorage per halaman dipakai konsisten di SEMUA stepX.js
+// lewat pola: document.body.dataset.page || window.location.pathname
+// (bukan getStepKeyFromURL() di atas, yang formatnya sedikit beda).
+// Dipakai oleh fitur "Hapus Data" supaya menghapus key yang PERSIS
+// sama dengan yang dipakai untuk menyimpan.
+function getPageStorageKey() {
+  return document.body.dataset.page || window.location.pathname;
+}
+
 // ==========================================
 // 3. Shared Function to Load HTML Components
 // ==========================================
@@ -105,13 +114,14 @@ function highlightRoadmapNav() {
 }
 
 // ==========================================
-// 6. 🌟 Header Actions Linkage (CSV & PDF 統合)
+// 6. 🌟 Header Actions Linkage (CSV & PDF & Hapus Data 統合)
 // ==========================================
 function initHeaderEvents() {
   const importBtn = document.getElementById("btn-import-csv");
   const fileInput = document.getElementById("input-import-csv");
   const exportCsvBtn = document.getElementById("btn-export-csv");
   const exportPdfBtn = document.getElementById("btn-export-pdf"); // 🌟 PDFボタン
+  const clearDataBtn = document.getElementById("btn-clear-data"); // 🌟 tombol Hapus Data
 
   // 📥 CSVインポート
   if (importBtn && fileInput) {
@@ -135,6 +145,13 @@ function initHeaderEvents() {
   if (exportPdfBtn) {
     exportPdfBtn.addEventListener("click", () => {
       exportPageToPDF();
+    });
+  }
+
+  // 🗑️ Hapus Data (khusus halaman yang sedang dibuka)
+  if (clearDataBtn) {
+    clearDataBtn.addEventListener("click", () => {
+      clearCurrentPageData();
     });
   }
 }
@@ -185,11 +202,7 @@ function exportPageToCSV() {
 }
 
 // 📥 共通CSVインポートロジック
-// Membaca file CSV yang formatnya sama dengan hasil exportPageToCSV
-// ("ID","Label","Nilai") lalu mengisi kembali nilai tiap field
-// berdasarkan ID/name yang cocok di halaman saat ini.
 function parseCSVText(text) {
-  // Buang BOM (\uFEFF) kalau ada di awal file
   if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
 
   const rows = [];
@@ -229,7 +242,6 @@ function parseCSVText(text) {
     }
   }
 
-  // baris terakhir (kalau file tidak diakhiri newline)
   if (field.length > 0 || row.length > 0) {
     row.push(field);
     rows.push(row);
@@ -249,7 +261,6 @@ function importCSVToPage(file) {
       return;
     }
 
-    // Baris pertama adalah header (ID,Label,Nilai) → lewati
     const header = rows[0].map(h => h.trim().toLowerCase());
     const idColIdx = header.indexOf("id") !== -1 ? header.indexOf("id") : 0;
     const valueColIdx = header.indexOf("nilai") !== -1 ? header.indexOf("nilai") : (header.length - 1);
@@ -263,15 +274,12 @@ function importCSVToPage(file) {
 
       if (!fieldId) continue;
 
-      // Cari elemen berdasarkan id, lalu fallback ke name
       let el = document.getElementById(fieldId);
       if (!el) el = document.querySelector(`[name="${CSS.escape(fieldId)}"]`);
       if (!el) continue;
 
       el.value = fieldValue;
 
-      // Trigger event "input" supaya listener autosave/kalkulasi milik
-      // masing-masing halaman (mis. step1.js, step2-1.js, dst.) ikut jalan
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
 
@@ -296,16 +304,12 @@ function importCSVToPage(file) {
 // 7. 🌟 PDF Helpers: kompresi ukuran file & skala aman untuk HP
 // ==========================================
 
-// Perkiraan ukuran byte dari sebuah data URL base64 (tanpa perlu decode penuh)
 function estimateDataUrlBytes(dataUrl) {
   const base64 = dataUrl.split(',')[1] || '';
-  // setiap 4 karakter base64 ≈ 3 byte data asli
   const padding = (base64.endsWith('==')) ? 2 : (base64.endsWith('=') ? 1 : 0);
   return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
 }
 
-// Membuat canvas baru yang lebih kecil (dipakai kalau kompresi JPEG saja
-// masih belum cukup untuk turun di bawah batas ukuran)
 function downscaleCanvas(sourceCanvas, factor) {
   const newCanvas = document.createElement('canvas');
   newCanvas.width = Math.max(1, Math.round(sourceCanvas.width * factor));
@@ -315,9 +319,6 @@ function downscaleCanvas(sourceCanvas, factor) {
   return newCanvas;
 }
 
-// Skala capture html2canvas: dikecilkan otomatis di layar HP supaya tidak
-// berat/crash saat merender tabel lebar (mis. matriks 36 bulan) di memori
-// terbatas milik browser mobile.
 function getCaptureScale() {
   const isSmallScreen = window.innerWidth < 768;
   const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -325,30 +326,8 @@ function getCaptureScale() {
   return 2;
 }
 
-// 🩹 FIX "PDF cuma kebuka preview, tidak langsung terdownload":
-// pdf.save() bawaan jsPDF kadang membuka tab baru dulu di sebagian browser
-// HP alih-alih langsung mengunduh. Solusinya: ambil file sebagai Blob,
-// lalu paksa download lewat <a download> yang diklik otomatis — pola yang
-// sama persis dipakai di exportPageToCSV() supaya perilakunya konsisten.
-//
-// Catatan jujur: di Safari iOS, membuka PDF di tab (dengan tombol
-// share/download di viewer bawaan) adalah batasan sistem dari Apple
-// sendiri — tidak ada cara dari sisi website untuk memaksa auto-save ke
-// Files di iOS. Untuk Chrome/Edge Android dan browser desktop, fungsi ini
-// akan langsung mengunduh.
 function forceDownloadPDF(pdf, fileName) {
   const pdfBlob = pdf.output("blob");
-
-  // 🩹 FIX "masih buka preview dulu, tidak langsung download":
-  // Banyak browser (terutama Chrome Android) mengenali tipe MIME
-  // "application/pdf" lalu otomatis membukanya di PDF viewer bawaan
-  // browser, meskipun link-nya sudah punya atribut `download`. Trik
-  // umum untuk memaksa dialog "Simpan File": bungkus ulang byte yang
-  // SAMA PERSIS ke dalam Blob baru dengan tipe generik
-  // "application/octet-stream" (bukan "application/pdf"). Browser jadi
-  // tidak tahu cara menampilkannya inline, sehingga langsung
-  // menawarkan unduh/simpan. Isi filenya tetap PDF valid — hanya label
-  // tipe MIME saat proses download ini saja yang disamarkan.
   const octetBlob = new Blob([pdfBlob], { type: "application/octet-stream" });
 
   const blobUrl = URL.createObjectURL(octetBlob);
@@ -362,9 +341,6 @@ function forceDownloadPDF(pdf, fileName) {
   setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
 }
 
-// Mengubah canvas hasil html2canvas menjadi PDF yang dijamin (sebisa mungkin)
-// berada di bawah MAX_BYTES, dengan menurunkan kualitas JPEG dulu, baru
-// menurunkan resolusi kalau kualitas saja belum cukup.
 function buildCompressedPDF(canvas, formattedTitle) {
   const { jsPDF } = window.jspdf;
   const MAX_BYTES = 1024 * 1024; // 1 MB
@@ -374,18 +350,16 @@ function buildCompressedPDF(canvas, formattedTitle) {
   let dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[0]);
   let qi = 0;
 
-  // Tahap 1: turunkan kualitas JPEG dulu (paling murah, tidak mengurangi ukuran gambar)
   while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && qi < qualitySteps.length - 1) {
     qi++;
     dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[qi]);
   }
 
-  // Tahap 2: kalau kualitas terendah masih kebesaran, turunkan resolusi canvas
   let scaleFactor = 1;
   while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && scaleFactor > 0.25) {
     scaleFactor -= 0.15;
     workingCanvas = downscaleCanvas(canvas, scaleFactor);
-    qi = 1; // mulai lagi dari kualitas menengah untuk resolusi baru ini
+    qi = 1;
     dataUrl = workingCanvas.toDataURL('image/jpeg', qualitySteps[qi]);
     while (estimateDataUrlBytes(dataUrl) > MAX_BYTES && qi < qualitySteps.length - 1) {
       qi++;
@@ -408,9 +382,6 @@ function buildCompressedPDF(canvas, formattedTitle) {
 
   const fileName = `${formattedTitle || "Kalender_Bisnis"}.pdf`;
 
-  // Cek akhir terhadap ukuran blob PDF sesungguhnya (bisa sedikit berbeda
-  // dari perkiraan base64). Kalau masih di atas batas, kompres sekali lagi
-  // lebih agresif sebagai upaya terakhir.
   const finalBlob = pdf.output('blob');
   if (finalBlob.size > MAX_BYTES && scaleFactor > 0.2) {
     const lastScale = Math.max(0.2, scaleFactor - 0.15);
@@ -421,20 +392,14 @@ function buildCompressedPDF(canvas, formattedTitle) {
     const orientation2 = w2 > h2 ? "l" : "p";
     const pdf2 = new jsPDF({ orientation: orientation2, unit: "pt", format: [w2, h2], compress: true });
     pdf2.addImage(lastDataUrl, "JPEG", 0, 0, w2, h2);
-    forceDownloadPDF(pdf2, fileName); // 🩹 download paksa, bukan pdf2.save()
+    forceDownloadPDF(pdf2, fileName);
     return;
   }
 
-  forceDownloadPDF(pdf, fileName); // 🩹 download paksa, bukan pdf.save()
+  forceDownloadPDF(pdf, fileName);
 }
 
 // 📕 共通PDF出力ロジック
-// Menggunakan html2canvas + jsPDF (bukan window.print()) supaya tabel lebar
-// (mis. matriks 36 bulan) ikut tercetak SELURUHNYA di PDF, tanpa terpotong
-// oleh lebar kertas atau oleh scroll container di layar.
-// 🌟 File PDF dijaga maksimal ±1 MB (lihat buildCompressedPDF), skala
-// capture disesuaikan otomatis di HP (lihat getCaptureScale), dan hasil
-// akhirnya dipaksa langsung terdownload (lihat forceDownloadPDF).
 function exportPageToPDF() {
   const dateElement = document.getElementById("current-print-date");
 
@@ -453,8 +418,6 @@ function exportPageToPDF() {
   const title = STEP_TITLES[stepKey] || "Data";
   const formattedTitle = title.replace(/\s+/g, '_').replace(/:/g, '');
 
-  // Fallback: kalau library belum ke-load (mis. lupa ditambahkan di HTML),
-  // tetap pakai window.print() biasa supaya tombolnya tidak mati total.
   if (typeof html2canvas === "undefined" || typeof window.jspdf === "undefined") {
     console.warn("html2canvas / jsPDF tidak ditemukan, fallback ke window.print().");
     window.print();
@@ -463,12 +426,6 @@ function exportPageToPDF() {
 
   const target = document.querySelector(".main-container") || document.body;
 
-  // 🩹 Fix menyeluruh: bukan cuma wrapper tabel yang perlu dibuka overflow-nya,
-  // tapi juga <html>, <body>, dan .main-container itu sendiri — karena banyak
-  // template CSS sengaja set "overflow-x: hidden" di body/html supaya tidak
-  // muncul scrollbar horizontal tak sengaja. Kalau itu tidak dibuka juga,
-  // begitu tabel "meluber" keluar wrapper-nya, langsung dipotong lagi di
-  // level body/html.
   const ancestorLockTargets = [
     document.documentElement,
     document.body,
@@ -507,23 +464,9 @@ function exportPageToPDF() {
     });
   }
 
-  // Ukur lebar/tinggi PENUH setelah semua batasan overflow di atas dibuka
   const fullWidth = Math.max(document.documentElement.scrollWidth, target.scrollWidth);
   const fullHeight = Math.max(document.documentElement.scrollHeight, target.scrollHeight);
 
-  // 🩹 Fix teks input kepotong: html2canvas sering merender teks di dalam
-  // <input>/<textarea> dengan terpotong vertikal — solusinya ganti jadi
-  // <div> biasa saat capture. TAPI banyak CSS di project ini pakai selector
-  // berbasis tag ("... input { padding-left: ... }") untuk menyisakan ruang
-  // bagi prefix "Rp" atau ikon copy yang posisinya absolute. Begitu elemen
-  // diganti <div>, selector tag itu tidak lagi cocok, jadi padding-nya
-  // hilang dan teks jadi numpuk/tabrakan dengan elemen lain.
-  //
-  // Solusi: ambil dulu COMPUTED STYLE asli tiap input/textarea (hasil akhir
-  // CSS yang benar-benar dipakai browser, apapun cara CSS itu ditulis),
-  // simpan, lalu terapkan langsung sebagai style eksplisit ke <div>
-  // penggantinya — jadi tidak bergantung lagi pada selector yang mungkin
-  // sudah tidak cocok.
   const pdfFields = Array.from(target.querySelectorAll("input, textarea"));
   const fieldComputedStyles = pdfFields.map(field => {
     const cs = window.getComputedStyle(field);
@@ -547,17 +490,15 @@ function exportPageToPDF() {
     pdfFields.forEach(field => field.removeAttribute("data-pdf-idx"));
   }
 
-  // pdf-print-mode dipakai kalau ada style khusus (mis. sembunyikan tombol)
-  // yang ingin diterapkan hanya saat capture berlangsung.
   document.body.classList.add("pdf-print-mode");
 
   html2canvas(target, {
-    scale: getCaptureScale(), // 🌟 otomatis lebih kecil di HP supaya tidak berat/crash
+    scale: getCaptureScale(),
     useCORS: true,
     backgroundColor: "#ffffff",
     windowWidth: fullWidth,
     windowHeight: fullHeight,
-    width: fullWidth,       // 🔑 paksa area render selebar ini, bukan cuma kotak asli target
+    width: fullWidth,
     height: fullHeight,
     scrollX: 0,
     scrollY: 0,
@@ -592,7 +533,7 @@ function exportPageToPDF() {
         const hasValue = field.value && field.value.trim() !== "";
         replacement.textContent = hasValue ? field.value : (field.placeholder || "");
         if (!hasValue) {
-          replacement.style.color = "#94A3B8"; // mirip warna placeholder asli
+          replacement.style.color = "#94A3B8";
         }
 
         field.parentNode.replaceChild(replacement, field);
@@ -603,8 +544,6 @@ function exportPageToPDF() {
     restoreStyles();
     cleanupPdfFieldMarkers();
 
-    // 🌟 Bangun PDF dengan kompresi bertahap sampai maksimal ±1 MB,
-    // lalu paksa langsung download (bukan buka tab preview).
     buildCompressedPDF(canvas, formattedTitle);
   }).catch(err => {
     document.body.classList.remove("pdf-print-mode");
@@ -618,10 +557,6 @@ function exportPageToPDF() {
 // ==========================================
 // 8. 🌟 Auto-resize Textarea (universal, semua halaman)
 // ==========================================
-// Membuat SEMUA <textarea> di halaman otomatis melebar mengikuti
-// panjang tulisan, supaya tidak ada teks yang "hilang"/kepotong saat
-// diketik di layar HP. Berlaku juga untuk textarea yang dibuat belakangan
-// lewat JavaScript (mis. tombol "Tambah Baris" di Tahap 6, 7, 9).
 (function () {
 
   function autoResizeTextarea(el) {
@@ -642,8 +577,6 @@ function exportPageToPDF() {
   document.addEventListener("DOMContentLoaded", () => {
     initAutosizeTextareas();
 
-    // Pantau textarea baru yang muncul belakangan (dibuat dinamis oleh
-    // stepX.js saat user klik "Tambah Baris", dsb).
     const observer = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
         mutation.addedNodes.forEach(node => {
@@ -663,28 +596,12 @@ function exportPageToPDF() {
 })();
 
 // ==========================================
-// 9. 🌟 Sinkronisasi "Nama Lengkap" antar semua 10 Tahap
+// 9. 🌟 Sinkronisasi "Nama Lengkap" antar semua Tahap
 // ==========================================
-// Selama ini tiap halaman menyimpan Nama Lengkap ke key localStorage yang
-// beda-beda per halaman (mis. "step5-nama-lengkap", "step6-nama-lengkap"),
-// jadi nama yang sudah diisi di satu tahap tidak otomatis muncul di tahap
-// lain. Script ini menambahkan satu key BERSAMA ("global-nama-lengkap")
-// yang disinkronkan ke/dari field Nama Lengkap di halaman manapun:
-//   - Saat halaman dibuka: kalau field Nama Lengkap di halaman ini masih
-//     kosong tapi sudah ada nama tersimpan dari tahap lain, otomatis diisi.
-//   - Saat user mengetik di field ini: nama barunya langsung disebar ke
-//     key bersama, supaya tahap-tahap lain ikut ter-update juga.
-//
-// Dipasang lewat event "load" (bukan "DOMContentLoaded") supaya berjalan
-// SETELAH script masing-masing tahap (stepX.js) selesai memuat data
-// tersimpan miliknya sendiri — jadi tidak saling menimpa.
 (function () {
 
   const GLOBAL_NAME_KEY = 'global-nama-lengkap';
 
-  // Cari field "Nama Lengkap" di halaman ini, dengan beberapa kemungkinan
-  // id yang dipakai di berbagai tahap, plus fallback lewat teks label
-  // untuk jaga-jaga kalau ada tahap dengan id yang belum terdaftar.
   function findNamaLengkapFields() {
     const found = new Set();
 
@@ -710,15 +627,11 @@ function exportPageToPDF() {
     const globalValue = localStorage.getItem(GLOBAL_NAME_KEY);
 
     fields.forEach(field => {
-      // Isi otomatis kalau field ini kosong tapi nama global sudah ada
       if (globalValue && !field.value) {
         field.value = globalValue;
-        // Trigger "input" supaya autosave milik stepX.js (kalau ada)
-        // ikut menyimpan nilai ini ke key khusus halaman itu juga.
         field.dispatchEvent(new Event('input', { bubbles: true }));
       }
 
-      // Setiap kali diketik di field manapun, sebar ke key bersama
       field.addEventListener('input', () => {
         localStorage.setItem(GLOBAL_NAME_KEY, field.value);
       });
@@ -726,3 +639,98 @@ function exportPageToPDF() {
   });
 
 })();
+
+// ==========================================
+// 10. 🌟 Hapus Data (Clear Data) — khusus halaman yang sedang dibuka
+// ==========================================
+// Menghapus SEMUA key localStorage yang menjadi milik halaman ini saja
+// (key yang diawali "<pageKey>-", persis pola yang dipakai tiap stepX.js
+// untuk menyimpan datanya). Setelah dihapus, halaman di-reload supaya
+// semua field kembali kosong — termasuk tabel dinamis (Tahap 6, 7, 9)
+// yang jumlah barisnya juga tersimpan di localStorage.
+//
+// Nama Lengkap sengaja DIKECUALIKAN dari penghapusan, karena field itu
+// disinkronkan lewat "global-nama-lengkap" (lihat bagian 9) — kalau
+// dihapus di sini, nanti otomatis terisi lagi oleh nilai global saat
+// halaman reload. Supaya perilaku tombol "Hapus Data" konsisten dengan
+// harapan pengguna (nama tidak ikut hilang begitu saja tanpa disadari),
+// key nama per-halaman JUGA dikecualikan secara eksplisit.
+//
+// 🌟 CUSTOM_CLEAR_KEYS: beberapa halaman (Tahap 4-2 & 4-3) menyimpan
+// data dengan nama key sendiri (mis. "sim-start-date", "invest-items",
+// "step4-3-fixed-fund-source-amount") yang TIDAK diawali "<pageKey>-",
+// jadi tidak pernah kedeteksi oleh pencarian prefix di bawah — akibatnya
+// tombol "Hapus Data" kelihatan tidak berfungsi di halaman itu. Key-key
+// ini didaftarkan di sini supaya ikut dihapus secara eksplisit.
+// Kalau nanti ada halaman lain yang ternyata juga pakai skema key
+// custom serupa, tinggal tambahkan entri barunya di sini juga.
+const CUSTOM_CLEAR_KEYS = {
+  '4-2': [
+    'sim-start-date',
+    'fund-source-amount',
+    'sim-expected-salary',
+    'invest-items'
+    // 'sim-user-name' SENGAJA tidak dimasukkan — ini menyimpan Nama
+    // Lengkap (field id="name" di step4-2.html), diperlakukan sama
+    // seperti pengecualian Nama Lengkap di halaman lain.
+  ],
+  '4-3': [
+    'step4-3-fixed-fund-source-amount',
+    'step4-3-fixed-upah-diharapkan',
+    'step4-3-fixed-penggunaan-cadangan',
+    'step4-3-dynamic-komoditas',
+    'step4-3-dynamic-biaya'
+    // 'invest-items' TIDAK dimasukkan di sini — datanya "dimiliki"
+    // Tahap 4-2 (di situ tempat menambah/mengedit asetnya), Tahap 4-3
+    // cuma ikut membaca & menampilkannya. Menghapusnya dari 4-3 akan
+    // mengejutkan user yang tidak sedang membuka 4-2. Kalau ternyata
+    // kamu MAU aset ikut terhapus juga dari sini, tinggal tambahkan
+    // 'invest-items' ke array ini.
+  ]
+};
+
+function clearCurrentPageData() {
+  const pageKey = getPageStorageKey();
+  const prefix = `${pageKey}-`;
+  const stepKey = getStepKeyFromURL();
+
+  const namaLengkapKeys = new Set([
+    `${prefix}nama-lengkap`,
+    `${prefix}name`,
+    `${prefix}nama_lengkap`,
+    `${prefix}namaLengkap`
+  ]);
+
+  const keysToRemove = [];
+
+  // 1. Key berpola umum "<pageKey>-idField" (dipakai kebanyakan halaman)
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(prefix) && !namaLengkapKeys.has(key)) {
+      keysToRemove.push(key);
+    }
+  }
+
+  // 2. Key KHUSUS untuk halaman tertentu yang tidak ikut pola di atas
+  //    (lihat CUSTOM_CLEAR_KEYS di atas)
+  (CUSTOM_CLEAR_KEYS[stepKey] || []).forEach(key => {
+    if (localStorage.getItem(key) !== null && !keysToRemove.includes(key)) {
+      keysToRemove.push(key);
+    }
+  });
+
+  if (keysToRemove.length === 0) {
+    alert("Tidak ada data tersimpan di halaman ini.");
+    return;
+  }
+
+  const confirmClear = window.confirm(
+    `Semua isian di halaman ini akan DIHAPUS PERMANEN (${keysToRemove.length} field). ` +
+    `Nama Lengkap tidak akan ikut terhapus. Lanjutkan?`
+  );
+  if (!confirmClear) return;
+
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+
+  window.location.reload();
+}
