@@ -96,6 +96,17 @@ body {
 .btn-csv { background-color: #F59E0B; }
 .btn-import { background-color: #3B82F6; }
 
+/* 🌟 Tombol "Hapus Data" — merah lebih gelap dari .btn-pdf supaya tetap
+   beda jelas, menandakan aksi destruktif/menghapus data tersimpan. */
+.btn-clear {
+  background-color: #DC2626;
+  color: #FFFFFF;
+}
+
+.btn-clear:hover {
+  background-color: #B91C1C;
+}
+
 .btn:hover, 
 .btn:active {
   opacity: 0.85;
