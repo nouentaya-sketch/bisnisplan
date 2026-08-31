@@ -45,8 +45,16 @@ document.addEventListener("DOMContentLoaded", function() {
   function saveAllToStorage() {
     if (nameInput) localStorage.setItem('sim-user-name', nameInput.value);
     if (startDateInput) localStorage.setItem('sim-start-date', startDateInput.value);
-    if (fundSourceInput) localStorage.setItem('fund-source-amount', fundSourceInput.value);
-    if (salaryInput) localStorage.setItem('sim-expected-salary', salaryInput.value);
+
+    // 🩹 FIX: sebelumnya field ini disimpan LANGSUNG dari .value tampilan
+    // (yang sudah berisi titik ribuan, mis. "120.000.000"). Itu bikin
+    // step4-3.js yang membaca dengan parseFloat() salah baca — parseFloat
+    // berhenti di titik KEDUA (dikira desimal ala Barat), jadi
+    // "120.000.000" terbaca cuma jadi 120. Sekarang disimpan sebagai
+    // ANGKA MENTAH (parseAngka membuang semua titik dulu) supaya
+    // parseFloat() di step4-3.js membacanya dengan benar.
+    if (fundSourceInput) localStorage.setItem('fund-source-amount', parseAngka(fundSourceInput.value));
+    if (salaryInput) localStorage.setItem('sim-expected-salary', parseAngka(salaryInput.value));
 
     const allAssetItems = [];
 
@@ -160,6 +168,10 @@ newAssetContainer.querySelectorAll('.new-row').forEach(row => {
   // --- 5. 初期ロード時のデータ復元展開 ---
   if (nameInput) nameInput.value = localStorage.getItem('sim-user-name') || "";
   if (startDateInput) startDateInput.value = localStorage.getItem('sim-start-date') || "2026-04";
+  // 🩹 formatRibuan() otomatis membuang karakter non-digit dulu (\D) sebelum
+  // memformat ulang, jadi baris ini tetap aman dipakai baik untuk data lama
+  // (yang sudah kadung tersimpan dengan titik) maupun data baru (angka
+  // mentah hasil perbaikan di atas) — keduanya tampil benar di layar.
   if (fundSourceInput) fundSourceInput.value = formatRibuan(localStorage.getItem('fund-source-amount') || "");
   if (salaryInput) salaryInput.value = formatRibuan(localStorage.getItem('sim-expected-salary') || "");
 
