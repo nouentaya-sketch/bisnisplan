@@ -1,7 +1,9 @@
 // js/step9.js
 // Tahap 9: Hasil Riset Bisnis Superstar Jepang
-// Item 1-8: field teks biasa (autosave).
-// Item 9-17: tabel (Item | Penjelasan) dengan sub-baris berlabel huruf
+// Item 1-7: field teks biasa (autosave).
+// Item 3: daftar lokasi bisnis (Alamat + Link Google Map berpasangan per
+// lokasi/cabang), mulai dari 1 baris, bisa ditambah lewat tombol.
+// Item 8-16: tabel (Item | Penjelasan) dengan sub-baris berlabel huruf
 // (a, b, c, ...), mulai dari 1 baris, bisa ditambah lewat tombol.
 // Di layar mobile (<=680px), tabel ini otomatis berubah jadi kartu
 // bertumpuk lewat CSS (lihat step9.css), memakai atribut data-label
@@ -13,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const DEFAULT_ROWS = 1;
 
   // ==========================================
-  // 1. Autosave field statis (item 1-8 + Nama Lengkap + Nama Superstar)
+  // 1. Autosave field statis (item 1-2, 4-7 + Nama Lengkap + Nama Superstar)
   // ==========================================
   document.querySelectorAll('[data-save="true"]').forEach(el => {
     if (!el.id) return;
@@ -62,7 +64,111 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 2. Konfigurasi tabel item 9-17
+  // 2. Daftar Lokasi Bisnis (item 3): Alamat + Link Google Map,
+  //    berpasangan per lokasi/cabang, mulai 1 baris, bisa ditambah.
+  // ==========================================
+  function createLokasiList() {
+
+    const container = document.getElementById('list-alamat-wrap');
+    if (!container) return;
+
+    const dataKey = `${PAGE_KEY}-list-alamat-rows`;
+
+    let rows = JSON.parse(localStorage.getItem(dataKey) || 'null');
+
+    if (!rows) {
+      // Migrasi dari field lama "f4-map-link" (link tunggal, sebelum
+      // digabung jadi satu daftar dengan alamat) — supaya data yang
+      // sudah sempat diisi user tidak hilang.
+      const legacyMapLink = localStorage.getItem(`${PAGE_KEY}-f4-map-link`) || '';
+      rows = [{ alamat: '', mapLink: legacyMapLink }];
+      if (legacyMapLink) localStorage.removeItem(`${PAGE_KEY}-f4-map-link`);
+    }
+
+    if (rows.length < 1) rows.push({ alamat: '', mapLink: '' });
+
+    container.innerHTML = `
+      <div class="riset-list-wrapper">
+        <div class="riset-list-items"></div>
+        <div class="button-row">
+          <button type="button" class="btn-add btn-add-lokasi">
+            <i class="fa-solid fa-plus"></i> Tambah Lokasi
+          </button>
+        </div>
+      </div>
+    `;
+
+    const itemsWrap = container.querySelector('.riset-list-items');
+    const btnAdd = container.querySelector('.btn-add-lokasi');
+
+    function saveRows() {
+      localStorage.setItem(dataKey, JSON.stringify(rows));
+    }
+
+    function renderRows() {
+      itemsWrap.innerHTML = '';
+
+      rows.forEach((rowData, index) => {
+        const letter = toLetter(index);
+        const row = document.createElement('div');
+        row.className = 'lokasi-list-row';
+
+        row.innerHTML = `
+          <div class="lokasi-list-row-header">
+            <span class="huruf-badge">${letter}</span>
+            ${rows.length > 1 ? `<button type="button" class="btn-remove-row" title="Hapus lokasi ${letter}" aria-label="Hapus lokasi ${letter}"><i class="fa-solid fa-trash"></i></button>` : ''}
+          </div>
+          <textarea class="riset-input lokasi-alamat-input" placeholder="Alamat lengkap lokasi ${letter}...">${escapeHtml(rowData.alamat || '')}</textarea>
+          <input type="url" class="riset-input lokasi-map-input" placeholder="Link Google Map lokasi ${letter} (opsional)...">
+        `;
+
+        const alamatInput = row.querySelector('.lokasi-alamat-input');
+        const mapInput = row.querySelector('.lokasi-map-input');
+        const btnRemove = row.querySelector('.btn-remove-row');
+
+        mapInput.value = rowData.mapLink || '';
+        autoResize(alamatInput);
+
+        alamatInput.addEventListener('input', () => {
+          rows[index].alamat = alamatInput.value;
+          autoResize(alamatInput);
+          saveRows();
+        });
+
+        mapInput.addEventListener('input', () => {
+          rows[index].mapLink = mapInput.value;
+          saveRows();
+        });
+
+        if (btnRemove) {
+          btnRemove.addEventListener('click', () => {
+            rows.splice(index, 1);
+            saveRows();
+            renderRows();
+          });
+        }
+
+        itemsWrap.appendChild(row);
+      });
+    }
+
+    btnAdd.addEventListener('click', () => {
+      rows.push({ alamat: '', mapLink: '' });
+      saveRows();
+      renderRows();
+      const lastRow = itemsWrap.lastElementChild;
+      const lastInput = lastRow && lastRow.querySelector('.lokasi-alamat-input');
+      if (lastInput) lastInput.focus();
+    });
+
+    renderRows();
+    saveRows();
+  }
+
+  createLokasiList();
+
+  // ==========================================
+  // 3. Konfigurasi tabel item 8-16
   // ==========================================
   const tables = [
     { containerId: 'tbl-sarana-barang-wrap', storageKey: 'tbl-sarana-barang', colLabel: 'Sarana dan Barang Bisnis' },

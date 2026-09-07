@@ -74,6 +74,68 @@
 }
 
 /* ==========================================
+   🌟 Daftar Lokasi Bisnis (item 3): Alamat + Link Google Map
+   berpasangan per lokasi/cabang. Textarea alamat & input link map
+   ikut styling ".riset-input" yang sama dengan sel tabel item 8-16
+   di bawah, supaya tampilannya konsisten.
+   ========================================== */
+
+.riset-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.riset-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lokasi-list-row {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fafafa;
+}
+
+.lokasi-list-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.huruf-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.lokasi-list-row .riset-input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.lokasi-list-row textarea.riset-input {
+  min-height: 44px;
+}
+
+.lokasi-list-row .btn-remove-row {
+  flex-shrink: 0;
+}
+
+/* ==========================================
    Tabel item 9-17 (dengan huruf a, b, c, ...)
    Desktop/tablet: tabel normal.
    Mobile (<=680px): berubah jadi kartu bertumpuk
@@ -236,7 +298,8 @@
    RESPONSIVE — MOBILE (<=680px)
    Tabel item 9-17 diubah jadi kartu bertumpuk supaya enak
    diisi pakai jari, tanpa harus scroll horizontal & tanpa
-   textarea yang kegencet sempit.
+   textarea yang kegencet sempit. Daftar Lokasi (item 3) juga
+   dirapikan supaya badge & tombol hapus tetap nyaman disentuh.
    ========================================================== */
 @media (max-width: 680px) {
 
@@ -262,6 +325,27 @@
 
   .field-item {
     margin-bottom: 16px;
+  }
+
+  /* --- Daftar Lokasi Bisnis (item 3) di mobile --- */
+  .lokasi-list-row {
+    padding: 14px;
+  }
+
+  .huruf-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .lokasi-list-row .btn-remove-row {
+    width: 34px;
+    height: 34px;
+  }
+
+  .lokasi-list-row .riset-input {
+    font-size: 0.9rem;
+    padding: 10px;
   }
 
   /* --- kartu mobile untuk tabel item 9-17 --- */
@@ -407,5 +491,9 @@
 
   .riset-tbody tr {
     padding: 16px 40px 14px 46px;
+  }
+
+  .lokasi-list-row {
+    padding: 12px;
   }
 }

@@ -6,14 +6,18 @@
   margin: 20px auto 40px auto;
 }
 
+/* 🌟 Judul diubah jadi banner biru (mengikuti referensi desain baru),
+   bukan lagi teks polos dengan garis putus-putus di bawahnya. */
 .roadmap-title {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #0F172A;
-  border-bottom: 2px dashed #CBD5E1;
-  padding-bottom: 12px;
+  color: #FFFFFF;
+  background-color: #2563EB;
+  border-radius: 12px;
+  padding: 16px 20px;
   margin-bottom: 32px;
-  text-align: left;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .roadmap-grid {
@@ -30,10 +34,12 @@
 }
 
 /* 共通の親ボックス（単体のステップ用） */
+/* 🌟 Teks diubah jadi putih (sebelumnya #0F172A/gelap), karena sekarang
+   tiap kotak punya warna latar sendiri-sendiri yang cukup pekat. */
 .step-box {
   display: block;
   text-decoration: none;
-  color: #0F172A !important;
+  color: #FFFFFF !important;
   padding: 18px 12px;
   text-align: center;
   border-radius: 12px;
@@ -53,7 +59,7 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #334155;
+  color: rgba(255, 255, 255, 0.9); /* 🌟 sebelumnya #334155 (gelap) */
   margin-top: 6px;
   line-height: 1.4;
 }
@@ -71,13 +77,14 @@
 }
 
 /* 📦 追加：グループ内のメインタイトル（大きなボタン風） */
+/* 🌟 Teks diubah jadi putih, sama alasannya dengan .step-box di atas. */
 .step-group-title {
   padding: 12px 8px;
   text-align: center;
   border-radius: 8px;
   font-weight: 700;
   font-size: 1rem;
-  color: #0F172A;
+  color: #FFFFFF;
 }
 
 /* 📦 追加：グループ中の細かいリンク（2-1, 4-1など） */
@@ -106,7 +113,26 @@
   margin-right: 4px;
 }
 
-/* 配色定義 */
+/* ==========================================
+   🌟 配色定義 — 10 warna berbeda, satu per tahap
+   (menggantikan skema lama yang cuma 2 warna: color-orange/color-yellow)
+   Dipakai di index.html sebagai class tambahan pada .step-box atau
+   .step-group-title, sesuai nomor tahapnya masing-masing.
+   ========================================== */
+.color-1  { background-color: #F97316; } /* Tahap 1  — oranye */
+.color-2  { background-color: #EAB308; } /* Tahap 2  — kuning keemasan */
+.color-3  { background-color: #65A30D; } /* Tahap 3  — hijau lime */
+.color-4  { background-color: #0D9488; } /* Tahap 4  — teal/hijau kebiruan */
+.color-5  { background-color: #0E7490; } /* Tahap 5  — biru toska */
+.color-6  { background-color: #4338CA; } /* Tahap 6  — indigo/biru tua */
+.color-7  { background-color: #7C3AED; } /* Tahap 7  — ungu */
+.color-8  { background-color: #A21CAF; } /* Tahap 8  — magenta/fuchsia */
+.color-9  { background-color: #9F1239; } /* Tahap 9  — merah marun */
+.color-10 { background-color: #EA580C; } /* Tahap 10 — oranye tua */
+
+/* Kelas lama (color-orange/color-yellow) tetap dipertahankan supaya
+   tidak ada elemen lain di halaman ini yang tiba-tiba kosong warnanya
+   kalau ternyata masih dipakai di tempat lain yang belum diketahui. */
 .color-orange { background-color: #F3B122; }
 .color-yellow { background-color: #EAF825; }
 
