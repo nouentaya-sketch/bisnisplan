@@ -1,49 +1,45 @@
 /* ==========================================
-   Roadmap & Intro (Tahap 0: 導入ページ専用設定)
+   Roadmap & Intro (Tahap 0)
    ========================================== */
 .roadmap-container {
   max-width: 900px;
   margin: 20px auto 40px auto;
 }
 
-/* 🌟 Judul diubah jadi banner biru (mengikuti referensi desain baru),
-   bukan lagi teks polos dengan garis putus-putus di bawahnya. */
+/*  Judul  */
 .roadmap-title {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: #FFFFFF;
-  background-color: #2563EB;
+  color: #0F172A;
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 32px;
   text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .roadmap-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  align-items: start;
+  gap: 20px;
+  align-items: stretch;
 }
 
-.roadmap-column {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* 共通の親ボックス（単体のステップ用） */
-/* 🌟 Teks diubah jadi putih (sebelumnya #0F172A/gelap), karena sekarang
-   tiap kotak punya warna latar sendiri-sendiri yang cukup pekat. */
 .step-box {
-  display: block;
+  min-height: 200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;   
+  align-items: flex-start;  
+  justify-content: flex-start;
+  background-color: #FFFFFF;
   text-decoration: none;
-  color: #FFFFFF !important;
-  padding: 18px 12px;
-  text-align: center;
+  color: #0F172A !important;
+  padding: 24px;
+  text-align: left;
   border-radius: 12px;
   font-weight: 700;
+  font-size: 1.25rem; 
+  line-height: 1.35;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -54,17 +50,25 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   opacity: 0.95;
 }
-
-.step-box span {
+.step-title {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9); /* 🌟 sebelumnya #334155 (gelap) */
-  margin-top: 6px;
-  line-height: 1.4;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  line-height: 1.35;
 }
 
-/* 📦 追加：複数の枝分かれステップをまとめる枠 */
+.step-desc {
+  display: block;
+  font-size: 0.85rem;
+  color: #64748B;
+  font-weight: normal;
+  line-height: 1.4;
+  margin: 0;
+}
+
 .step-group {
   background-color: #FFFFFF;
   border: 1px solid #E2E8F0;
@@ -75,27 +79,29 @@
   gap: 8px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
-
-/* 📦 追加：グループ内のメインタイトル（大きなボタン風） */
-/* 🌟 Teks diubah jadi putih, sama alasannya dengan .step-box di atas. */
 .step-group-title {
-  padding: 12px 8px;
-  text-align: center;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #FFFFFF;
+  position: relative;
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start;
+  text-align: left;
+  padding: 8px 10px 14px 8px;
+  border-bottom: 1px dashed #E2E8F0;
+  margin-bottom: 8px;
+  box-sizing: border-box;
 }
-
-/* 📦 追加：グループ中の細かいリンク（2-1, 4-1など） */
+.step-group-title .step-title {
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
 .step-sub-box {
   display: block;
   text-decoration: none;
-  color: #475569 !important;
+  color: #0F172A !important;
   background-color: #F8FAFC;
   padding: 10px 12px;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 600;
   border: 1px solid #E2E8F0;
   transition: all 0.15s ease;
@@ -105,7 +111,7 @@
   background-color: #F1F5F9;
   color: #0F172A !important;
   border-color: #CBD5E1;
-  padding-left: 16px; /* ホバー時に少し右に動く親切エフェクト */
+  padding-left: 16px; 
 }
 
 .step-sub-box i {
@@ -113,40 +119,53 @@
   margin-right: 4px;
 }
 
-/* ==========================================
-   🌟 配色定義 — 10 warna berbeda, satu per tahap
-   (menggantikan skema lama yang cuma 2 warna: color-orange/color-yellow)
-   Dipakai di index.html sebagai class tambahan pada .step-box atau
-   .step-group-title, sesuai nomor tahapnya masing-masing.
-   ========================================== */
-.color-1  { background-color: #F97316; } /* Tahap 1  — oranye */
-.color-2  { background-color: #EAB308; } /* Tahap 2  — kuning keemasan */
-.color-3  { background-color: #65A30D; } /* Tahap 3  — hijau lime */
-.color-4  { background-color: #0D9488; } /* Tahap 4  — teal/hijau kebiruan */
-.color-5  { background-color: #0E7490; } /* Tahap 5  — biru toska */
-.color-6  { background-color: #4338CA; } /* Tahap 6  — indigo/biru tua */
-.color-7  { background-color: #7C3AED; } /* Tahap 7  — ungu */
-.color-8  { background-color: #A21CAF; } /* Tahap 8  — magenta/fuchsia */
-.color-9  { background-color: #9F1239; } /* Tahap 9  — merah marun */
-.color-10 { background-color: #EA580C; } /* Tahap 10 — oranye tua */
-
-/* Kelas lama (color-orange/color-yellow) tetap dipertahankan supaya
-   tidak ada elemen lain di halaman ini yang tiba-tiba kosong warnanya
-   kalau ternyata masih dipakai di tempat lain yang belum diketahui. */
-.color-orange { background-color: #F3B122; }
-.color-yellow { background-color: #EAF825; }
-
-.roadmap-note {
-  margin-top: 32px;
-  font-size: 0.875rem;
-  color: #475569;
-  font-weight: 700;
-  line-height: 1.6;
+.step-icon {
+  position: static !important;
+  transform: none !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.1rem !important;
+  background-color: #F1F5F9 !important; 
+  color: #0F172A !important;   
+  transition: all 0.25s ease !important;
+  box-sizing: border-box !important;
+  pointer-events: none;
 }
+.step-box:hover .step-icon,
+.step-group:hover .step-icon {
+  transform: scale(1.08) !important;
+}
+
+.step-icon::before {
+  display: block !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.color-1:hover .step-icon   { background-color: #F97316 !important; color: #FFFFFF !important; }
+.color-2:hover .step-icon   { background-color: #EAB308 !important; color: #FFFFFF !important; }
+.color-3:hover .step-icon   { background-color: #65A30D !important; color: #FFFFFF !important; }
+.color-4:hover .step-icon   { background-color: #0D9488 !important; color: #FFFFFF !important; }
+.color-5:hover .step-icon   { background-color: #0E7490 !important; color: #FFFFFF !important; }
+.color-6:hover .step-icon   { background-color: #4338CA !important; color: #FFFFFF !important; }
+.color-7:hover .step-icon   { background-color: #7C3AED !important; color: #FFFFFF !important; }
+.color-8:hover .step-icon   { background-color: #A21CAF !important; color: #FFFFFF !important; }
+.color-9:hover .step-icon   { background-color: #9F1239 !important; color: #FFFFFF !important; }
+.color-10:hover .step-icon  { background-color: #EA580C !important; color: #FFFFFF !important; }
 
 @media (max-width: 768px) {
   .roadmap-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+ 
+  .step-box {
+    min-height: 48px;
+    padding: 14px 36px 14px 14px;
   }
 }
