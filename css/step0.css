@@ -41,7 +41,7 @@
   font-size: 1.25rem; 
   line-height: 1.35;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  transition: all 0.4s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -131,13 +131,9 @@
   font-size: 1.1rem !important;
   background-color: #F1F5F9 !important; 
   color: #0F172A !important;   
-  transition: all 0.25s ease !important;
+  transition: all 0.4s ease !important;
   box-sizing: border-box !important;
   pointer-events: none;
-}
-.step-box:hover .step-icon,
-.step-group:hover .step-icon {
-  transform: scale(1.08) !important;
 }
 
 .step-icon::before {
@@ -147,16 +143,11 @@
   padding: 0 !important;
 }
 
-.color-1:hover .step-icon   { background-color: #F97316 !important; color: #FFFFFF !important; }
-.color-2:hover .step-icon   { background-color: #EAB308 !important; color: #FFFFFF !important; }
-.color-3:hover .step-icon   { background-color: #65A30D !important; color: #FFFFFF !important; }
-.color-4:hover .step-icon   { background-color: #0D9488 !important; color: #FFFFFF !important; }
-.color-5:hover .step-icon   { background-color: #0E7490 !important; color: #FFFFFF !important; }
-.color-6:hover .step-icon   { background-color: #4338CA !important; color: #FFFFFF !important; }
-.color-7:hover .step-icon   { background-color: #7C3AED !important; color: #FFFFFF !important; }
-.color-8:hover .step-icon   { background-color: #A21CAF !important; color: #FFFFFF !important; }
-.color-9:hover .step-icon   { background-color: #9F1239 !important; color: #FFFFFF !important; }
-.color-10:hover .step-icon  { background-color: #EA580C !important; color: #FFFFFF !important; }
+.step-box:hover .step-icon,
+.step-group:hover .step-icon {
+  background-color: #34D399 !important;
+  color: #FFFFFF !important;
+}
 
 @media (max-width: 768px) {
   .roadmap-grid {
