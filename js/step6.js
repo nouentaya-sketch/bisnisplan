@@ -6,6 +6,19 @@
 // ditutup dengan 1 tabel besar "Analisa" (6 kolom gabungan).
 // Semua tabel mulai dari 1 baris dan bisa ditambah lewat tombol.
 //
+// 🌟 FIX (CSV export/import): tiap <textarea> baris sekarang diberi
+// atribut id unik berpola "<storageKey>-ext-<index>" / "-int-<index>",
+// supaya exportPageToCSV (header-route.js) tidak lagi jatuh ke fallback
+// id generik "input" untuk semua field (yang menyebabkan banyak baris
+// CSV punya ID sama dan gagal dikenali balik saat import).
+//
+// 🌟 FIX (CSV import ke tabel dinamis): karena jumlah baris tiap tabel
+// bisa berubah-ubah (user bisa Tambah/Hapus Baris), saat import CSV
+// jumlah baris yang sedang tampil di halaman bisa lebih sedikit dari
+// jumlah baris yang ada di file CSV. window.ensureDynamicRowsForImport()
+// diekspos di sini supaya header-route.js bisa memanggilnya SEBELUM
+// mengisi value, untuk menambah baris yang kurang terlebih dahulu.
+//
 // 🌟 Update layout mobile: tiap <td> yang berisi input diberi atribut
 // data-label supaya di layar HP, tabel bisa berubah jadi kartu bertumpuk
 // dengan label kecil di atas tiap isian (lihat css/step6.css).
@@ -22,12 +35,19 @@
 // dipancarkan lewat document, dan tabel Analisa mendengarkan event itu
 // untuk langsung merender ulang isinya — tanpa reload halaman. Textarea
 // di tabel Analisa dibuat readonly karena isinya sekarang turunan
-// (derived), bukan data yang diketik langsung di situ.
+// (derived), bukan data yang diketik langsung di situ — dan karena itu
+// SENGAJA tidak diberi id (tidak perlu ikut diexport/diimport, lihat
+// juga pengecualian `input.readOnly` di header-route.js).
 
 document.addEventListener('DOMContentLoaded', () => {
 
   const PAGE_KEY = document.body.dataset.page || window.location.pathname;
   const DEFAULT_ROWS = 1;
+
+  // 🌟 Registry kecil: storageKey -> { getRowCount, addRow }
+  // Diisi oleh createTwoColTable untuk tiap tabel Faktor, dipakai oleh
+  // window.ensureDynamicRowsForImport (lihat paling bawah).
+  const tableInstances = {};
 
   // ==========================================
   // Autosave field Nama Lengkap
@@ -59,8 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // tampil di kolom "Faktor" dan "Penjelasan" sebelum pengguna mengetik.
   //
   // 🌟 storageKey di sini JUGA dipakai sebagai kunci pemetaan ke tabel
-  // Analisa di bagian bawah (lihat ANALISA_COLUMNS_A / _B) — jangan
-  // ubah storageKey tanpa menyesuaikan pemetaan itu juga.
+  // Analisa di bagian bawah (lihat ANALISA_COLUMNS_A / _B) DAN sebagai
+  // prefix id unik tiap textarea (lihat renderRows) — jangan ubah
+  // storageKey tanpa menyesuaikan kedua pemetaan itu juga.
   // ==========================================================
   const twoColTables = [
     // ---- 1. Keterampilan (hijau) ----
@@ -201,14 +222,19 @@ document.addEventListener('DOMContentLoaded', () => {
       rows.forEach((rowData, index) => {
         const tr = document.createElement('tr');
 
+        // 🌟 id unik per baris ("<storageKey>-ext-<index>" / "-int-<index>")
+        // supaya Export/Import CSV (header-route.js) bisa mengenali tiap
+        // field secara pasti — sebelumnya textarea ini tidak punya id
+        // sama sekali sehingga export/import CSV gagal mencocokkannya.
+        //
         // 🌟 data-label pada td dipakai CSS untuk mode kartu di HP.
         // Sel nomor sengaja TIDAK diberi data-label (jadi badge bulat polos).
         // 🌟 placeholder textarea sekarang berisi CONTOH konkret (bukan
         // instruksi generik), muncul otomatis selama sel masih kosong.
         tr.innerHTML = `
           <td class="no-cell">${index + 1}</td>
-          <td data-label="${colLabel}"><textarea class="struktur-input ext-input" placeholder="${extPlaceholder}">${rowData.ext || ''}</textarea></td>
-          <td data-label="Penjelasan"><textarea class="struktur-input int-input" placeholder="${intPlaceholder}">${rowData.int || ''}</textarea></td>
+          <td data-label="${colLabel}"><textarea id="${storageKey}-ext-${index}" name="${storageKey}-ext-${index}" class="struktur-input ext-input" placeholder="${extPlaceholder}">${rowData.ext || ''}</textarea></td>
+          <td data-label="Penjelasan"><textarea id="${storageKey}-int-${index}" name="${storageKey}-int-${index}" class="struktur-input int-input" placeholder="${intPlaceholder}">${rowData.int || ''}</textarea></td>
           <td class="action-cell">
             ${rows.length > 1 ? `<button type="button" class="btn-remove-row" title="Hapus baris"><i class="fa-solid fa-trash"></i> <span class="btn-remove-text">Hapus Baris</span></button>` : ''}
           </td>
@@ -258,9 +284,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderRows();
     saveRows();
+
+    // 🌟 Daftarkan tabel ini ke registry supaya bisa "diminta menambah
+    // baris" dari luar (dipakai window.ensureDynamicRowsForImport saat
+    // import CSV membutuhkan lebih banyak baris daripada yang tampil).
+    tableInstances[storageKey] = {
+      getRowCount: () => rows.length,
+      addRow: () => {
+        rows.push({ ext: '', int: '' });
+        saveRows();
+        renderRows();
+      }
+    };
   }
 
   twoColTables.forEach(createTwoColTable);
+
+  // ==========================================================
+  // 🌟 HOOK untuk header-route.js: dipanggil SEBELUM CSV diisikan ke
+  // form, supaya tiap tabel Faktor menambah baris dulu kalau file CSV
+  // yang diimport ternyata punya lebih banyak baris daripada yang
+  // sedang tampil di halaman saat ini. Tanpa ini, baris "kelebihan"
+  // di CSV tidak akan pernah ketemu elemen tujuannya (karena barisnya
+  // belum ada di DOM) dan otomatis dilewati saat import.
+  //
+  // fieldIds: array id mentah dari kolom "ID" file CSV, contoh:
+  //   ["struktur-keterampilan-sudah-ext-0", "struktur-keterampilan-sudah-int-0", ...]
+  // ==========================================================
+  window.ensureDynamicRowsForImport = function (fieldIds) {
+    const neededCounts = {}; // storageKey -> jumlah baris yang dibutuhkan
+
+    fieldIds.forEach(id => {
+      const match = id.match(/^(.+)-(ext|int)-(\d+)$/);
+      if (!match) return;
+      const storageKey = match[1];
+      const idx = parseInt(match[3], 10);
+      if (!Number.isFinite(idx)) return;
+      const needed = idx + 1;
+      if (!neededCounts[storageKey] || neededCounts[storageKey] < needed) {
+        neededCounts[storageKey] = needed;
+      }
+    });
+
+    Object.keys(neededCounts).forEach(storageKey => {
+      const table = tableInstances[storageKey];
+      if (!table) return;
+      while (table.getRowCount() < neededCounts[storageKey]) {
+        table.addRow();
+      }
+    });
+  };
 
   // ==========================================================
   // BAGIAN B — Tabel "Analisa" (6 kolom gabungan)
@@ -270,6 +343,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // sama persis dengan yang dipakai di twoColTables di atas), dan
   // isinya diambil otomatis dari kolom "Faktor" (bukan "Penjelasan")
   // tabel sumber tsb — digabung jadi daftar bertanda "•" per baris.
+  //
+  // 🌟 Textarea di tabel ini SENGAJA tidak diberi id/name — isinya
+  // turunan (derived), bukan data primer, jadi tidak perlu (dan tidak
+  // boleh) ikut diexport/diimport lewat CSV. Lihat pengecualian
+  // `input.readOnly` di exportPageToCSV (header-route.js).
   // ==========================================================
   function createAnalisaTable() {
 

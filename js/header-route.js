@@ -157,11 +157,23 @@ function initHeaderEvents() {
 }
 
 // 📄 共通CSV生成ロジック
+//
+// 🌟 FIX: sebelumnya field tanpa id/name diberi fallback id generik
+// "input", sehingga banyak baris CSV berbagi ID yang sama persis dan
+// tidak bisa dibedakan lagi saat diimport kembali (semua field di
+// tabel dinamis seperti Tahap 6 jatuh ke fallback ini). Sekarang field
+// tanpa id/name dilewati (tidak diexport) — field seperti itu perlu
+// diberi id unik dulu di halaman terkait (lihat step6.js untuk contoh
+// polanya) baru bisa ikut export/import CSV dengan benar.
+//
+// 🌟 FIX: field readonly (mis. tabel "Analisa" Tahap 6, yang isinya
+// otomatis/turunan dari tabel lain) juga dilewati — tidak perlu ikut
+// diexport karena bukan data primer.
 function exportPageToCSV() {
   const stepKey = getStepKeyFromURL();
   const title = STEP_TITLES[stepKey] || "Data";
   const inputs = document.querySelectorAll(".main-container input, .main-container textarea");
-  
+
   if (inputs.length === 0) {
     alert("Tidak ada data yang bisa diexport di halaman ini.");
     return;
@@ -169,25 +181,33 @@ function exportPageToCSV() {
 
   let csvContent = "\uFEFF"; 
   csvContent += "ID,Label,Nilai\n";
+  let exportedCount = 0;
 
   inputs.forEach((input) => {
     if (input.type === "button" || input.type === "submit" || input.type === "file") return;
+    if (input.readOnly) return;
+
+    const inputId = input.id || input.name;
+    if (!inputId) return;
 
     let labelText = "";
-    if (input.id) {
-      const label = document.querySelector(`label[for="${input.id}"]`);
-      if (label) labelText = label.innerText.trim();
-    }
+    const label = document.querySelector(`label[for="${CSS.escape(inputId)}"]`);
+    if (label) labelText = label.innerText.trim();
     if (!labelText) {
       labelText = input.placeholder || input.name || input.type;
     }
 
     const cleanLabel = labelText.replace(/"/g, '""').replace(/\n/g, ' ');
     const cleanValue = input.value.replace(/"/g, '""');
-    const inputId = input.id || input.name || "input";
 
     csvContent += `"${inputId}","${cleanLabel}","${cleanValue}"\n`;
+    exportedCount++;
   });
+
+  if (exportedCount === 0) {
+    alert("Tidak ada field yang bisa diexport di halaman ini (belum ada field dengan id/name yang valid).");
+    return;
+  }
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -199,6 +219,7 @@ function exportPageToCSV() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 // 📥 共通CSVインポートロジック
@@ -250,6 +271,15 @@ function parseCSVText(text) {
   return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ""));
 }
 
+// 🌟 FIX: sebelum mengisi value, panggil dulu window.ensureDynamicRowsForImport
+// (kalau halaman menyediakannya, mis. step6.js) supaya tabel dinamis
+// menambah baris terlebih dulu jika CSV punya lebih banyak baris
+// daripada yang sedang tampil di halaman. Tanpa ini, baris "kelebihan"
+// selalu gagal diisi karena elemennya belum ada di DOM.
+//
+// 🌟 FIX: pesan hasil import sekarang memisahkan jumlah field yang
+// berhasil vs yang tidak ditemukan (skippedCount), supaya kalau masih
+// ada yang tidak terisi, penyebabnya jelas kelihatan.
 function importCSVToPage(file) {
   const reader = new FileReader();
 
@@ -265,7 +295,13 @@ function importCSVToPage(file) {
     const idColIdx = header.indexOf("id") !== -1 ? header.indexOf("id") : 0;
     const valueColIdx = header.indexOf("nilai") !== -1 ? header.indexOf("nilai") : (header.length - 1);
 
+    if (typeof window.ensureDynamicRowsForImport === 'function') {
+      const fieldIds = rows.slice(1).map(r => (r[idColIdx] || '').trim()).filter(Boolean);
+      window.ensureDynamicRowsForImport(fieldIds);
+    }
+
     let filledCount = 0;
+    let skippedCount = 0;
 
     for (let i = 1; i < rows.length; i++) {
       const cols = rows[i];
@@ -276,7 +312,10 @@ function importCSVToPage(file) {
 
       let el = document.getElementById(fieldId);
       if (!el) el = document.querySelector(`[name="${CSS.escape(fieldId)}"]`);
-      if (!el) continue;
+      if (!el) {
+        skippedCount++;
+        continue;
+      }
 
       el.value = fieldValue;
 
@@ -288,6 +327,8 @@ function importCSVToPage(file) {
 
     if (filledCount === 0) {
       alert("Tidak ada field yang cocok ditemukan di halaman ini untuk data CSV tersebut.");
+    } else if (skippedCount > 0) {
+      alert(`Berhasil mengisi ${filledCount} field. ${skippedCount} field di CSV tidak ditemukan di halaman ini (mungkin dari halaman lain).`);
     } else {
       alert(`Berhasil mengisi ${filledCount} field dari file CSV.`);
     }
