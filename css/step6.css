@@ -28,7 +28,6 @@
 }
 
 .field-desc {
-  color: #6b7280;
   font-size: 0.9rem;
   line-height: 1.6;
   margin-bottom: 14px;
@@ -132,7 +131,7 @@
 /* Kolom "Penjelasan" — netral abu-abu muda */
 .struktur-table thead th:nth-child(3) {
   background: #f3f4f6;
-  color: #374151;
+  color: #334155;
 }
 
 /* ---------- Textarea di dalam sel ---------- */
@@ -356,7 +355,7 @@
 }
 
 .analisa-input-auto::placeholder {
-  color: #9ca3af;
+  color: #94A3B8;
   font-style: italic;
 }
 
@@ -437,7 +436,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.02em;
-    color: #6b7280;
+    color: #64748B;
     margin-bottom: 6px;
   }
 

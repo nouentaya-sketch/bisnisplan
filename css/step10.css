@@ -37,11 +37,10 @@
   font-weight: 600;
   font-size: 0.98rem;
   margin-bottom: 4px;
-  color: #1f2937;
+  color: #1E293B;
 }
 
 .field-desc {
-  color: #6b7280;
   font-size: 0.85rem;
   line-height: 1.55;
   margin-bottom: 12px;
@@ -141,7 +140,7 @@
 
 .checklist-item span {
   font-size: 0.92rem;
-  color: #1f2937;
+  color: #1E293B;
 }
 
 /* ---------- Progress bar ---------- */
@@ -154,7 +153,7 @@
 #checklist-progress-text {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: #334155;
 }
 
 .progress-bar-track {

@@ -1,6 +1,16 @@
 /* Font umum untuk seluruh halaman (satu-satunya tempat memuat Noto Sans JP) */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap');
 
+/* Warna teks umum untuk seluruh halaman (ubah di sini untuk mengganti semua halaman) */
+:root {
+  --text-strong: #0F172A;
+  --text-heading: #1E293B;
+  --text-body: #334155;
+  --text-sub: #475569;
+  --text-muted: #64748B;
+  --text-placeholder: #94A3B8;
+}
+
 /* ==========================================
    1. Base Rule (全体共通の基本設定)
    ========================================== */
@@ -13,7 +23,7 @@
 body {
   font-family: 'Noto Sans JP', sans-serif;
   background-color: #F8FAFC;
-  color: #0F172A;
+  color: var(--text-strong);
 }
 
 /* Form controls tidak otomatis mewarisi font, jadi dipaksa mengikuti body */
@@ -173,14 +183,14 @@ textarea {
 }
 
 .tab-header h2 {
-  color: #0F172A;
+  color: var(--text-strong);
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 12px;
 }
 
 .tab-header p {
-  color: #475569;
+  color: var(--text-sub);
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 8px;
@@ -215,7 +225,7 @@ footer {
 }
 
 footer p {
-  color: #94A3B8;
+  color: var(--text-placeholder);
   font-size: 14px;
 }
 
@@ -241,12 +251,18 @@ footer p {
 }
 
 .input-group label {
-  color: #334155;
+  color: var(--text-body);
   font-size: 0.875rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.finance-block h3,
+.struktur-section h3,
+.swot-section h3 {
+  color: var(--text-heading);
 }
 
 .input-group label i { color: #10B981; }
@@ -541,7 +557,7 @@ footer p {
 
 .field-desc {
   font-size: 0.85rem;
-  color: #64748B;
+  color: var(--text-muted);
   margin-bottom: 12px;
   line-height: 1.5;
 }
