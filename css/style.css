@@ -1,3 +1,6 @@
+/* Font umum untuk seluruh halaman (satu-satunya tempat memuat Noto Sans JP) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap');
+
 /* ==========================================
    1. Base Rule (全体共通の基本設定)
    ========================================== */
