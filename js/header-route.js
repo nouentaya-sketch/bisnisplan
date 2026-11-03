@@ -706,6 +706,14 @@ function exportPageToPDF() {
 // Kalau nanti ada halaman lain yang ternyata juga pakai skema key
 // custom serupa, tinggal tambahkan entri barunya di sini juga.
 const CUSTOM_CLEAR_KEYS = {
+  '1': [
+    'current-saving',
+    'remittance',
+    'remaining-months',
+    'financeGroup:income',
+    'financeGroup:living',
+    'financeGroup:desire'
+  ],
   '4-2': [
     'sim-start-date',
     'fund-source-amount',
