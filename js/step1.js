@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ctx = document.getElementById("financeChart").getContext("2d");
 
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+
     const financeChart = new Chart(ctx, {
         type: "doughnut",
         data: {

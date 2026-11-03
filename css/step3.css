@@ -13,17 +13,9 @@
   padding: 25px;
   border: 1px solid #E2E8F0;
   text-align: center;
-
-  /* Tambahan */
-  font-family: 'Noto Sans JP', sans-serif;
 }
 
-/* ==========================================
-   Font Samakan Dengan Halaman Lain
-   ========================================== */
-
 .idea-card h3 {
-  font-family: 'Noto Sans JP', sans-serif;
   font-size: 15px;
   font-weight: 700;
   margin-bottom: 15px;
@@ -31,18 +23,11 @@
 }
 
 .idea-card .field-desc {
-  font-family: 'Noto Sans JP', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
   color: #64748B;
   margin-bottom: 16px;
-}
-
-.idea-card textarea,
-#nama-bisnis,
-#ringkasan-bisnis {
-  font-family: 'Noto Sans JP', sans-serif;
 }
 
 /* ==========================================

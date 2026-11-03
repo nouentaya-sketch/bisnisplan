@@ -13,6 +13,14 @@ body {
   color: #0F172A;
 }
 
+/* Form controls tidak otomatis mewarisi font, jadi dipaksa mengikuti body */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
 .hidden {
   display: none !important;
 }

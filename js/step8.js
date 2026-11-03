@@ -111,6 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const factorColLabel = FACTOR_COL_LABELS[category] || 'Faktor';
     const rs = getChartResponsiveSettings();
 
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+
     const chart = new Chart(canvas.getContext('2d'), {
       type: 'scatter',
       data: { datasets: [{ data: [], backgroundColor: '#4472C4', pointRadius: rs.pointRadius }] },

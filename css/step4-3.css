@@ -45,7 +45,6 @@
   width: max-content; /* 中身の指定幅（150px + 120px * 36）を維持 */
   border-collapse: collapse;
   table-layout: fixed; /* これにより列幅が文字の長さに引っ張られなくなります */
-  font-family: 'Noto Sans JP', sans-serif;
   margin: 0;
   padding: 0;
 }
