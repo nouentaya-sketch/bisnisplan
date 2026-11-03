@@ -16,17 +16,13 @@
 }
 
 .idea-card h3 {
-  font-size: 15px;
+  font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 15px;
-  color: #334155;
+  color: var(--text-heading);
 }
 
 .idea-card .field-desc {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.6;
-  color: #64748B;
   margin-bottom: 16px;
 }
 
@@ -70,9 +66,15 @@
   border-radius: 12px;
   padding: 12px;
   resize: none;
-  font-size: 14px;
+  font-size: 0.95rem;
   line-height: 1.6;
-  color: #334155;
+  color: var(--text-strong);
+}
+
+.idea-card textarea::placeholder,
+#nama-bisnis::placeholder,
+#ringkasan-bisnis::placeholder {
+  color: var(--text-placeholder);
 }
 
 /* ==========================================
@@ -86,6 +88,8 @@
   font-weight: bold;
   text-align: left;
   margin-bottom: 10px;
+  font-size: 0.875rem;
+  color: var(--text-body);
 }
 
 #nama-bisnis {
@@ -94,7 +98,8 @@
   padding: 12px 15px;
   border: 1px solid #CBD5E1;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 0.95rem;
+  color: var(--text-strong);
   display: block;
   margin: 0 auto;
 }
@@ -105,7 +110,8 @@
   margin-top: 30px;
   font-weight: bold;
   text-align: left;
-  font-size: 16px;
+  font-size: 0.875rem;
+  color: var(--text-body);
 }
 
 #ringkasan-bisnis {
@@ -114,7 +120,8 @@
   padding: 12px 15px;
   border: 1px solid #CBD5E1;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 0.95rem;
+  color: var(--text-strong);
   display: block;
   margin: 0 auto;
 }
