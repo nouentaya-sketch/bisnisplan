@@ -5,11 +5,6 @@
 
 .mt-16 { margin-top: 16px; }
 
-/* ---------- Icon coloring ---------- */
-.icon-green { color: #4a7c1f; }
-.icon-orange { color: #b5590e; }
-.icon-gold { color: #b8860b; }
-
 /* ---------- Finance Block base ---------- */
 .finance-block {
   background: #fff;

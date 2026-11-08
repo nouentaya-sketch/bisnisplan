@@ -41,17 +41,8 @@
   margin: 0 auto 15px auto;
 }
 
-/* 各カードのアイコン背景色 */
-.idea-card.passion-card .card-icon {
-  background-color: #059669;
-}
-
-.idea-card.skill-card .card-icon {
-  background-color: #D97706;
-}
-
-.idea-card.problem-card .card-icon {
-  background-color: #E11D48;
+.idea-card .card-icon {
+  background-color: var(--icon-color);
 }
 
 /* ==========================================

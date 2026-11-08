@@ -33,10 +33,6 @@
   word-break: break-word;
 }
 
-/* ---------- Icon coloring ---------- */
-.icon-blue { color: #2563eb; }
-.icon-amber { color: #d97706; }
-
 /* ---------- Finance Block base ---------- */
 .finance-block {
   background: #fff;

@@ -9,6 +9,7 @@
   --text-sub: #475569;
   --text-muted: #64748B;
   --text-placeholder: #94A3B8;
+  --icon-color: #0F766E;
 }
 
 /* ==========================================
@@ -36,6 +37,19 @@ textarea {
 
 .hidden {
   display: none !important;
+}
+
+/* コンテンツ内の見出し・項目アイコンを共通化 */
+.main-container h2 > i.fa-solid,
+.main-container h3 > i.fa-solid,
+.main-container h4 > i.fa-solid,
+.main-container label > i.fa-solid,
+.main-container th > i.fa-solid {
+  display: inline-block;
+  width: 1.25em;
+  flex: 0 0 1.25em;
+  color: var(--icon-color);
+  text-align: center;
 }
 
 /* ==========================================
@@ -264,16 +278,6 @@ footer p {
 .swot-section h3 {
   color: var(--text-heading);
 }
-
-.input-group label i { color: #10B981; }
-.profile-block label i    { color: #3B82F6; }
-.saving-block h3 i           { color: #06B6D4; }
-.income-block h3 i           { color: #10B981; }
-.expense-block h3 i          { color: #EF4444; }
-.remittance-block h3 i       { color: #8B5CF6; }
-.desire-block h3 i           { color: #EC4899; }
-.period-block h3 i           { color: #6366F1; }
-.result-block h3 i           { color: #F59E0B; }
 
 /* ★すべてのインプット欄・カレンダー・複数行テキスト（textarea）のスタイルを共通統合 */
 .input-group input[type="text"],
@@ -550,10 +554,6 @@ footer p {
   align-items: center !important;
   justify-content: center !important;
 }
-
-.risk-section h3 i { color: #EF4444; }
-.success-section h3 i { color: #10B981; }
-.superstar-section h3 i { color: #F59E0B; }
 
 .field-desc {
   font-size: 0.85rem;
