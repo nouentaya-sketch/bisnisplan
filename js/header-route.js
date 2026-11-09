@@ -503,7 +503,8 @@ function exportPageToPDF() {
       overflow: "visible",
       overflowX: "visible",
       width: el.scrollWidth + "px",
-      maxWidth: "none"
+      maxWidth: "none",
+      maxHeight: "none" // 🌟 FIX: wrapper dengan max-height (mis. 70vh di Tahap 4-3) dibuka penuh
     });
   });
 
@@ -541,7 +542,23 @@ function exportPageToPDF() {
   const textareaOverflow = pdfFields.reduce((sum, f) => {
     return f.tagName === "TEXTAREA" ? sum + Math.max(0, f.scrollHeight - f.clientHeight) : sum;
   }, 0);
-  const extraHeight = textareaOverflow > 0 ? textareaOverflow + 40 : 0;
+  // 🌟 FIX: input satu baris yang isinya lebih panjang dari kotaknya (mis. nama
+  // aset yang panjang di Tahap 4-2) akan dibungkus ke beberapa baris di PDF,
+  // jadi perkirakan tambahan tinggi halamannya juga.
+  const measureCtx = document.createElement("canvas").getContext("2d");
+  let wrapExtra = 0;
+  pdfFields.forEach(f => {
+    if (f.tagName === "TEXTAREA" || !f.value) return;
+    const fcs = window.getComputedStyle(f);
+    measureCtx.font = `${fcs.fontStyle} ${fcs.fontWeight} ${fcs.fontSize} ${fcs.fontFamily}`;
+    const avail = f.clientWidth - (parseFloat(fcs.paddingLeft) || 0) - (parseFloat(fcs.paddingRight) || 0);
+    if (avail <= 0) return;
+    const lines = Math.ceil(measureCtx.measureText(f.value).width / avail);
+    if (lines > 1) wrapExtra += (lines - 1) * (parseFloat(fcs.fontSize) * 1.4);
+  });
+
+  const totalExtra = textareaOverflow + wrapExtra;
+  const extraHeight = totalExtra > 0 ? Math.ceil(totalExtra) + 40 : 0;
 
   function cleanupPdfFieldMarkers() {
     pdfFields.forEach(field => field.removeAttribute("data-pdf-idx"));
@@ -599,6 +616,16 @@ function exportPageToPDF() {
             overflowWrap: "break-word",
             wordBreak: "break-word"
           });
+        } else {
+          // 🌟 FIX: input satu baris dengan teks panjang dibungkus ke baris
+          // berikutnya (tinggi tetap dari layar menjadi tinggi minimum)
+          // supaya seluruh teks terlihat, tidak terpotong.
+          Object.assign(replacement.style, {
+            height: "auto",
+            minHeight: cs.height,
+            overflow: "visible",
+            overflowWrap: "anywhere"
+          });
         }
 
         const hasValue = field.value && field.value.trim() !== "";
@@ -643,9 +670,14 @@ function exportPageToPDF() {
       ? (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0)
       : 0;
 
-    el.style.overflowY = "hidden";
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight + borders}px`;
+    // 🌟 FIX: pakai !important inline supaya TIDAK bisa dikalahkan aturan CSS
+    // lain (height / max-height / overflow tetap di stylesheet mana pun).
+    el.style.setProperty("overflow-y", "hidden", "important");
+    el.style.setProperty("max-height", "none", "important");
+    el.style.setProperty("resize", "none", "important");
+    el.style.setProperty("height", "auto", "important");
+    el.style.setProperty("height", `${el.scrollHeight + borders}px`, "important");
+    el.scrollTop = 0;
   }
 
   function resizeAllTextareas() {
