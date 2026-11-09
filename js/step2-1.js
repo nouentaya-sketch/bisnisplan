@@ -1,43 +1,86 @@
 // js/step2-1.js
-
 // ==========================================
-// Patch export PDF: tampilkan seluruh isi textarea
-// (membungkus html2canvas, kode export lama tidak perlu diubah)
+// Perbaikan universal export PDF: seluruh isi textarea harus terlihat.
+// Cukup dimuat sekali di setiap halaman HTML, tanpa mengubah kode lain.
+// - Membungkus html2canvas (kapan pun dimuat, sebelum atau sesudah file ini)
+// - Mendukung juga export lewat window.print()
 // ==========================================
-(function patchHtml2CanvasForTextareas() {
-  if (typeof window.html2canvas !== 'function') return;
+(function () {
 
-  const originalHtml2Canvas = window.html2canvas;
+  // ---------- 1. html2canvas ----------
+  function wrap(original) {
+    if (typeof original !== 'function' || original.__textareaPatched) return original;
 
-  window.html2canvas = function (element, options = {}) {
-    const userOnClone = options.onclone;
-    const originalTextareas = Array.from(document.querySelectorAll('textarea'));
+    const patched = function (element, options) {
+      options = Object.assign({}, options || {});
+      const userOnClone = options.onclone;
 
-    options.onclone = function (clonedDoc, clonedElement) {
-      const clonedTextareas = clonedDoc.querySelectorAll('textarea');
+      // Tinggi isi sebenarnya dari textarea asli (termasuk teks yang tersembunyi)
+      const heights = Array.from(document.querySelectorAll('textarea'))
+        .map(ta => ta.scrollHeight + 4);
 
-      clonedTextareas.forEach((ta, i) => {
-        const original = originalTextareas[i];
-        // tinggi isi sebenarnya dari textarea asli (termasuk teks yang tersembunyi)
-        const fullHeight = (original ? original.scrollHeight : ta.scrollHeight) + 4;
+      options.onclone = function (clonedDoc, clonedElement) {
+        // Hanya salinan yang diubah, halaman asli tidak tersentuh
+        clonedDoc.querySelectorAll('textarea').forEach((ta, i) => {
+          const h = heights[i] !== undefined ? heights[i] : ta.scrollHeight + 4;
+          ta.style.overflow = 'hidden';
+          ta.style.resize = 'none';
+          ta.style.height = h + 'px';
+          ta.style.minHeight = h + 'px';
+          ta.scrollTop = 0;
+        });
 
-        ta.style.overflow = 'hidden';
-        ta.style.resize = 'none';
-        ta.style.height = fullHeight + 'px';
-        ta.style.minHeight = fullHeight + 'px';
-        ta.scrollTop = 0;
-      });
+        if (typeof userOnClone === 'function') {
+          return userOnClone(clonedDoc, clonedElement);
+        }
+      };
 
-      if (typeof userOnClone === 'function') {
-        return userOnClone(clonedDoc, clonedElement);
-      }
+      return original.call(this, element, options);
     };
 
-    return originalHtml2Canvas.call(this, element, options);
-  };
+    Object.assign(patched, original);
+    patched.__textareaPatched = true;
+    return patched;
+  }
 
-  // pertahankan properti bawaan html2canvas jika ada
-  Object.assign(window.html2canvas, originalHtml2Canvas);
+  let current = wrap(window.html2canvas);
+
+  try {
+    Object.defineProperty(window, 'html2canvas', {
+      configurable: true,
+      get: function () { return current; },
+      set: function (value) { current = wrap(value); }
+    });
+  } catch (e) {
+    // Jika gagal, coba bungkus setelah semua script dimuat
+    window.addEventListener('load', function () {
+      if (typeof window.html2canvas === 'function') {
+        window.html2canvas = wrap(window.html2canvas);
+      }
+    });
+  }
+
+  // ---------- 2. window.print() ----------
+  let savedForPrint = [];
+
+  window.addEventListener('beforeprint', function () {
+    savedForPrint = [];
+    document.querySelectorAll('textarea').forEach(ta => {
+      savedForPrint.push({ ta: ta, height: ta.style.height, overflow: ta.style.overflow });
+      ta.style.overflow = 'hidden';
+      ta.style.height = 'auto';
+      ta.style.height = (ta.scrollHeight + 4) + 'px';
+    });
+  });
+
+  window.addEventListener('afterprint', function () {
+    savedForPrint.forEach(s => {
+      s.ta.style.height = s.height;
+      s.ta.style.overflow = s.overflow;
+    });
+    savedForPrint = [];
+  });
+
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
