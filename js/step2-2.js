@@ -1,5 +1,118 @@
 // js/step2-2.js
 
+// ==========================================
+// Patch export PDF: tabel 12 bulan & isi input tampil utuh
+// - tabel yang melebar (scroll horizontal) tidak terpotong di kanan
+// - angka panjang di input (mis. 15.000.000) tidak terpotong
+// (membungkus html2canvas, kode export lama tidak perlu diubah)
+// ==========================================
+(function patchHtml2CanvasForWideTable() {
+
+  function applyPatch() {
+    if (typeof window.html2canvas !== 'function') return;
+    if (window.html2canvas.__wideTablePatched) return;
+
+    const originalHtml2Canvas = window.html2canvas;
+
+    const patched = function (element, options = {}) {
+      options = Object.assign({}, options);
+      const userOnClone = options.onclone;
+
+      // --- 1. Cari wrapper yang bisa di-scroll horizontal (di dokumen asli) ---
+      const originalAll = Array.from(element.querySelectorAll('*'));
+      const scrollIdx = [];
+      let extraWidth = 0;
+
+      originalAll.forEach((el, i) => {
+        const ox = getComputedStyle(el).overflowX;
+        if (ox === 'auto' || ox === 'scroll') {
+          scrollIdx.push(i);
+          extraWidth = Math.max(extraWidth, el.scrollWidth - el.clientWidth);
+        }
+      });
+
+      // --- 2. Hitung lebar input bulan agar angka terpanjang muat ---
+      const monthInputs = Array.from(element.querySelectorAll('.month-input'));
+      let neededInputWidth = 65;
+
+      if (monthInputs.length) {
+        const ctx = document.createElement('canvas').getContext('2d');
+        monthInputs.forEach(inp => {
+          const cs = getComputedStyle(inp);
+          ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          const textWidth = ctx.measureText(inp.value || '').width;
+          const padding =
+            (parseFloat(cs.paddingLeft) || 0) +
+            (parseFloat(cs.paddingRight) || 0) +
+            (parseFloat(cs.borderLeftWidth) || 0) +
+            (parseFloat(cs.borderRightWidth) || 0);
+          neededInputWidth = Math.max(
+            neededInputWidth,
+            inp.offsetWidth,
+            Math.ceil(textWidth + padding + 6)
+          );
+        });
+      }
+
+      const currentWidth = monthInputs[0] ? monthInputs[0].offsetWidth : 65;
+      const widenBy = Math.max(0, neededInputWidth - currentWidth) * 12;
+      const originalWidth = element.offsetWidth;
+
+      // --- 3. Pastikan jendela render cukup lebar ---
+      if (!options.windowWidth) {
+        options.windowWidth = Math.max(
+          window.innerWidth,
+          originalWidth + extraWidth + widenBy + 80
+        );
+      }
+
+      // --- 4. Ubah salinan (clone) saja, halaman asli tidak tersentuh ---
+      options.onclone = function (clonedDoc, clonedElement) {
+        const root = clonedElement || clonedDoc.body;
+
+        // Elemen yang diekspor mengikuti lebar isinya
+        root.style.minWidth = originalWidth + 'px';
+        root.style.width = 'max-content';
+        root.style.maxWidth = 'none';
+        root.style.overflow = 'visible';
+
+        // Wrapper scroll horizontal -> tampil penuh
+        const clonedAll = root.querySelectorAll('*');
+        scrollIdx.forEach(i => {
+          const el = clonedAll[i];
+          if (!el) return;
+          el.style.overflow = 'visible';
+          el.style.maxWidth = 'none';
+          el.style.width = 'auto';
+        });
+
+        // Input bulan dilebarkan agar angka tidak terpotong
+        root.querySelectorAll('.month-input').forEach(inp => {
+          inp.style.width = neededInputWidth + 'px';
+          inp.style.minWidth = neededInputWidth + 'px';
+          inp.style.textOverflow = 'clip';
+        });
+
+        if (typeof userOnClone === 'function') {
+          return userOnClone(clonedDoc, clonedElement);
+        }
+      };
+
+      return originalHtml2Canvas.call(this, element, options);
+    };
+
+    // pertahankan properti bawaan html2canvas jika ada
+    Object.assign(patched, originalHtml2Canvas);
+    patched.__wideTablePatched = true;
+    window.html2canvas = patched;
+  }
+
+  // Coba langsung; jika html2canvas belum dimuat, coba lagi nanti
+  applyPatch();
+  document.addEventListener('DOMContentLoaded', applyPatch);
+  window.addEventListener('load', applyPatch);
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // === 1. Static Fields (data-save="true" di HTML) ===
   // Sama seperti step1 & step2-1: field mana yang disimpan ditentukan
@@ -126,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const janVal = monthsArray[0] !== undefined ? monthsArray[0] : '';
       let monthCellsHtml = `
         <td>
-          <div style="display: flex; align-items: center; gap: 4px; min-width: 105px;">
-            <input type="text" inputmode="numeric" class="month-input jan-input" data-save="true" placeholder="0" value="${formatRibuan(janVal)}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
+          <div style="display: flex; align-items: center; gap: 4px; min-width: 150px;">
+            <input type="text" inputmode="numeric" class="month-input jan-input" data-save="true" placeholder="0" value="${formatRibuan(janVal)}" style="width:110px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;">
             <button type="button" class="btn-copy-all" title="Salin ke semua bulan" style="background:#FFFFFF; color:#64748B; border:none; padding:6px; border-radius:50%; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; transition: all 0.2s ease;">
               <i class="fa-regular fa-copy"></i>
             </button>
@@ -137,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       for (let i = 1; i < 12; i++) {
         const val = monthsArray[i] !== undefined ? monthsArray[i] : '';
-        monthCellsHtml += `<td><input type="text" inputmode="numeric" class="month-input" data-save="true" placeholder="0" value="${formatRibuan(val)}" style="width:65px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
+        monthCellsHtml += `<td><input type="text" inputmode="numeric" class="month-input" data-save="true" placeholder="0" value="${formatRibuan(val)}" style="width:110px; padding:6px; font-size:0.85rem; border-radius:4px; border:1px solid #cbd5e1;"></td>`;
       }
 
       // 💡 1行目なら「プラスボタン」、2行目以降なら「ゴミ箱ボタン」を Nama item の右隣にインライン配置
