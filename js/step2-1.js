@@ -1,5 +1,45 @@
 // js/step2-1.js
 
+// ==========================================
+// Patch export PDF: tampilkan seluruh isi textarea
+// (membungkus html2canvas, kode export lama tidak perlu diubah)
+// ==========================================
+(function patchHtml2CanvasForTextareas() {
+  if (typeof window.html2canvas !== 'function') return;
+
+  const originalHtml2Canvas = window.html2canvas;
+
+  window.html2canvas = function (element, options = {}) {
+    const userOnClone = options.onclone;
+    const originalTextareas = Array.from(document.querySelectorAll('textarea'));
+
+    options.onclone = function (clonedDoc, clonedElement) {
+      const clonedTextareas = clonedDoc.querySelectorAll('textarea');
+
+      clonedTextareas.forEach((ta, i) => {
+        const original = originalTextareas[i];
+        // tinggi isi sebenarnya dari textarea asli (termasuk teks yang tersembunyi)
+        const fullHeight = (original ? original.scrollHeight : ta.scrollHeight) + 4;
+
+        ta.style.overflow = 'hidden';
+        ta.style.resize = 'none';
+        ta.style.height = fullHeight + 'px';
+        ta.style.minHeight = fullHeight + 'px';
+        ta.scrollTop = 0;
+      });
+
+      if (typeof userOnClone === 'function') {
+        return userOnClone(clonedDoc, clonedElement);
+      }
+    };
+
+    return originalHtml2Canvas.call(this, element, options);
+  };
+
+  // pertahankan properti bawaan html2canvas jika ada
+  Object.assign(window.html2canvas, originalHtml2Canvas);
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ==========================================
