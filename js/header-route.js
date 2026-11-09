@@ -465,6 +465,14 @@ function exportPageToPDF() {
     return;
   }
 
+  // 🌟 FIX: pastikan tinggi SEMUA textarea sudah sesuai isinya sebelum
+  // halaman difoto. Sebelumnya tinggi textarea bisa masih "basi" (mis.
+  // isi dipulihkan dari localStorage tanpa memicu auto-resize), sehingga
+  // teks panjang terpotong di PDF.
+  if (typeof window.autoResizeAllTextareas === "function") {
+    window.autoResizeAllTextareas();
+  }
+
   const target = document.querySelector(".main-container") || document.body;
 
   const ancestorLockTargets = [
@@ -512,6 +520,7 @@ function exportPageToPDF() {
   const fieldComputedStyles = pdfFields.map(field => {
     const cs = window.getComputedStyle(field);
     return {
+      isTextarea: field.tagName === "TEXTAREA", // 🌟 FIX
       padding: cs.padding,
       border: cs.border,
       borderRadius: cs.borderRadius,
@@ -527,6 +536,13 @@ function exportPageToPDF() {
   });
   pdfFields.forEach((field, idx) => field.setAttribute("data-pdf-idx", idx));
 
+  // 🌟 FIX: jaga-jaga kalau isi textarea masih lebih tinggi dari kotaknya,
+  // tambahkan tinggi kanvas supaya bagian bawah halaman tidak ikut terpotong.
+  const textareaOverflow = pdfFields.reduce((sum, f) => {
+    return f.tagName === "TEXTAREA" ? sum + Math.max(0, f.scrollHeight - f.clientHeight) : sum;
+  }, 0);
+  const extraHeight = textareaOverflow > 0 ? textareaOverflow + 40 : 0;
+
   function cleanupPdfFieldMarkers() {
     pdfFields.forEach(field => field.removeAttribute("data-pdf-idx"));
   }
@@ -538,9 +554,9 @@ function exportPageToPDF() {
     useCORS: true,
     backgroundColor: "#ffffff",
     windowWidth: fullWidth,
-    windowHeight: fullHeight,
+    windowHeight: fullHeight + extraHeight,
     width: fullWidth,
-    height: fullHeight,
+    height: fullHeight + extraHeight,
     scrollX: 0,
     scrollY: 0,
     onclone: (clonedDoc) => {
@@ -571,6 +587,20 @@ function exportPageToPDF() {
           overflow: "hidden"
         });
 
+        // 🌟 FIX: untuk textarea, tinggi dibiarkan otomatis mengikuti isi
+        // (tinggi tetap dari tampilan layar menjadi tinggi minimum saja),
+        // dan teks dimulai dari atas, bukan di tengah.
+        if (cs.isTextarea) {
+          Object.assign(replacement.style, {
+            display: "block",
+            height: "auto",
+            minHeight: cs.height,
+            overflow: "visible",
+            overflowWrap: "break-word",
+            wordBreak: "break-word"
+          });
+        }
+
         const hasValue = field.value && field.value.trim() !== "";
         replacement.textContent = hasValue ? field.value : (field.placeholder || "");
         if (!hasValue) {
@@ -598,12 +628,32 @@ function exportPageToPDF() {
 // ==========================================
 // 8. 🌟 Auto-resize Textarea (universal, semua halaman)
 // ==========================================
+// 🌟 FIX: ukuran dihitung ulang juga saat halaman selesai dimuat, saat
+// font selesai dimuat, dan sebelum export PDF (window.autoResizeAllTextareas),
+// karena isi textarea sering dipulihkan dari localStorage SESUDAH
+// auto-resize pertama berjalan. Textarea yang sedang tersembunyi dilewati,
+// dan tinggi border ikut dihitung.
 (function () {
 
   function autoResizeTextarea(el) {
+    if (el.offsetParent === null) return; // sedang tersembunyi
+
+    const cs = window.getComputedStyle(el);
+    const borders = cs.boxSizing === "border-box"
+      ? (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0)
+      : 0;
+
+    el.style.overflowY = "hidden";
     el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+    el.style.height = `${el.scrollHeight + borders}px`;
   }
+
+  function resizeAllTextareas() {
+    document.querySelectorAll("textarea").forEach(autoResizeTextarea);
+  }
+
+  // dipakai juga oleh exportPageToPDF()
+  window.autoResizeAllTextareas = resizeAllTextareas;
 
   function initAutosizeTextareas(root = document) {
     root.querySelectorAll("textarea").forEach(el => {
@@ -632,7 +682,17 @@ function exportPageToPDF() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+
+    setTimeout(resizeAllTextareas, 150);
+    setTimeout(resizeAllTextareas, 600);
   });
+
+  window.addEventListener("load", resizeAllTextareas);
+  window.addEventListener("pageshow", resizeAllTextareas);
+  window.addEventListener("resize", resizeAllTextareas);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(resizeAllTextareas);
+  }
 
 })();
 
